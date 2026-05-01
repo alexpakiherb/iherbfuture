@@ -33,7 +33,7 @@ import { AgentAction } from '@/data/personas';
 
 interface CartItem {
   id: string;
-  emoji: string;
+  imageUrl: string;
   brand: string;
   name: string;
   dose: string;
@@ -47,7 +47,7 @@ interface CartItem {
 const MAYA_CART: CartItem[] = [
   {
     id: 'cgn-vit-d3',
-    emoji: '☀️',
+    imageUrl: 'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/cgn/cgn01066/u/159.jpg',
     brand: 'California Gold Nutrition',
     name: 'Vitamin D3 5,000 IU, 360 Softgels',
     dose: '1 softgel daily · morning',
@@ -58,7 +58,7 @@ const MAYA_CART: CartItem[] = [
   },
   {
     id: 'now-mag-glycinate',
-    emoji: '💊',
+    imageUrl: 'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/now/now01289/u/62.jpg',
     brand: 'NOW Foods',
     name: 'Magnesium Glycinate 200 mg, 180 Capsules',
     dose: '2 capsules daily · evening',
@@ -73,7 +73,7 @@ const MAYA_CART: CartItem[] = [
 const DANIEL_CART: CartItem[] = [
   {
     id: 'le-nmn',
-    emoji: '🧬',
+    imageUrl: 'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/lex/lex23443/u/24.jpg',
     brand: 'Life Extension',
     name: 'NMN 500 mg, 60 Capsules',
     dose: '1 capsule daily · morning',
@@ -84,7 +84,7 @@ const DANIEL_CART: CartItem[] = [
   },
   {
     id: 'le-quercetin',
-    emoji: '🌿',
+    imageUrl: 'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/lex/lex23023/u/66.jpg',
     brand: 'Life Extension',
     name: 'Quercetin Phytosome, 60 Capsules',
     dose: '1 capsule daily · morning',
@@ -95,7 +95,7 @@ const DANIEL_CART: CartItem[] = [
   },
   {
     id: 'cgn-resveratrol',
-    emoji: '🍇',
+    imageUrl: 'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/cgn/cgn00934/u/221.jpg',
     brand: 'California Gold Nutrition',
     name: 'Resveratrol 500 mg, 60 Capsules',
     dose: '1 capsule daily · morning',
@@ -107,7 +107,7 @@ const DANIEL_CART: CartItem[] = [
   },
   {
     id: 'thorne-omega',
-    emoji: '🐟',
+    imageUrl: 'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/thr/thr00690/u/50.jpg',
     brand: 'Thorne',
     name: 'Omega-3 Triglyceride EPA/DHA 2.5g, 60 Softgels',
     dose: '2 softgels daily · morning',
@@ -235,8 +235,20 @@ export default function CartPage() {
   // ── Upsell product for free shipping strip ──────────────────────────────
   const freeShippingUpsell =
     persona.id === 'maya'
-      ? { emoji: '🍊', name: 'Vitamin C 1,000 mg', brand: 'California Gold Nutrition', price: 12.49, note: 'On your wish list' }
-      : { emoji: '🧪', name: 'Glycine 3g Powder', brand: 'NOW Foods', price: 9.99, note: 'Advisor recommended' };
+      ? {
+          imageUrl: 'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/cgn/cgn00932/u/298.jpg',
+          name: 'Vitamin C 1,000 mg',
+          brand: 'California Gold Nutrition',
+          price: 12.49,
+          note: 'On your wish list',
+        }
+      : {
+          imageUrl: 'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/now/now00225/u/32.jpg',
+          name: 'Glycine 3g Powder',
+          brand: 'NOW Foods',
+          price: 9.99,
+          note: 'Advisor recommended',
+        };
 
   return (
     <div className="flex min-h-screen flex-col bg-[#FAFAFA]">
@@ -276,8 +288,13 @@ export default function CartPage() {
                   <div key={item.id} className="px-5 py-4">
                     <div className="flex gap-4">
                       {/* Product image */}
-                      <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-xl border border-[#EBEBEB] bg-[#F1FAF3] text-[28px]">
-                        {item.emoji}
+                      <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#EBEBEB] bg-white">
+                        <img
+                          src={item.imageUrl}
+                          alt={item.name}
+                          className="h-full w-full object-contain"
+                          loading="lazy"
+                        />
                       </div>
 
                       {/* Product info */}
@@ -389,13 +406,23 @@ export default function CartPage() {
                 eyebrow="Free shipping unlock"
                 headline={`Add $${toFreeShipping.toFixed(2)} more for free shipping`}
                 body={
-                  <>
-                    Suggested:{' '}
-                    <span className="font-semibold text-[#1A1A1A]">
-                      {freeShippingUpsell.emoji} {freeShippingUpsell.brand} {freeShippingUpsell.name}
-                    </span>{' '}
-                    (${freeShippingUpsell.price.toFixed(2)}) · {freeShippingUpsell.note}
-                  </>
+                  <span className="flex items-center gap-2">
+                    <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#EBEBEB] bg-white">
+                      <img
+                        src={freeShippingUpsell.imageUrl}
+                        alt={freeShippingUpsell.name}
+                        className="h-full w-full object-contain"
+                        loading="lazy"
+                      />
+                    </span>
+                    <span>
+                      Suggested:{' '}
+                      <span className="font-semibold text-[#1A1A1A]">
+                        {freeShippingUpsell.brand} {freeShippingUpsell.name}
+                      </span>{' '}
+                      (${freeShippingUpsell.price.toFixed(2)}) · {freeShippingUpsell.note}
+                    </span>
+                  </span>
                 }
               >
                 <div className="flex items-center gap-2">

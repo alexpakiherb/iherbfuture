@@ -59,7 +59,7 @@ const RELATED_ARTICLES = [
 // ── Try This Stack ───────────────────────────────────────────────────────────
 const STACK_PRODUCTS = [
   {
-    emoji: '💊',
+    imageUrl: 'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/now/now01289/u/62.jpg',
     brand: 'NOW Foods',
     name: 'Magnesium Glycinate 200mg',
     badge: 'Best for sleep',
@@ -68,7 +68,7 @@ const STACK_PRODUCTS = [
     reviews: 2341,
   },
   {
-    emoji: '🔬',
+    imageUrl: 'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/thr/thr00644/u/96.jpg',
     brand: 'Thorne',
     name: 'Magnesium Bisglycinate 200mg',
     badge: 'Premium pick',
@@ -77,8 +77,8 @@ const STACK_PRODUCTS = [
     reviews: 891,
   },
   {
-    emoji: '🧪',
-    brand: 'Doctor\'s Best',
+    imageUrl: 'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/drb/drb00565/u/32.jpg',
+    brand: "Doctor's Best",
     name: 'Magnesium Glycinate 100mg',
     badge: 'Budget-friendly',
     price: '$14.49',
@@ -93,9 +93,14 @@ function InlineProductCard() {
     <div className="my-6 overflow-hidden rounded-2xl border border-[#D9EADF] bg-white shadow-[0_2px_12px_rgba(10,107,60,0.06)]">
       <div className="h-[3px] bg-gradient-to-r from-[#0A6B3C] via-[#79A83C] to-[#0A6B3C]" />
       <div className="flex gap-4 p-4">
-        {/* Product image placeholder */}
-        <div className="flex h-[88px] w-[88px] flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#F1FAF3] to-[#E5F8E6] text-[36px]">
-          💊
+        {/* Product image */}
+        <div className="flex h-[88px] w-[88px] flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#EBEBEB] bg-white p-2">
+          <img
+            src="https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/now/now01289/u/62.jpg"
+            alt="NOW Foods Magnesium Glycinate"
+            className="h-full w-full object-contain"
+            loading="lazy"
+          />
         </div>
         <div className="flex flex-1 flex-col justify-between min-w-0">
           <div>
@@ -273,7 +278,7 @@ export default function WellnessHubArticlePage() {
             {/* Dek */}
             <p className="mt-2.5 text-[15.5px] leading-relaxed text-[#555]">
               Magnesium comes in a dozen forms — but only a few are worth your attention.
-              Here's how to match the right form to your goal, whether that's better sleep,
+              Here&apos;s how to match the right form to your goal, whether that&apos;s better sleep,
               more energy, or sharper cognition.
             </p>
 
@@ -294,11 +299,35 @@ export default function WellnessHubArticlePage() {
             </div>
           </div>
 
-          {/* Hero image area */}
-          <div className="flex h-[200px] w-full items-center justify-center bg-gradient-to-br from-[#F1FAF3] to-[#E5F8E6]">
-            <div className="flex flex-col items-center gap-2 text-center">
-              <span className="text-[72px]">🧪</span>
-              <span className="text-[12px] font-medium text-[#0A6B3C] opacity-60 uppercase tracking-widest">
+          {/* Hero image area — three-bottle product collage on tinted backdrop */}
+          <div className="relative flex h-[220px] w-full items-center justify-center overflow-hidden bg-gradient-to-br from-[#F1FAF3] via-[#E8F5EC] to-[#E5F8E6]">
+            <div className="absolute left-6 top-1/2 -translate-y-1/2 -rotate-6 transform">
+              <div className="flex h-[140px] w-[110px] items-center justify-center overflow-hidden rounded-xl border border-[#EBEBEB] bg-white p-3 shadow-[0_8px_24px_rgba(10,107,60,0.12)]">
+                <img
+                  src="https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/now/now01289/u/62.jpg"
+                  alt=""
+                  className="h-full w-full object-contain"
+                />
+              </div>
+            </div>
+            <div className="z-10 flex h-[170px] w-[130px] items-center justify-center overflow-hidden rounded-xl border border-[#EBEBEB] bg-white p-3 shadow-[0_12px_32px_rgba(10,107,60,0.18)]">
+              <img
+                src="https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/thr/thr00644/u/96.jpg"
+                alt=""
+                className="h-full w-full object-contain"
+              />
+            </div>
+            <div className="absolute right-6 top-1/2 -translate-y-1/2 rotate-6 transform">
+              <div className="flex h-[140px] w-[110px] items-center justify-center overflow-hidden rounded-xl border border-[#EBEBEB] bg-white p-3 shadow-[0_8px_24px_rgba(10,107,60,0.12)]">
+                <img
+                  src="https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/lex/lex16039/u/276.jpg"
+                  alt=""
+                  className="h-full w-full object-contain"
+                />
+              </div>
+            </div>
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 transform">
+              <span className="rounded-full bg-white/80 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-[#0A6B3C] backdrop-blur">
                 Minerals · Magnesium
               </span>
             </div>
@@ -344,13 +373,13 @@ export default function WellnessHubArticlePage() {
             {/* ── Section: 5 most common forms ── */}
             <section id="five-forms">
               <h2 className="text-[22px] font-bold text-[#0A6B3C] mt-8 mb-3">
-                The 5 most common forms — and what they're for
+                The 5 most common forms — and what they&apos;re for
               </h2>
               <div className="space-y-4 text-[15px] leading-relaxed text-[#333]">
                 <p>
-                  Walk down the supplement aisle and you'll find magnesium labeled as
-                  glycinate, citrate, malate, threonate, and oxide. They're not
-                  interchangeable. Here's what the evidence says about each:
+                  Walk down the supplement aisle and you&apos;ll find magnesium labeled as
+                  glycinate, citrate, malate, threonate, and oxide. They&apos;re not
+                  interchangeable. Here&apos;s what the evidence says about each:
                 </p>
                 <ul className="space-y-3 pl-0 list-none">
                   {[
@@ -405,8 +434,8 @@ export default function WellnessHubArticlePage() {
               <div className="space-y-4 text-[15px] leading-relaxed text-[#333]">
                 <p>
                   The decision tree is simpler than the label count suggests. Start with
-                  your primary complaint, not the marketing. If you're here because
-                  you're not sleeping well, start with glycinate and take it 30–60 minutes
+                  your primary complaint, not the marketing. If you&apos;re here because
+                  you&apos;re not sleeping well, start with glycinate and take it 30–60 minutes
                   before bed. If energy and fatigue are your concern, malate pairs
                   naturally with your morning stack. If you have a sensitive gut, avoid
                   citrate and oxide.
@@ -415,14 +444,14 @@ export default function WellnessHubArticlePage() {
                   Advanced users with a clean foundation — solid sleep, stable energy,
                   good gut motility — may find value in threonate as a targeted
                   nootropic addition, particularly on high-cognitive-demand days. But
-                  it's a poor first choice if the basics aren't covered.
+                  it&apos;s a poor first choice if the basics aren&apos;t covered.
                 </p>
               </div>
 
               <ComparisonTable />
 
               <div className="mt-4 rounded-xl border-l-4 border-[#0A6B3C] bg-[#F1FAF3] px-5 py-4 text-[14px] leading-relaxed text-[#333]">
-                <strong className="text-[#0A6B3C]">Clinical note:</strong> There's no benefit
+                <strong className="text-[#0A6B3C]">Clinical note:</strong> There&apos;s no benefit
                 to stacking multiple magnesium forms simultaneously unless you have a specific
                 protocol designed by a clinician. Choose one, run it for four to six weeks,
                 and assess. Too many forms at once clouds the signal.
@@ -485,14 +514,14 @@ export default function WellnessHubArticlePage() {
                 </p>
                 <p>
                   <strong>For cognition (threonate):</strong> Morning or early afternoon
-                  is optimal. Threonate's mechanism involves long-term potentiation — a
+                  is optimal. Threonate&apos;s mechanism involves long-term potentiation — a
                   synaptic strengthening process that benefits from being active during
                   waking hours rather than competing with sleep-related consolidation.
                 </p>
                 <p>
                   Split dosing — half in the morning, half at night — is a valid
                   strategy for improving tolerability when starting at higher doses.
-                  There's minimal pharmacokinetic benefit beyond gut comfort.
+                  There&apos;s minimal pharmacokinetic benefit beyond gut comfort.
                 </p>
               </div>
             </section>
@@ -509,13 +538,13 @@ export default function WellnessHubArticlePage() {
                 <ul className="space-y-2 pl-5 list-disc">
                   <li>
                     <strong>Taking magnesium with high-dose zinc at the same time.</strong> Both
-                    minerals compete for the same transporters. If you're taking zinc,
+                    minerals compete for the same transporters. If you&apos;re taking zinc,
                     separate it from magnesium by a few hours.
                   </li>
                   <li>
                     <strong>Expecting overnight results.</strong> Tissue magnesium repletion
                     takes 4–6 weeks of consistent supplementation to show measurable
-                    change. Don't abandon the protocol in week two.
+                    change. Don&apos;t abandon the protocol in week two.
                   </li>
                   <li>
                     <strong>Choosing based on price alone.</strong> Magnesium oxide is cheap
@@ -526,7 +555,7 @@ export default function WellnessHubArticlePage() {
                   <li>
                     <strong>Ignoring interactions with medications.</strong> Magnesium can
                     affect the absorption of certain antibiotics (especially tetracyclines
-                    and fluoroquinolones) and blood pressure medications. If you're on
+                    and fluoroquinolones) and blood pressure medications. If you&apos;re on
                     prescription medication, check with your clinician.
                   </li>
                   <li>
@@ -545,30 +574,30 @@ export default function WellnessHubArticlePage() {
               </h2>
               <ol className="space-y-2 text-[13px] leading-relaxed text-[#555] pl-5 list-decimal">
                 <li>
-                  Abbasi B, et al. "The effect of magnesium supplementation on primary
-                  insomnia in elderly: A double-blind placebo-controlled clinical trial."
+                  Abbasi B, et al. &quot;The effect of magnesium supplementation on primary
+                  insomnia in elderly: A double-blind placebo-controlled clinical trial.&quot;
                   <em> J Res Med Sci.</em> 2012;17(12):1161–1169. PMID: 23853635.
                 </li>
                 <li>
-                  Slutsky I, et al. "Enhancement of learning and memory by elevating
-                  brain magnesium." <em>Neuron.</em> 2010;65(2):165–177.
+                  Slutsky I, et al. &quot;Enhancement of learning and memory by elevating
+                  brain magnesium.&quot; <em>Neuron.</em> 2010;65(2):165–177.
                   DOI: 10.1016/j.neuron.2009.12.026.
                 </li>
                 <li>
-                  DiNicolantonio JJ, O'Keefe JH, Wilson W. "Subclinical magnesium
+                  DiNicolantonio JJ, O&apos;Keefe JH, Wilson W. &quot;Subclinical magnesium
                   deficiency: a principal driver of cardiovascular disease and a
-                  public health crisis." <em>Open Heart.</em> 2018;5(1):e000668.
+                  public health crisis.&quot; <em>Open Heart.</em> 2018;5(1):e000668.
                   DOI: 10.1136/openhrt-2017-000668.
                 </li>
                 <li>
-                  Held K, et al. "Oral Mg(2+) supplementation reverses age-related
-                  neuroendocrine and sleep EEG changes in humans."
+                  Held K, et al. &quot;Oral Mg(2+) supplementation reverses age-related
+                  neuroendocrine and sleep EEG changes in humans.&quot;
                   <em> Pharmacopsychiatry.</em> 2002;35(4):135–143.
                   DOI: 10.1055/s-2002-33195.
                 </li>
                 <li>
-                  Schwalfenberg GK, Genuis SJ. "The Importance of Magnesium in
-                  Clinical Healthcare." <em>Scientifica (Cairo).</em> 2017;2017:4179326.
+                  Schwalfenberg GK, Genuis SJ. &quot;The Importance of Magnesium in
+                  Clinical Healthcare.&quot; <em>Scientifica (Cairo).</em> 2017;2017:4179326.
                   DOI: 10.1155/2017/4179326.
                 </li>
               </ol>
@@ -605,7 +634,7 @@ export default function WellnessHubArticlePage() {
               </div>
               {helpfulVote && (
                 <span className="ml-1 text-[12px] text-[#888]">
-                  {helpfulVote === 'up' ? 'Thanks for the feedback!' : "We'll keep improving."}
+                  {helpfulVote === 'up' ? 'Thanks for the feedback!' : 'We will keep improving.'}
                 </span>
               )}
             </div>
@@ -690,8 +719,8 @@ export default function WellnessHubArticlePage() {
                 <div className="divide-y divide-[#F0F0F0]">
                   {STACK_PRODUCTS.map((p) => (
                     <div key={p.name} className="flex items-center gap-3 px-4 py-3">
-                      <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#F1FAF3] to-[#E5F8E6] text-[20px]">
-                        {p.emoji}
+                      <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#EBEBEB] bg-white">
+                        <img src={p.imageUrl} alt={p.name} className="h-full w-full object-contain" loading="lazy" />
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="text-[10px] font-bold uppercase tracking-wide text-[#0A6B3C]">

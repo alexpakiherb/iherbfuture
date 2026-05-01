@@ -236,8 +236,17 @@ export default function ForecastPage() {
               >
                 {insight.productSuggestion && (
                   <div className="flex items-center gap-3 rounded-xl border border-[#E8E8E8] bg-[#FAFBFA] p-3">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-white text-[20px] shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
-                      💊
+                    <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#EBEBEB] bg-white shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
+                      {insight.productSuggestion.imageUrl ? (
+                        <img
+                          src={insight.productSuggestion.imageUrl}
+                          alt={insight.productSuggestion.name}
+                          className="h-full w-full object-contain"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <span className="text-[20px]">💊</span>
+                      )}
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="truncate text-[13px] font-semibold text-[#1A1A1A]">

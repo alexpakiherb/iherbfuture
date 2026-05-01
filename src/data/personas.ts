@@ -134,7 +134,7 @@ export const maya: Persona = {
       name: 'Vitamin D3 5,000 IU',
       brand: 'California Gold Nutrition',
       imageUrl:
-        'https://res.cloudinary.com/iherb/image/upload/v1700000001/products/d3.jpg',
+        'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/cgn/cgn01066/u/159.jpg',
       dose: '1 softgel',
       timeOfDay: 'morning',
       reasonShort: 'For your immune goal',
@@ -149,7 +149,7 @@ export const maya: Persona = {
       name: 'Magnesium Glycinate 200mg',
       brand: 'NOW Foods',
       imageUrl:
-        'https://res.cloudinary.com/iherb/image/upload/v1700000001/products/mag.jpg',
+        'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/now/now01289/u/62.jpg',
       dose: '2 capsules',
       timeOfDay: 'evening',
       reasonShort: 'For sleep — gentlest form',
@@ -164,7 +164,7 @@ export const maya: Persona = {
       name: 'Vitamin C 1,000mg',
       brand: 'California Gold Nutrition',
       imageUrl:
-        'https://res.cloudinary.com/iherb/image/upload/v1700000001/products/vc.jpg',
+        'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/cgn/cgn00932/u/298.jpg',
       dose: '1 capsule',
       timeOfDay: 'morning',
       reasonShort: 'Daily immune support',
@@ -183,7 +183,7 @@ export const maya: Persona = {
       category: 'protocol',
       approvalDeadline: 'Decide within 3 days',
       productImage:
-        'https://res.cloudinary.com/iherb/image/upload/v1700000001/products/zinc.jpg',
+        'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/thr/thr21002/u/37.jpg',
     },
     {
       id: 'act-m-2',
@@ -275,7 +275,7 @@ export const daniel: Persona = {
       name: 'Creatine Monohydrate 5g',
       brand: 'Thorne',
       imageUrl:
-        'https://res.cloudinary.com/iherb/image/upload/v1700000001/products/creatine.jpg',
+        'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/thr/thr00635/u/61.jpg',
       dose: '5g',
       timeOfDay: 'morning',
       reasonShort: 'Cognitive + power output',
@@ -289,7 +289,7 @@ export const daniel: Persona = {
       name: 'NMN 500mg',
       brand: 'Life Extension',
       imageUrl:
-        'https://res.cloudinary.com/iherb/image/upload/v1700000001/products/nmn.jpg',
+        'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/lex/lex23443/u/24.jpg',
       dose: '1 capsule',
       timeOfDay: 'morning',
       reasonShort: 'NAD+ precursor — longevity',
@@ -303,7 +303,7 @@ export const daniel: Persona = {
       name: 'Omega-3 Triglyceride EPA/DHA 2.5g',
       brand: 'Thorne',
       imageUrl:
-        'https://res.cloudinary.com/iherb/image/upload/v1700000001/products/omega.jpg',
+        'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/thr/thr00690/u/50.jpg',
       dose: '2 softgels',
       timeOfDay: 'morning',
       reasonShort: 'Brain + cardiovascular',
@@ -317,7 +317,7 @@ export const daniel: Persona = {
       name: 'Magnesium Bisglycinate 200mg',
       brand: 'Thorne',
       imageUrl:
-        'https://res.cloudinary.com/iherb/image/upload/v1700000001/products/mag-thorne.jpg',
+        'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/thr/thr00644/u/96.jpg',
       dose: '2 capsules',
       timeOfDay: 'evening',
       reasonShort: 'Sleep architecture',
@@ -331,7 +331,7 @@ export const daniel: Persona = {
       name: 'Quercetin Phytosome',
       brand: 'Life Extension',
       imageUrl:
-        'https://res.cloudinary.com/iherb/image/upload/v1700000001/products/quercetin.jpg',
+        'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/lex/lex23023/u/66.jpg',
       dose: '1 capsule',
       timeOfDay: 'morning',
       reasonShort: 'Senolytic — longevity protocol',
@@ -343,7 +343,7 @@ export const daniel: Persona = {
       name: 'Collagen Plus',
       brand: 'Thorne',
       imageUrl:
-        'https://res.cloudinary.com/iherb/image/upload/v1700000001/products/collagen.jpg',
+        'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/thr/thr01311/u/96.jpg',
       dose: '1 scoop',
       timeOfDay: 'morning',
       reasonShort: 'Joint + connective tissue',
@@ -355,7 +355,7 @@ export const daniel: Persona = {
       name: 'Electrolyte Mix',
       brand: 'LMNT',
       imageUrl:
-        'https://res.cloudinary.com/iherb/image/upload/v1700000001/products/lmnt.jpg',
+        'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/nuu/nuu02050/u/30.jpg',
       dose: '1 stick',
       timeOfDay: 'pre-workout',
       reasonShort: 'Hydration before Z2',
@@ -367,7 +367,7 @@ export const daniel: Persona = {
       name: 'Ashwagandha KSM-66',
       brand: 'Thorne',
       imageUrl:
-        'https://res.cloudinary.com/iherb/image/upload/v1700000001/products/ashwa.jpg',
+        'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/thr/thr01554/u/8.jpg',
       dose: '1 capsule',
       timeOfDay: 'evening',
       reasonShort: 'Cortisol regulation',
@@ -386,7 +386,7 @@ export const daniel: Persona = {
       category: 'protocol',
       approvalDeadline: 'Decide within 5 days',
       productImage:
-        'https://res.cloudinary.com/iherb/image/upload/v1700000001/products/mag-threonate.jpg',
+        'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/lex/lex16039/u/276.jpg',
     },
     {
       id: 'act-d-2',

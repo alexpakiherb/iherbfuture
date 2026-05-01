@@ -27,20 +27,6 @@ import { AgentActionCard } from '@/components/AgentActionCard';
 import { AdherenceRing } from '@/components/AdherenceRing';
 import { usePersona } from '@/components/PersonaProvider';
 
-// Emoji icons per product category — mirrors stack page pattern
-function productEmoji(category: string): string {
-  const map: Record<string, string> = {
-    Vitamins: '☀️',
-    Minerals: '💊',
-    Sports: '⚡',
-    Longevity: '🧬',
-    Omega: '🐟',
-    Adaptogens: '🌿',
-    Protein: '🥩',
-  };
-  return map[category] ?? '💊';
-}
-
 // Frequency label helper
 function freqLabel(days: number): string {
   if (days === 30) return 'Every 30 days';
@@ -240,10 +226,15 @@ export default function SubscriptionsPage() {
                     <div className="flex items-start gap-4">
                       {/* Product image */}
                       <div className="flex-shrink-0">
-                        <div className="relative flex h-16 w-16 items-center justify-center rounded-xl border border-[#E8E8E8] bg-[#FAFBFA] text-[28px]">
-                          {productEmoji(item.category)}
+                        <div className="relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-[#E8E8E8] bg-white">
+                          <img
+                            src={item.imageUrl}
+                            alt={item.name}
+                            className="h-full w-full object-contain"
+                            loading="lazy"
+                          />
                           {item.autoshipNote && (
-                            <div className="absolute -bottom-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#0A6B3C]">
+                            <div className="absolute -bottom-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#0A6B3C] ring-2 ring-white">
                               <Sparkles size={9} className="text-white" strokeWidth={3} />
                             </div>
                           )}

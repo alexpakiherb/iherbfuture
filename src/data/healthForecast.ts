@@ -22,7 +22,7 @@ export interface ForecastInsight {
   icon: string;
   title: string;
   body: string;
-  productSuggestion?: { name: string; reason: string; productId?: string };
+  productSuggestion?: { name: string; reason: string; productId?: string; imageUrl?: string };
   ctaLabel: string;
 }
 
@@ -50,7 +50,7 @@ const MAYA_FORECAST: HealthForecast = {
       icon: '🌳',
       title: 'Tree pollen is in the top 10% of the year',
       body: 'Cedar and oak pollen peaks for Central Texas this week. If you typically experience allergy symptoms, consider adding quercetin and stinging nettle to your routine.',
-      productSuggestion: { name: 'Quercetin + Bromelain', reason: 'Natural antihistamine support', productId: 'le-quercetin' },
+      productSuggestion: { name: 'Quercetin + Bromelain', reason: 'Natural antihistamine support', productId: 'le-quercetin', imageUrl: 'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/lex/lex23023/u/66.jpg' },
       ctaLabel: 'See seasonal protocol',
     },
     {
@@ -63,7 +63,7 @@ const MAYA_FORECAST: HealthForecast = {
       icon: '💧',
       title: 'Heat advisory may impact hydration',
       body: 'Heat index of 95+ on 4 of the next 7 days. Add electrolytes if you\'re training outdoors or experiencing low energy.',
-      productSuggestion: { name: 'LMNT Electrolyte Mix', reason: 'Replenishes sodium loss in heat' },
+      productSuggestion: { name: 'LMNT Electrolyte Mix', reason: 'Replenishes sodium loss in heat', imageUrl: 'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/nuu/nuu02050/u/30.jpg' },
       ctaLabel: 'Shop electrolytes',
     },
   ],
@@ -92,7 +92,7 @@ const DANIEL_FORECAST: HealthForecast = {
       icon: '🏃',
       title: 'Outdoor Z2 cardio window is opening up',
       body: 'Mostly dry days Mon–Wed. Whoop forecast: ideal recovery for outdoor zone-2 sessions. Pre-workout electrolytes and creatine timing have been adjusted in your stack.',
-      productSuggestion: { name: 'LMNT Citrus Salt', reason: 'Pre-workout sodium for outdoor heat' },
+      productSuggestion: { name: 'LMNT Citrus Salt', reason: 'Pre-workout sodium for outdoor heat', imageUrl: 'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/nuu/nuu02050/u/30.jpg' },
       ctaLabel: 'View workout stack',
     },
     {

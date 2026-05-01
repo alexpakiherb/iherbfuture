@@ -204,8 +204,13 @@ export default function StackPage() {
                             {isTaken && <CheckCircle2 size={16} className="text-white" strokeWidth={2.5} />}
                           </button>
 
-                          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-[#FAFAFA] text-[18px]">
-                            💊
+                          <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#EBEBEB] bg-white">
+                            <img
+                              src={item.imageUrl}
+                              alt={item.name}
+                              className="h-full w-full object-contain"
+                              loading="lazy"
+                            />
                           </div>
 
                           <div className="min-w-0 flex-1">

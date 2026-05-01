@@ -45,7 +45,7 @@ const MOCK_PRODUCT = {
   rating: 4.8,
   reviewCount: 6842,
   soldCount: '148K+',
-  image: 'https://res.cloudinary.com/iherb/image/upload/v1700000001/products/mag.jpg',
+  image: 'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/now/now01289/u/62.jpg',
   badges: ['Quality Promise', '3rd-Party Tested', 'Non-GMO Verified', 'Vegan'],
   dietaryTags: ['Vegan', 'Non-GMO', 'No Gluten'],
   healthGoals: ['Sleep Quality', 'Relaxation Support', 'Muscle Recovery'],
@@ -58,15 +58,15 @@ const MOCK_PRODUCT = {
 
 // ── Pairing products ─────────────────────────────────────────────────────────
 const MAYA_PAIRINGS = [
-  { emoji: '☀️', brand: 'California Gold Nutrition', name: 'Vitamin D3 5,000 IU', reason: 'Already in your morning stack', price: '$9.99', badge: 'In your stack' },
-  { emoji: '🍊', brand: 'California Gold Nutrition', name: 'Vitamin C 1,000 mg', reason: 'Supports immune + sleep synergy', price: '$12.49', badge: 'Immune pair' },
-  { emoji: '💤', brand: 'NOW Foods', name: 'L-Theanine 200 mg', reason: 'Amplifies the calming effect at night', price: '$12.99', badge: 'Sleep stack' },
+  { imageUrl: 'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/cgn/cgn01066/u/159.jpg', brand: 'California Gold Nutrition', name: 'Vitamin D3 5,000 IU', reason: 'Already in your morning stack', price: '$9.99', badge: 'In your stack' },
+  { imageUrl: 'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/cgn/cgn00932/u/298.jpg', brand: 'California Gold Nutrition', name: 'Vitamin C 1,000 mg', reason: 'Supports immune + sleep synergy', price: '$12.49', badge: 'Immune pair' },
+  { imageUrl: 'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/lex/lex16836/u/156.jpg', brand: 'Life Extension', name: 'L-Theanine 200 mg', reason: 'Amplifies the calming effect at night', price: '$12.99', badge: 'Sleep stack' },
 ];
 
 const DANIEL_PAIRINGS = [
-  { emoji: '🧬', brand: 'Life Extension', name: 'Glycine 3g', reason: 'Synergistic with bisglycinate for deep sleep', price: '$14.99', badge: 'Protocol pair' },
-  { emoji: '🌿', brand: 'Thorne', name: 'Ashwagandha KSM-66', reason: 'Already in your evening stack', price: '$34.99', badge: 'In your stack' },
-  { emoji: '🔬', brand: 'Life Extension', name: 'Magnesium L-Threonate 2g', reason: 'Add Tue/Fri for BBB cognitive lift', price: '$32.99', badge: 'Advanced add-on' },
+  { imageUrl: 'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/now/now00225/u/32.jpg', brand: 'NOW Foods', name: 'Glycine 3g', reason: 'Synergistic with bisglycinate for deep sleep', price: '$14.99', badge: 'Protocol pair' },
+  { imageUrl: 'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/thr/thr01554/u/8.jpg', brand: 'Thorne', name: 'Ashwagandha KSM-66', reason: 'Already in your evening stack', price: '$34.99', badge: 'In your stack' },
+  { imageUrl: 'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/lex/lex16039/u/276.jpg', brand: 'Life Extension', name: 'Magnesium L-Threonate 2g', reason: 'Add Tue/Fri for BBB cognitive lift', price: '$32.99', badge: 'Advanced add-on' },
 ];
 
 // ── Mock reviews ─────────────────────────────────────────────────────────────
@@ -173,26 +173,24 @@ export default function PDPPage() {
           <div>
             <div className="sticky top-[130px]">
               {/* Main image */}
-              <div className="flex aspect-square items-center justify-center overflow-hidden rounded-2xl border border-[#EBEBEB] bg-[#F1FAF3]">
-                <div className="flex flex-col items-center gap-3 text-center">
-                  <span className="text-[72px]">💊</span>
-                  <div>
-                    <div className="text-[11px] font-bold uppercase tracking-widest text-[#0A6B3C]">{product.brand}</div>
-                    <div className="mt-0.5 text-[13px] font-semibold text-[#1A1A1A]">Magnesium Glycinate</div>
-                  </div>
-                </div>
+              <div className="flex aspect-square items-center justify-center overflow-hidden rounded-2xl border border-[#EBEBEB] bg-white p-6">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="h-full w-full object-contain"
+                />
               </div>
 
               {/* Thumbnail row */}
               <div className="mt-3 flex gap-2">
-                {['💊', '📋', '🔬', '✅'].map((em, i) => (
+                {[product.image, product.image, product.image, product.image].map((src, i) => (
                   <button
                     key={i}
-                    className={`flex h-16 w-16 items-center justify-center rounded-xl border-2 text-[22px] transition-all hover:border-[#0A6B3C] ${
-                      i === 0 ? 'border-[#0A6B3C] bg-[#F1FAF3]' : 'border-[#E8E8E8] bg-white'
+                    className={`flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border-2 bg-white p-1.5 transition-all hover:border-[#0A6B3C] ${
+                      i === 0 ? 'border-[#0A6B3C]' : 'border-[#E8E8E8]'
                     }`}
                   >
-                    {em}
+                    <img src={src} alt="" className="h-full w-full object-contain" loading="lazy" />
                   </button>
                 ))}
               </div>
@@ -392,8 +390,10 @@ export default function PDPPage() {
                     key={p.name}
                     className="group flex flex-col rounded-xl border border-[#E8E8E8] bg-white p-3 transition-all hover:-translate-y-0.5 hover:border-[#0A6B3C] hover:shadow-[0_4px_16px_rgba(10,107,60,0.08)]"
                   >
-                    <div className="mb-2 flex items-center justify-between">
-                      <span className="text-[24px]">{p.emoji}</span>
+                    <div className="mb-2 flex items-start justify-between">
+                      <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg border border-[#EBEBEB] bg-white">
+                        <img src={p.imageUrl} alt={p.name} className="h-full w-full object-contain" loading="lazy" />
+                      </div>
                       <span className="rounded-full bg-[#F1FAF3] px-2 py-0.5 text-[9.5px] font-bold text-[#0A6B3C]">
                         {p.badge}
                       </span>

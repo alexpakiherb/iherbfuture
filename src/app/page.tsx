@@ -22,6 +22,7 @@ import { AIMoment, ContextPill } from '@/components/AIMoment';
 import { AgentActionCard } from '@/components/AgentActionCard';
 import { HealthForecastStrip } from '@/components/HealthForecastStrip';
 import { AdherenceRing } from '@/components/AdherenceRing';
+import { BundleCollage } from '@/components/BundleCollage';
 import { usePersona } from '@/components/PersonaProvider';
 import { getForecast } from '@/data/healthForecast';
 
@@ -52,7 +53,7 @@ export default function TodayPage() {
     timeOfDay === 'morning' && persona.id === 'maya'
       ? "Here's your morning stack and what your advisor noticed overnight."
       : timeOfDay === 'morning' && persona.id === 'daniel'
-        ? "HRV is trending +6 vs your baseline. Whoop says you're cleared for a higher-strain day."
+        ? 'HRV is trending +6 vs your baseline. Whoop says you\'re cleared for a higher-strain day.'
         : timeOfDay === 'afternoon' && persona.id === 'maya'
           ? 'Halfway through the day — keep your hydration and energy steady.'
           : timeOfDay === 'afternoon' && persona.id === 'daniel'
@@ -66,7 +67,7 @@ export default function TodayPage() {
       <Header />
 
       <main className="mx-auto w-full max-w-[1280px] flex-1 px-8 py-6">
-        {/* Hero greeting band */}
+        {/* ── Hero greeting band ─────────────────────────────────────── */}
         <section className="mb-6 grid grid-cols-12 gap-5">
           <div className="col-span-8 overflow-hidden rounded-2xl border border-[#E0E0E0] bg-white">
             <div className="h-[3px] bg-gradient-to-r from-[#0A6B3C] via-[#79A83C] to-[#0A6B3C]" />
@@ -126,8 +127,13 @@ export default function TodayPage() {
                     key={item.productId}
                     className="flex items-center gap-2.5 rounded-xl border border-[#E8E8E8] bg-white p-2.5 transition-all hover:border-[#0A6B3C]"
                   >
-                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-[#F1FAF3] text-[18px]">
-                      💊
+                    <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#EBEBEB] bg-white">
+                      <img
+                        src={item.imageUrl}
+                        alt={item.name}
+                        className="h-full w-full object-contain"
+                        loading="lazy"
+                      />
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="truncate text-[10.5px] font-bold uppercase tracking-wide text-[#0A6B3C]">
@@ -219,7 +225,7 @@ export default function TodayPage() {
           </div>
         </section>
 
-        {/* Pending agent actions */}
+        {/* ── Pending agent actions ─────────────────────────────────── */}
         {pendingActions.length > 0 && (
           <section className="mb-6">
             <div className="mb-3 flex items-baseline justify-between">
@@ -242,7 +248,7 @@ export default function TodayPage() {
           </section>
         )}
 
-        {/* Hero AI insight */}
+        {/* ── Hero AI insight (forecast-driven) ──────────────────────── */}
         <section className="mb-6 grid grid-cols-12 gap-5">
           <div className="col-span-7">
             <AIMoment
@@ -262,8 +268,17 @@ export default function TodayPage() {
             >
               {heroInsight.productSuggestion && (
                 <div className="flex items-center gap-3 rounded-xl border border-[#E8E8E8] bg-[#FAFBFA] p-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-white text-[20px] shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
-                    💊
+                  <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#EBEBEB] bg-white shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
+                    {heroInsight.productSuggestion.imageUrl ? (
+                      <img
+                        src={heroInsight.productSuggestion.imageUrl}
+                        alt={heroInsight.productSuggestion.name}
+                        className="h-full w-full object-contain"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <span className="text-[20px]">💊</span>
+                    )}
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-[13px] font-semibold text-[#1A1A1A]">
@@ -285,7 +300,7 @@ export default function TodayPage() {
           </div>
         </section>
 
-        {/* Things your advisor handled */}
+        {/* ── Things your advisor handled ───────────────────────────── */}
         <section className="mb-6">
           <div className="mb-3 flex items-baseline justify-between">
             <div>
@@ -306,7 +321,7 @@ export default function TodayPage() {
           </div>
         </section>
 
-        {/* Curated bundles */}
+        {/* ── Curated bundles ───────────────────────────────────────── */}
         <section className="mb-6">
           <div className="mb-3">
             <h2 className="text-[18px] font-bold text-[#1A1A1A]">
@@ -319,55 +334,106 @@ export default function TodayPage() {
             </p>
           </div>
           <div className="grid grid-cols-3 gap-4">
-            {[
-              {
-                emoji: '🌱',
-                badge: persona.id === 'maya' ? 'Beginner Bundle' : 'Longevity Stack',
-                title:
-                  persona.id === 'maya'
-                    ? 'Sleep Foundations · 3-supplement starter'
-                    : 'Cellular Longevity · 5-supplement protocol',
-                price: persona.id === 'maya' ? '$48' : '$184',
-                save: persona.id === 'maya' ? 'Save 12%' : 'Save 18%',
-              },
-              {
-                emoji: '🔬',
-                badge: '3rd-Party Tested',
-                title: 'Quality Promise picks · Gold-tier brands only',
-                price: 'From $14',
-                save: 'NSF & Informed Choice',
-              },
-              {
-                emoji: '⚡',
-                badge: persona.id === 'maya' ? 'Energy Boost' : 'Performance Stack',
-                title:
-                  persona.id === 'maya'
-                    ? 'Steady energy · Without the crash'
-                    : 'Z2 cardio support · Pre/intra/post stack',
-                price: persona.id === 'maya' ? '$32' : '$96',
-                save: '4-week supply',
-              },
-            ].map((card, i) => (
+            {(persona.id === 'maya'
+              ? [
+                  {
+                    badge: 'Beginner Bundle',
+                    title: 'Sleep Foundations · 3-supplement starter',
+                    price: '$48',
+                    save: 'Save 12%',
+                    tint: 'green' as const,
+                    images: [
+                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/cgn/cgn01066/u/159.jpg',
+                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/now/now01289/u/62.jpg',
+                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/cgn/cgn00932/u/298.jpg',
+                    ] as [string, string, string],
+                  },
+                  {
+                    badge: '3rd-Party Tested',
+                    title: 'Quality Promise picks · Gold-tier brands only',
+                    price: 'From $14',
+                    save: 'NSF & Informed Choice',
+                    tint: 'blue' as const,
+                    images: [
+                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/cgn/cgn01330/u/350.jpg',
+                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/lex/lex25359/u/8.jpg',
+                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/sre/sre09180/u/8.jpg',
+                    ] as [string, string, string],
+                  },
+                  {
+                    badge: 'Energy Boost',
+                    title: 'Steady energy · Without the crash',
+                    price: '$32',
+                    save: '4-week supply',
+                    tint: 'orange' as const,
+                    images: [
+                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/lex/lex45706/u/94.jpg',
+                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/jar/jar05079/u/36.jpg',
+                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/now/now01300/u/82.jpg',
+                    ] as [string, string, string],
+                  },
+                ]
+              : [
+                  {
+                    badge: 'Longevity Stack',
+                    title: 'Cellular Longevity · 5-supplement protocol',
+                    price: '$184',
+                    save: 'Save 18%',
+                    tint: 'green' as const,
+                    images: [
+                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/lex/lex23443/u/24.jpg',
+                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/lex/lex23023/u/66.jpg',
+                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/cgn/cgn00934/u/221.jpg',
+                    ] as [string, string, string],
+                  },
+                  {
+                    badge: '3rd-Party Tested',
+                    title: 'Quality Promise picks · Gold-tier brands only',
+                    price: 'From $14',
+                    save: 'NSF & Informed Choice',
+                    tint: 'blue' as const,
+                    images: [
+                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/thr/thr00635/u/61.jpg',
+                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/thr/thr00644/u/96.jpg',
+                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/thr/thr00690/u/50.jpg',
+                    ] as [string, string, string],
+                  },
+                  {
+                    badge: 'Performance Stack',
+                    title: 'Z2 cardio support · Pre/intra/post stack',
+                    price: '$96',
+                    save: '4-week supply',
+                    tint: 'orange' as const,
+                    images: [
+                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/thr/thr00635/u/61.jpg',
+                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/nuu/nuu02050/u/30.jpg',
+                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/thr/thr01311/u/96.jpg',
+                    ] as [string, string, string],
+                  },
+                ]
+            ).map((card, i) => (
               <Link
                 key={i}
                 href="/search?q=bundle"
-                className="group relative overflow-hidden rounded-2xl border border-[#E0E0E0] bg-white p-5 transition-all hover:-translate-y-0.5 hover:border-[#0A6B3C] hover:shadow-[0_8px_24px_rgba(10,107,60,0.08)]"
+                className="group relative overflow-hidden rounded-2xl border border-[#E0E0E0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#0A6B3C] hover:shadow-[0_8px_24px_rgba(10,107,60,0.08)]"
               >
-                <div className="absolute right-3 top-3 rounded-full bg-[#F1FAF3] px-2 py-0.5 text-[10px] font-bold text-[#0A6B3C]">
+                <div className="absolute right-3 top-3 z-20 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-bold text-[#0A6B3C] backdrop-blur">
                   {card.badge}
                 </div>
-                <div className="mb-3 text-[40px]">{card.emoji}</div>
-                <h3 className="text-[14px] font-semibold leading-snug text-[#1A1A1A]">{card.title}</h3>
-                <div className="mt-3 flex items-end justify-between">
-                  <div className="text-[18px] font-bold text-[#1A1A1A]">{card.price}</div>
-                  <div className="text-[11px] font-medium text-[#D14800]">{card.save}</div>
+                <BundleCollage images={card.images} alt={card.title} tint={card.tint} size="md" />
+                <div className="p-4">
+                  <h3 className="text-[14px] font-semibold leading-snug text-[#1A1A1A]">{card.title}</h3>
+                  <div className="mt-3 flex items-end justify-between">
+                    <div className="text-[18px] font-bold text-[#1A1A1A]">{card.price}</div>
+                    <div className="text-[11px] font-medium text-[#D14800]">{card.save}</div>
+                  </div>
                 </div>
               </Link>
             ))}
           </div>
         </section>
 
-        {/* Connected apps + achievements */}
+        {/* ── Connected apps + achievements ─────────────────────────── */}
         <section className="mb-6 grid grid-cols-12 gap-5">
           <div className="col-span-8 rounded-2xl border border-[#E0E0E0] bg-white p-5">
             <div className="mb-3 flex items-center gap-2">
@@ -423,7 +489,7 @@ export default function TodayPage() {
           </div>
         </section>
 
-        {/* Wellness hub editorial entry */}
+        {/* ── Wellness hub editorial entry ──────────────────────────── */}
         <section className="mb-6">
           <Link
             href="/wellness-hub/magnesium-guide"
