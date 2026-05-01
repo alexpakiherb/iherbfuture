@@ -65,12 +65,16 @@ export function PersonaProvider({ children }: { children: React.ReactNode }) {
     [persona, personaId, setPersonaId, timeOfDay, setTimeOfDay, greeting]
   );
 
-  // Avoid SSR/CSR mismatch flicker by only rendering once hydrated
-  if (!hydrated) {
-    return <div style={{ visibility: 'hidden' }}>{children}</div>;
-  }
-
-  return <PersonaContext.Provider value={value}>{children}</PersonaContext.Provider>;
+  // Always render the Provider so SSR/prerendering of any consumer works.
+  // Use suppressHydrationWarning + a hidden wrapper while we're catching up
+  // localStorage to avoid a flash of un-personalized content on the client.
+  return (
+    <PersonaContext.Provider value={value}>
+      <div suppressHydrationWarning style={{ visibility: hydrated ? 'visible' : 'hidden' }}>
+        {children}
+      </div>
+    </PersonaContext.Provider>
+  );
 }
 
 export function usePersona() {
