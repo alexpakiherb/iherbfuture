@@ -19,6 +19,7 @@ export interface Product {
   form: string;
   servingSize?: string;
   weight?: string;
+  servingsPerContainer?: number;
 }
 
 export const products: Product[] = [
