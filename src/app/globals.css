@@ -1,0 +1,205 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+@import "tailwindcss";
+
+:root {
+  /* iHerb Brand Colors */
+  --iherb-green: #0A6B3C;
+  --iherb-green-dark: #065C32;
+  --iherb-green-light: #E5F8E6;
+  --iherb-orange: #D14800;
+  --iherb-blue: #1558A6;
+  --iherb-white: #FFFFFF;
+  --iherb-gray-bg: #F7F8F7;
+  --iherb-text-primary: #333333;
+  --iherb-text-secondary: #666666;
+  --iherb-border: #CCCCCC;
+  --iherb-divider: #E0E0E0;
+  --iherb-dark: #212529;
+  --iherb-gold: #F5A623;
+  --iherb-error: #CA2222;
+
+  /* Elevation Shadows */
+  --elevation-1: 0px 2px 8px rgba(0, 0, 0, 0.12);
+  --elevation-2: 0px 3px 8px rgba(0, 0, 0, 0.06), 0px 6px 8px rgba(0, 0, 0, 0.12);
+  --elevation-3: 0px 12px 20px rgba(0, 0, 0, 0.16);
+}
+
+@theme inline {
+  --font-sans: "Noto Sans", system-ui, -apple-system, sans-serif;
+  --font-serif: "Noto Sans", system-ui, -apple-system, sans-serif;
+
+  /* Color Palette */
+  --color-iherb-green: #0A6B3C;
+  --color-iherb-green-dark: #065C32;
+  --color-iherb-green-light: #E5F8E6;
+  --color-iherb-orange: #D14800;
+  --color-iherb-blue: #1558A6;
+  --color-iherb-white: #FFFFFF;
+  --color-iherb-gray-bg: #F7F8F7;
+  --color-iherb-text-primary: #333333;
+  --color-iherb-text-secondary: #666666;
+  --color-iherb-border: #CCCCCC;
+  --color-iherb-divider: #E0E0E0;
+  --color-iherb-dark: #212529;
+  --color-iherb-gold: #F5A623;
+  --color-iherb-error: #CA2222;
+
+  /* Spacing (4px base grid) */
+  --spacing-0: 0;
+  --spacing-1: 2px;
+  --spacing-2: 4px;
+  --spacing-3: 8px;
+  --spacing-4: 12px;
+  --spacing-5: 16px;
+  --spacing-6: 24px;
+  --spacing-7: 28px;
+  --spacing-8: 32px;
+
+  /* Border Radius */
+  --radius-none: 0;
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-base: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* Box Shadows */
+  --shadow-elevation-1: 0px 2px 8px rgba(0, 0, 0, 0.12);
+  --shadow-elevation-2: 0px 3px 8px rgba(0, 0, 0, 0.06),
+    0px 6px 8px rgba(0, 0, 0, 0.12);
+  --shadow-elevation-3: 0px 12px 20px rgba(0, 0, 0, 0.16);
+}
+
+/* Base Styles */
+html,
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--iherb-gray-bg);
+  color: var(--iherb-text-primary);
+  font-family: "Noto Sans", system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Reset default styles */
+* {
+  box-sizing: border-box;
+  /* Hide scrollbars globally — scroll still works */
+  scrollbar-width: none;       /* Firefox */
+  -ms-overflow-style: none;   /* IE/Edge */
+}
+
+*::-webkit-scrollbar {
+  display: none;               /* Chrome/Safari/Opera */
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  padding: 0;
+  font-weight: 700;
+}
+
+p {
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  color: var(--iherb-blue);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+button {
+  font-family: "Noto Sans", system-ui, -apple-system, sans-serif;
+  cursor: pointer;
+}
+
+input,
+textarea,
+select {
+  font-family: "Noto Sans", system-ui, -apple-system, sans-serif;
+}
+
+/* Utility Classes for Shadows */
+.elevation-1 {
+  box-shadow: var(--elevation-1);
+}
+
+.elevation-2 {
+  box-shadow: var(--elevation-2);
+}
+
+.elevation-3 {
+  box-shadow: var(--elevation-3);
+}
+
+/* Utility Classes for Colors */
+.text-iherb-primary {
+  color: var(--iherb-text-primary);
+}
+
+.text-iherb-secondary {
+  color: var(--iherb-text-secondary);
+}
+
+.bg-iherb-green {
+  background-color: var(--iherb-green);
+}
+
+.bg-iherb-green-dark {
+  background-color: var(--iherb-green-dark);
+}
+
+.bg-iherb-green-light {
+  background-color: var(--iherb-green-light);
+}
+
+.bg-iherb-orange {
+  background-color: var(--iherb-orange);
+}
+
+.bg-iherb-blue {
+  background-color: var(--iherb-blue);
+}
+
+.bg-iherb-gray {
+  background-color: var(--iherb-gray-bg);
+}
+
+.border-iherb {
+  border-color: var(--iherb-border);
+}
+
+.border-iherb-divider {
+  border-color: var(--iherb-divider);
+}
+
+/* ── Keyframe Animations ──────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
