@@ -377,7 +377,7 @@ export default function WellnessHubArticlePage() {
                     {
                       form: 'Magnesium Oxide',
                       desc:
-                        'The cheapest and most common form found in low-cost multivitamins — but only about 4% is absorbed. Its primary utility is as a laxative. If your label lists oxide as the only form, you're essentially getting very little benefit for mineral repletion.',
+                        "The cheapest and most common form found in low-cost multivitamins — but only about 4% is absorbed. Its primary utility is as a laxative. If your label lists oxide as the only form, you're essentially getting very little benefit for mineral repletion.",
                     },
                   ].map(({ form, desc }) => (
                     <li key={form} className="flex gap-3 rounded-xl border border-[#E8E8E8] bg-white p-4">
@@ -605,7 +605,7 @@ export default function WellnessHubArticlePage() {
               </div>
               {helpfulVote && (
                 <span className="ml-1 text-[12px] text-[#888]">
-                  {helpfulVote === 'up' ? 'Thanks for the feedback!' : 'We'll keep improving.'}
+                  {helpfulVote === 'up' ? 'Thanks for the feedback!' : "We'll keep improving."}
                 </span>
               )}
             </div>

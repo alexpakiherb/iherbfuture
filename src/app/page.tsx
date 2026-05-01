@@ -1,6 +1,6 @@
 'use client';
 
-// Today / Home page — the dynamic, personalized landing that morphs by persona,
+// Home page — the dynamic, personalized landing that morphs by persona,
 // time of day, season, and recent activity. Sets the visual bar for the whole
 // prototype: heavy use of the AIMoment / AgentActionCard patterns, light tints,
 // pills everywhere, gradient accents.
@@ -52,7 +52,7 @@ export default function TodayPage() {
     timeOfDay === 'morning' && persona.id === 'maya'
       ? "Here's your morning stack and what your advisor noticed overnight."
       : timeOfDay === 'morning' && persona.id === 'daniel'
-        ? 'HRV is trending +6 vs your baseline. Whoop says you\'re cleared for a higher-strain day.'
+        ? "HRV is trending +6 vs your baseline. Whoop says you're cleared for a higher-strain day."
         : timeOfDay === 'afternoon' && persona.id === 'maya'
           ? 'Halfway through the day — keep your hydration and energy steady.'
           : timeOfDay === 'afternoon' && persona.id === 'daniel'
@@ -66,7 +66,7 @@ export default function TodayPage() {
       <Header />
 
       <main className="mx-auto w-full max-w-[1280px] flex-1 px-8 py-6">
-        {/* ── Hero greeting band ─────────────────────────────────────── */}
+        {/* Hero greeting band */}
         <section className="mb-6 grid grid-cols-12 gap-5">
           <div className="col-span-8 overflow-hidden rounded-2xl border border-[#E0E0E0] bg-white">
             <div className="h-[3px] bg-gradient-to-r from-[#0A6B3C] via-[#79A83C] to-[#0A6B3C]" />
@@ -219,7 +219,7 @@ export default function TodayPage() {
           </div>
         </section>
 
-        {/* ── Pending agent actions ─────────────────────────────────── */}
+        {/* Pending agent actions */}
         {pendingActions.length > 0 && (
           <section className="mb-6">
             <div className="mb-3 flex items-baseline justify-between">
@@ -242,7 +242,7 @@ export default function TodayPage() {
           </section>
         )}
 
-        {/* ── Hero AI insight (forecast-driven) ──────────────────────── */}
+        {/* Hero AI insight */}
         <section className="mb-6 grid grid-cols-12 gap-5">
           <div className="col-span-7">
             <AIMoment
@@ -285,7 +285,7 @@ export default function TodayPage() {
           </div>
         </section>
 
-        {/* ── Things your advisor handled ───────────────────────────── */}
+        {/* Things your advisor handled */}
         <section className="mb-6">
           <div className="mb-3 flex items-baseline justify-between">
             <div>
@@ -306,7 +306,7 @@ export default function TodayPage() {
           </div>
         </section>
 
-        {/* ── Curated bundles ───────────────────────────────────────── */}
+        {/* Curated bundles */}
         <section className="mb-6">
           <div className="mb-3">
             <h2 className="text-[18px] font-bold text-[#1A1A1A]">
@@ -367,7 +367,7 @@ export default function TodayPage() {
           </div>
         </section>
 
-        {/* ── Connected apps + achievements ─────────────────────────── */}
+        {/* Connected apps + achievements */}
         <section className="mb-6 grid grid-cols-12 gap-5">
           <div className="col-span-8 rounded-2xl border border-[#E0E0E0] bg-white p-5">
             <div className="mb-3 flex items-center gap-2">
@@ -423,8 +423,41 @@ export default function TodayPage() {
           </div>
         </section>
 
-        {/* ── Wellness hub editorial entry ──────────────────────────── */}
+        {/* Wellness hub editorial entry */}
         <section className="mb-6">
           <Link
             href="/wellness-hub/magnesium-guide"
-         
+            className="group flex items-center gap-5 rounded-2xl border border-[#E0E0E0] bg-white p-5 transition-all hover:border-[#0A6B3C]"
+          >
+            <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#F1FAF3] to-[#E5F8E6] text-[28px]">
+              📖
+            </div>
+            <div className="flex-1">
+              <div className="mb-1 flex items-center gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#0A6B3C]">
+                  Wellness Hub · Recommended for you
+                </span>
+                <span className="rounded-full bg-[#FFF7F1] px-2 py-0.5 text-[9.5px] font-bold uppercase text-[#D14800]">
+                  6 min read
+                </span>
+              </div>
+              <h3 className="text-[16px] font-bold text-[#1A1A1A] group-hover:text-[#0A6B3C]">
+                {persona.id === 'maya'
+                  ? 'The Magnesium Guide: Glycinate vs Citrate vs Malate'
+                  : 'Magnesium Forms & Cognitive Performance: What the Research Says'}
+              </h3>
+              <p className="mt-1 text-[12.5px] text-[#666]">
+                {persona.id === 'maya'
+                  ? 'Why your advisor recommended glycinate for sleep — and when to consider switching forms.'
+                  : 'Threonate, taurate, and glycinate — when to use each, and what your sleep data should tell you.'}
+              </p>
+            </div>
+            <ArrowRight size={20} className="text-[#999] group-hover:text-[#0A6B3C]" />
+          </Link>
+        </section>
+      </main>
+
+      <Footer />
+    </div>
+  );
+}

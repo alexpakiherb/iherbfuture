@@ -179,4 +179,24 @@ export default function Header({ initialQuery = '', onSearch }: HeaderProps) {
 
           {/* Shop categories */}
           <div className="flex items-center gap-1">
-            {categoryNav.slice(0, 5)
+            {categoryNav.slice(0, 5).map((cat) => (
+              <Link
+                key={cat.id}
+                href={`/search?category=${cat.id}`}
+                className="whitespace-nowrap px-3 py-2.5 text-[12.5px] font-semibold text-[#444] transition-colors hover:text-[#0A6B3C]"
+              >
+                {cat.label}
+              </Link>
+            ))}
+            <Link
+              href="/specials"
+              className="whitespace-nowrap px-3 py-2.5 text-[12.5px] font-semibold text-[#D14800] transition-colors hover:text-[#A83600]"
+            >
+              {promoNav[0].label}
+            </Link>
+          </div>
+        </div>
+      </nav>
+    </header>
+  );
+}

@@ -17,4 +17,16 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-  childr
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <html lang="en" className={`${notoSans.variable} h-full antialiased`}>
+      <body className="m-0 flex min-h-screen flex-col p-0">
+        <PersonaProvider>
+          {children}
+          <PersonaSwitcher />
+        </PersonaProvider>
+      </body>
+    </html>
+  );
+}

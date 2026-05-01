@@ -449,4 +449,25 @@ function SERPPageInner() {
                   <button
                     onClick={handleClearAll}
                     className="mt-4 px-5 py-2 rounded-full border border-[#0A6B3C] text-sm font-medium text-[#0A6B3C] hover:bg-[#F1FAF3] transition-colors"
-   
+                  >
+                    Clear all filters
+                  </button>
+                </div>
+              </div>
+            )}
+          </main>
+        </div>
+      </div>
+
+      <Footer />
+    </div>
+  );
+}
+
+export default function SERPPage() {
+  return (
+    <Suspense fallback={<div />}>
+      <SERPPageInner />
+    </Suspense>
+  );
+}
