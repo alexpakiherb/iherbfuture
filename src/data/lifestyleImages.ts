@@ -66,9 +66,9 @@ export const HYDRATION_LIFESTYLE: LifestyleImage = {
 
 export const SUBSCRIPTIONS_HERO: LifestyleImage = {
   // Wellness flat lay — supplements + journal + plant.
-  url: 'https://images.pexels.com/photos/3683074/pexels-photo-3683074.jpeg?auto=compress&cs=tinysrgb&w=1800',
-  alt: 'Editorial flat lay of premium wellness products',
-  credit: 'Karolina Grabowska / Pexels',
+  url: 'https://images.unsplash.com/photo-1556228720-195a672e8a03?w=1800&q=80&auto=format&fit=crop',
+  alt: 'Premium amber bottles arranged in warm light',
+  credit: 'Volodymyr Hryshchenko / Unsplash',
 };
 
 export const DELIVERY_LIFESTYLE: LifestyleImage = {
