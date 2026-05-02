@@ -45,14 +45,16 @@ A clickable, multi-page Next.js prototype showcasing iHerb's future state as a p
 |---|---|
 | `/` | Today / Home — dynamic personalized landing, morphs by persona + time of day |
 | `/onboarding` | 5-step wellness profile flow (Welcome → Goals → Profile → Routine → Connect) |
-| `/advisor` | Wellness Advisor — chat + agent action queue + automation rules |
-| `/stack` | Daily Stack — supplement routine grouped by time, adherence rings, streaks |
+| `/advisor` | **Wellness Advisor** — agentic-action console (5th nav tab). Hero stats bento + chat + automation rules + filtered action queue |
+| `/stack` | My Stack — supplement routine grouped by time, adherence rings, streaks |
 | `/forecast` | Health Forecast — 7-day environmental → AI product recs |
 | `/search?q=...` | SERP — direct port from Search 2.0 (AIContextualHeader, SmartFilterPills, AIAnswerCard) |
 | `/product/[id]` | PDP — persona-aware "Why this is good for you" panel + smart pairing |
 | `/cart` | Smart Cart — agentic curation with bundle detection + free shipping unlock |
 | `/subscriptions` | Subscription Manager — auto-tuning agent with audit trail per item |
-| `/wellness-hub/[slug]` | Long-form editorial article (anchors AI citations) |
+| `/wellness-hub/[slug]` | Long-form editorial article (anchors AI citations). Reachable from Today page CTA + PDP, **not in primary nav** |
+
+**Primary nav order (in `Header.tsx` → `WELLNESS_NAV`):** Today · My Stack · Health Forecast · Subscriptions · Wellness Advisor. Wellness Hub was removed from the nav in favor of the Advisor as the 5th tab; the article still has multiple entry points.
 
 ## Component Conventions
 
@@ -166,18 +168,21 @@ Brand prefixes seen: `cgn` (California Gold), `now` (NOW Foods), `thr` (Thorne),
 - **Onboarding step descriptions** — every step has a subtitle paragraph; many can become a single sentence + an inline diagram or progress visualization.
 - **Forecast page detail panels** — UV / pollen / AQI details are paragraph form; should be data-viz-first (mini bars, thresholds, trend arrows).
 
-### 3. Make it more visual ✅ (Home done — May 2, 2026)
+### 3. Make it more visual ✅ (4 of 5 nav tabs done — May 2, 2026)
 
-Home page rebuilt as a varied bento grid in commit `9bd2fee`: greeting + coral streak tile (with `StreakHeatmap`) on Row 1; forecast strip + green adherence tile (with `Sparkline`) + teal rewards tile (with savings sparkline) on Row 2; pending actions and advisor-handled tightened to 2-up / 3-up; achievements moved into a purple gradient tile. New accent palette (coral / purple / teal) breaks up the previously green-dominant page.
+Bento + accent palette + sparklines now applied across the four primary nav tabs:
 
-Remaining surfaces (apply the same pattern):
+- **Today/Home** (commit `9bd2fee`) — varied bento with greeting + coral streak tile + heatmap, forecast strip + green adherence + teal rewards, achievements moved to purple gradient tile.
+- **My Stack** (commit `773008e`) — bento stat row: coral streak (5 cols) w/ heatmap, green adherence (4 cols) w/ sparkline, 2-up rail (teal next-delivery + purple earned). Time-of-day group headers carry category colors (morning=coral, pre-workout=teal, midday=gold, post-workout=blue, evening=purple). Each supplement row gets a per-item 30-day adherence sparkline.
+- **Subscriptions** (commit `773008e`) — bento stat row: green active + teal saved w/ sparkline + purple next-delivery + coral paused. Recently optimized AIMoment uses delta chips per bullet. Subscription cards show ring + sparkline. Automation rules card switched to purple-tinted with purple toggles.
+- **Wellness Advisor** (commit `773008e`) — refocused on agentic actions. Hero bento of 4 stat tiles (coral pending, green actions taken w/ sparkline, teal savings w/ sparkline, purple approval rate w/ sparkline). Action queue gets category filter chips on top of state tabs. Automation rules carry category-colored dots + toggles.
 
-- **Bigger Health Forecast strip** — current 7-day strip is small; on the Forecast page itself, make it the visual hero with prominent UV/pollen meters
-- **Real workout / wearable iconography** instead of emoji for Whoop, Oura, Garmin, Apple Health, Levels CGM — pull SVG logos
-- **Subtle illustrations** in onboarding for each step (currently all text + pills)
-- **Daily Stack timeline** could use a vertical timeline visualization instead of stacked grouped boxes; replace the 4 equal stat tiles at the top with a varied bento mirroring Home (one large streak tile w/ `StreakHeatmap`, smaller tiles for adherence + delivery + earned).
-- **Subscriptions page** — full-width cards are uniform; would benefit from same bento treatment + sparklines.
-- **Bundle savings on Smart Cart** — visualize as a progress bar ("save 15% with bundle") instead of just a price line
+Still flagged (not yet done):
+
+- **Health Forecast** — already has accent colors via helper functions, but the 4 env-detail cards are prose-heavy. Tighten body copy + bigger UV/pollen meters on the Forecast page itself.
+- **Real workout / wearable iconography** instead of emoji for Whoop, Oura, Garmin, Apple Health, Levels CGM — pull SVG logos.
+- **Subtle illustrations** in onboarding for each step (currently all text + pills).
+- **Bundle savings on Smart Cart** — visualize as a progress bar instead of a price line.
 
 ### 4. Copy + content polish (lower priority)
 
