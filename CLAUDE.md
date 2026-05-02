@@ -90,6 +90,20 @@ A clickable, multi-page Next.js prototype showcasing iHerb's future state as a p
 - **`Sparkline`** (`src/components/Sparkline.tsx`) — tiny inline SVG trend line. Drop into stat tiles, agent action deltas, anywhere a metric is mentioned. Props: `values: number[]`, `width=60`, `height=18`, `color?` (hex), `filled?=true`, `showLastPoint?=true`. No axes, no labels — just shape with optional fill. Pair with a number, never alone.
 - **`StreakHeatmap`** (`src/components/StreakHeatmap.tsx`) — 30-day GitHub-style calendar grid (6×5). Each cell tints by 0..1 dose-percentage. Props: `values?: number[]` (default mock pattern), `size?=9`, `gap?=2`, `color?` (hex base), `emptyColor?`. Used on Home streak tile (coral) and could be used on Stack page.
 
+### Editorial / luxury specialty-store components (added May 2 2026)
+
+- **`LifestyleHero`** (`src/components/LifestyleHero.tsx`) — full-width image hero with overlay text. Used on Forecast (location-aware) and Subscriptions (luxury wellness). Props: `imageUrl`, `alt`, `eyebrow?`, `headline`, `subline?`, `children?`, `size?: 'sm'|'md'|'lg'|'xl'`, `overlay?: 'soft'|'medium'|'strong'`, `align?: 'left'|'center'|'right'`, `tint?: 'neutral'|'green'|'coral'|'teal'|'purple'`. Uses bottom-up gradient — top of image stays clear, only the bottom band gets the dark wash for legible text. Don't crank `overlay` higher than `medium` unless the image is busy.
+- **`EditorialQuote`** (`src/components/EditorialQuote.tsx`) — magazine pulled quote. Serif Georgia italic body, oversized decorative `&ldquo;` mark, portrait + credential below. Use as a section break in long-form layouts. Variants: `default` (white bg) or `tinted` with `green`/`coral`/`teal`/`purple` for color zones. Pairs well with `Dr. Sarah Chen` (`EXPERT_DR_CHEN.url`) as the speaker on most surfaces.
+- **`ExpertCallout`** (`src/components/ExpertCallout.tsx`) — credential strip with portrait, name, letters, title, endorsement copy, optional `expertiseChips`. Variants: `card` (full bordered tile with 'Reviewed by clinical advisor' eyebrow + 'Verified' badge) or `inline` (small horizontal pill for sidebars). Use anywhere the user is being asked to defer to AI judgement — Subscriptions sidebar, Advisor below hero stats.
+- **`TrustBadgeStrip`** (`src/components/TrustBadgeStrip.tsx`) — row of certification icon pills. Available badges: `nsf`, `informed-sport`, `third-party`, `non-gmo`, `gmp`, `usp`. Props: `badges?: TrustBadgeKey[]`, `density?: 'tight'|'loose'`, `background?: 'white'|'tinted'`. Use on Subscriptions, Advisor, future PDP — anywhere quality/safety questions surface.
+
+### Lifestyle imagery library
+
+- `src/data/lifestyleImages.ts` — typed map of curated Unsplash + Pexels CDN URLs covering: persona-aware morning hero (Maya/Daniel), location-aware Forecast hero (Austin/Seattle), seasonal lifestyle vignettes (allergy/hydration), Subscriptions hero (premium amber bottles), Stack hero (supplement ritual), expert portraits (Dr. Chen / Dr. Patel), supplement still-lifes.
+- All royalty-free; pulled via plain `<img>` tags (no Next.js Image optimization), so no `remotePatterns` allowlist needed in `next.config.ts`. URLs include `?w=NNNN&q=80` params so we ship reasonable file sizes (1800 for heroes, 1200 for inline, 400 for thumbs).
+- **Always use this library** rather than hardcoding lifestyle URLs in pages. If you add a new image, append to the file with comment, alt text, and credit.
+- **Verify URL works before shipping**: not every Unsplash photo ID is actually live. If a hero renders as a gray gradient, the image 404'd — swap to a known-good URL (e.g., `1556228720-195a672e8a03` amber bottles, `1584308666744-24d5c474f2ae` supplement ritual, `1441974231531-c6227db76b6e` PNW forest, `1531219432768-9f540ec081f3` Texas hill country).
+
 ## Visual Recipe (the through-line)
 
 1. AI moments use the `AIMoment` component, never raw card markup
@@ -102,6 +116,9 @@ A clickable, multi-page Next.js prototype showcasing iHerb's future state as a p
 8. **Color zones, not all green**: lean on the extended palette (coral / purple / teal) so each tile reads as a different category at a glance. Streak/energy → coral. Longevity/protocol/achievement → purple. Rewards/hydration/inventory → teal.
 9. **Every metric gets a sparkline**: when a number is shown (adherence %, savings $, streak days), include a `<Sparkline>` of its 30-day trend or a `<StreakHeatmap>` for binary daily data. Numbers without a trend look static.
 10. **Cut prose, surface deltas**: AgentActionCard body is line-clamped; the actual *effect* of the action lives in a delta chip ("Saved $18.99", "Sleep score ↑ 12%", "May 18 → May 21"). Don't write paragraphs explaining what a chip can show.
+11. **Lifestyle imagery on hero moments**: long-form pages (Forecast, Subscriptions) and persona context bands (Today greeting, Stack ritual hero) need real wellness photography from `lifestyleImages.ts`, not gradient placeholders. The image is the headline; the headline is the caption.
+12. **Editorial pacing in long pages**: insert an `EditorialQuote` from Dr. Chen as a section break between dense data sections. Magazine-style pacing — read, breathe, read.
+13. **Trust signals near agentic moments**: anywhere the AI is asked to make a judgement call on the user's behalf, surface an `ExpertCallout` (Dr. Chen reviewed this) and/or `TrustBadgeStrip` (NSF, Informed Sport, third-party tested). Specialty-store credibility comes from the doctor and the certifications, not the chatbot.
 
 ## Git & Deployment Workflow (mirrors Search 2.0)
 
@@ -130,6 +147,7 @@ These ALL bit the first deploy. Don't repeat them.
 3. **Optional fields must be declared on types.** PDP referenced `product.servingsPerContainer` with a `?? 90` runtime fallback, but TS type-check failed because the field wasn't on `Product`. Always add `optionalField?: type` to the interface even if the runtime path uses fallbacks.
 4. **PersonaProvider must always render the Provider.** Earlier version did `if (!hydrated) return <div>{children}</div>` (no context) — this broke `/_not-found` and any other prerendered route that consumed `usePersona`. Now the Provider is always mounted; only visibility of children depends on hydration.
 5. **`useSearchParams` requires Suspense in app router.** The SERP page wraps `<SERPPageInner>` in `<Suspense>` to satisfy Next 16 + Turbopack.
+6. **Lifestyle image URL validation.** Unsplash photo IDs sometimes 404 — when a `LifestyleHero` renders as just a gray gradient with no visible photo, the image URL didn't resolve. Quick test: open the URL in a browser. Verified-good IDs are listed in CLAUDE.md under "Lifestyle imagery library".
 
 ## Refinements Needed (next pass)
 
@@ -168,21 +186,31 @@ Brand prefixes seen: `cgn` (California Gold), `now` (NOW Foods), `thr` (Thorne),
 - **Onboarding step descriptions** — every step has a subtitle paragraph; many can become a single sentence + an inline diagram or progress visualization.
 - **Forecast page detail panels** — UV / pollen / AQI details are paragraph form; should be data-viz-first (mini bars, thresholds, trend arrows).
 
-### 3. Make it more visual ✅ (4 of 5 nav tabs done — May 2, 2026)
+### 3. Make it more visual ✅ (full editorial polish — May 2, 2026)
 
-Bento + accent palette + sparklines now applied across the four primary nav tabs:
+Two layers shipped:
 
-- **Today/Home** (commit `9bd2fee`) — varied bento with greeting + coral streak tile + heatmap, forecast strip + green adherence + teal rewards, achievements moved to purple gradient tile.
-- **My Stack** (commit `773008e`) — bento stat row: coral streak (5 cols) w/ heatmap, green adherence (4 cols) w/ sparkline, 2-up rail (teal next-delivery + purple earned). Time-of-day group headers carry category colors (morning=coral, pre-workout=teal, midday=gold, post-workout=blue, evening=purple). Each supplement row gets a per-item 30-day adherence sparkline.
-- **Subscriptions** (commit `773008e`) — bento stat row: green active + teal saved w/ sparkline + purple next-delivery + coral paused. Recently optimized AIMoment uses delta chips per bullet. Subscription cards show ring + sparkline. Automation rules card switched to purple-tinted with purple toggles.
-- **Wellness Advisor** (commit `773008e`) — refocused on agentic actions. Hero bento of 4 stat tiles (coral pending, green actions taken w/ sparkline, teal savings w/ sparkline, purple approval rate w/ sparkline). Action queue gets category filter chips on top of state tabs. Automation rules carry category-colored dots + toggles.
+**Layer 1 — Bento + accent palette + sparklines** (commits `9bd2fee`, `773008e`):
+
+- **Today/Home** — varied bento with greeting + coral streak tile + heatmap, forecast strip + green adherence + teal rewards, achievements in purple gradient tile.
+- **My Stack** — coral streak (5 cols) w/ heatmap, green adherence (4 cols) w/ sparkline, 2-up rail (teal next-delivery + purple earned). Time-of-day groups have category colors. Per-supplement 30-day sparkline.
+- **Subscriptions** — green active + teal saved w/ sparkline + purple next-delivery + coral paused. Recently-optimized uses delta chips per bullet.
+- **Wellness Advisor** — agentic-action console. Hero bento of 4 stat tiles all with sparklines. Action queue gets category filter chips.
+
+**Layer 2 — Editorial / luxury specialty store** (commit `cd95457` and tweaks):
+
+- **Health Forecast** — full editorial rebuild: location-aware lifestyle hero (Austin sunrise / Seattle PNW forest), magazine-style "Today's conditions" w/ half-circle SVG gauges replacing prose, `EditorialQuote` from Dr. Chen, lifestyle vignette (allergy blossoms) intermixed with first AIMoment, hydration lifestyle break (when heat ≥85°F), magazine "morning briefing" email signup.
+- **Subscriptions** — luxury hero (amber bottle photography), `EditorialQuote` section break, `TrustBadgeStrip` after subscription cards, `ExpertCallout` (Dr. Chen) in right rail, larger product photos on cards.
+- **Today** — persona-aware morning lifestyle band (140px) at top of greeting card with location chip overlay.
+- **Stack** — wellness ritual lifestyle hero (180px) at top with editorial headline.
+- **Advisor** — `ExpertCallout` + `TrustBadgeStrip` strip below hero stats — establishes clinical/quality trust before user starts chatting.
 
 Still flagged (not yet done):
 
-- **Health Forecast** — already has accent colors via helper functions, but the 4 env-detail cards are prose-heavy. Tighten body copy + bigger UV/pollen meters on the Forecast page itself.
 - **Real workout / wearable iconography** instead of emoji for Whoop, Oura, Garmin, Apple Health, Levels CGM — pull SVG logos.
 - **Subtle illustrations** in onboarding for each step (currently all text + pills).
 - **Bundle savings on Smart Cart** — visualize as a progress bar instead of a price line.
+- **PDP** — could use the editorial recipe (lifestyle hero, expert callout, trust badges, editorial quote).
 
 ### 4. Copy + content polish (lower priority)
 
