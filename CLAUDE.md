@@ -71,6 +71,7 @@ A clickable, multi-page Next.js prototype showcasing iHerb's future state as a p
 - **`HealthForecastStrip`** — 7-day mini forecast card
 - **`AdherenceRing`** — circular progress ring used on Home, Stack, Subscriptions
 - **Search 2.0 ported components**: `AIContextualHeader`, `AIAnswerCard`, `SmartFilterPills`, `FilterSidebar`, `ProductCardGrid`, `ProductCardList` — used on `/search` and `/product/[id]`
+- **`BundleCollage`** (`src/components/BundleCollage.tsx`) — 3-product overlapped bottle collage on a tinted gradient backdrop. Center bottle is the hero (larger, on top, no rotation); flanking bottles are smaller and rotated outward. Used on Home bundle cards and the Wellness Hub article hero. Props: `images: [string, string, string]`, `tint?: 'green' | 'orange' | 'blue'`, `size?: 'sm' | 'md' | 'lg'`. Always pass real Cloudinary product URLs.
 
 ## Visual Recipe (the through-line)
 
@@ -113,20 +114,29 @@ These ALL bit the first deploy. Don't repeat them.
 
 The build deploys, but there's a meaningful gap between *the prototype works* and *the prototype sells the vision*. Priority order:
 
-### 1. Real product imagery everywhere
+### 1. Real product imagery everywhere ✅ (done — May 1, 2026)
 
-Right now nearly every product is a 💊 emoji on a `#F1FAF3` tinted div. This kills the polish bar. The fix is mechanical — Search 2.0's `src/data/products.ts` already has real Cloudinary CDN URLs for 31 products. Wire them through:
+Done in commit `f5b7fee`. Every product surface now uses real iHerb Cloudinary images:
 
-- **`src/data/personas.ts`** — `StackItem.imageUrl` currently uses placeholder Cloudinary paths that may not resolve. Map each `productId` to a real Cloudinary URL by matching to a Search 2.0 product.
-- **PDP main image** — replace the placeholder gradient div with a real `<Image>` (Next.js) or `<img>` from Cloudinary, with a 4-thumbnail row underneath. `next.config.ts` already allowlists `cloudinary.images-iherb.com`.
-- **Cart line items** — currently 💊 emoji thumbs; should be real product images.
-- **Subscription cards** — same.
-- **Stack timeline rows** — same.
-- **Today page "Now in your routine" mini-cards** — same.
-- **Smart pairing strip on PDP** — real images.
-- **Bundle cards on Home page** — should be product photo collages (3 bottles laid out), not single emoji.
+- **`src/data/personas.ts`** — All `StackItem.imageUrl` and `AgentAction.productImage` fields now point to real `cloudinary.images-iherb.com/.../images/<brand>/<sku>/u/<n>.jpg` URLs (Maya: CGN D3 5000, NOW Mag Glycinate, CGN Vit C; Daniel: Thorne creatine/omega/bisglycinate/collagen/ashwagandha + LE NMN/Quercetin + Nuun substituted for LMNT).
+- **PDP** — main image, 4-thumb row, and smart pairing all wired to real Cloudinary URLs (uses `product.image` from products.ts, with the MOCK_PRODUCT fallback also pointing to a real URL).
+- **Cart** — `CartItem.emoji` field renamed to `imageUrl`; all line items render real images. Free-shipping upsell also has a thumbnail.
+- **Subscriptions** — removed the `productEmoji(category)` helper; subscription cards use `item.imageUrl` directly.
+- **Stack timeline rows, Today "Now in your routine" mini-cards** — both use `item.imageUrl`.
+- **Forecast `productSuggestion`** — `ForecastInsight.productSuggestion` gained an `imageUrl?` field. Maya's quercetin and Daniel's electrolyte suggestions now show real bottles.
+- **Home bundle cards** — switched from emoji + price layout to `<BundleCollage>` 3-bottle collage on tinted gradient. 9 distinct curated bundles (3 per persona) each have their own image trio.
+- **Wellness Hub article hero** — gradient backdrop now displays a 3-bottle product collage (NOW glycinate + Thorne bisglycinate + LE threonate) instead of a single 🧪 emoji.
 
-For new product images iherb.com blocks server-side fetches with 403; use Claude in Chrome to scrape `img[src*="cloudinary.images-iherb"]` from search result pages.
+**Scraping pattern (for future image needs):** iherb.com blocks server-side fetches with 403, but Claude in Chrome works. Navigate to `https://www.iherb.com/search?kw=<query>`, wait 2 seconds, then run this JS to extract canonical image URLs:
+```js
+Array.from(document.querySelectorAll('img'))
+  .filter(i => (i.currentSrc || i.src).includes('cloudinary.images-iherb') && !i.src.includes('cms/'))
+  .map(i => { let el = i.parentElement, h = '', t = '';
+    for (let d = 0; d < 8 && el; d++) { const lk = el.querySelector('a[href*="/pr/"]'); if (lk) { h = lk.href; t = lk.title; break; } el = el.parentElement; }
+    return { src: i.currentSrc || i.src, href: h, title: t };
+  })
+```
+Brand prefixes seen: `cgn` (California Gold), `now` (NOW Foods), `thr` (Thorne), `lex` (Life Extension), `nuu` (Nuun), `slg`/`sol` (Solgar), `drb` (Doctor's Best), `jar`/`jrw` (Jarrow), `gol` (Garden of Life), `nbr` (NutraBio), `ncs`/`nwy` (Nature's Way), `sre` (Sports Research). LMNT is not on iHerb — substitute with Nuun (`nuu/nuu02050/u/30.jpg`).
 
 ### 2. Less text-heavy
 
@@ -140,14 +150,12 @@ The current AI moments and agent action cards are paragraph-heavy. Compress and 
 
 ### 3. Make it more visual
 
-Beyond imagery, the prototype lacks the data-visualization layer that would make it feel like a wellness platform vs. a content site:
+The May 1 imagery sweep crossed off bundle collages and the Wellness Hub hero. Remaining:
 
 - **Sparklines / trend lines** wherever a metric is mentioned (sleep score, HRV, adherence over time, savings YTD)
 - **Bigger Health Forecast strip** — current 7-day strip is small; on the Forecast page itself, make it the visual hero with prominent UV/pollen meters
-- **Product image collages** on bundle cards
 - **Real workout / wearable iconography** instead of emoji for Whoop, Oura, Garmin, Apple Health, Levels CGM — pull SVG logos
 - **Subtle illustrations** in onboarding for each step (currently all text + pills)
-- **Wellness Hub article hero** is a gradient with an emoji — should be a real editorial hero image
 - **Daily Stack timeline** could use a vertical timeline visualization instead of stacked grouped boxes
 - **Streak card** could include a 30-day calendar heatmap, not just a number
 - **Adherence rings** could be more prominent on Home; currently small in the side rail
