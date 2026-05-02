@@ -1,9 +1,10 @@
 'use client';
 
-// Subscription Manager — bento layout with auto-tuning intelligence.
-// Stats row uses varied accent colors (green active, teal savings, purple
-// next-delivery, coral paused). Subscription cards include per-item sparkline
-// of adherence trend.
+// Subscriptions — editorial rebuild.
+// Lifestyle hero (curated wellness ritual aesthetic), bento stat row,
+// recently-optimized digest with delta chips, magazine-style transitions
+// between sections, expert callout for trust, larger / more polished
+// subscription cards.
 
 import { useState } from 'react';
 import {
@@ -26,7 +27,15 @@ import { AIMoment } from '@/components/AIMoment';
 import { AgentActionCard } from '@/components/AgentActionCard';
 import { AdherenceRing } from '@/components/AdherenceRing';
 import { Sparkline } from '@/components/Sparkline';
+import { LifestyleHero } from '@/components/LifestyleHero';
+import { ExpertCallout } from '@/components/ExpertCallout';
+import { TrustBadgeStrip } from '@/components/TrustBadgeStrip';
+import { EditorialQuote } from '@/components/EditorialQuote';
 import { usePersona } from '@/components/PersonaProvider';
+import {
+  SUBSCRIPTIONS_HERO,
+  EXPERT_DR_CHEN,
+} from '@/data/lifestyleImages';
 
 // Frequency label helper
 function freqLabel(days: number): string {
@@ -111,31 +120,43 @@ export default function SubscriptionsPage() {
 
       <main className="mx-auto w-full max-w-[1280px] flex-1 px-8 py-6">
 
-        {/* ── Page header ─────────────────────────────────────────── */}
-        <div className="mb-5">
-          <div className="mb-2 flex items-center gap-1.5 text-[#0A6B3C]">
-            <Sparkles size={13} strokeWidth={2.5} />
-            <span className="text-[10.5px] font-bold uppercase tracking-widest">
-              Subscriptions
-            </span>
-          </div>
-          <h1 className="text-[28px] font-bold text-[#1A1A1A]">
-            Auto-tuned by your advisor
-          </h1>
-          <p className="mt-1 text-[13.5px] text-[#666]">
-            {isMaya
-              ? 'Watching your usage patterns and adjusting deliveries so you never run out — or end up with too much.'
-              : 'Optimized in real time from Whoop, Oura, and price intelligence. Every change is logged and reversible.'}
-          </p>
-        </div>
+        {/* ── Editorial hero ──────────────────────────────────────── */}
+        <section className="mb-6">
+          <LifestyleHero
+            imageUrl={SUBSCRIPTIONS_HERO.url}
+            alt={SUBSCRIPTIONS_HERO.alt}
+            eyebrow="Subscriptions · auto-tuned"
+            headline={
+              isMaya
+                ? 'A routine that adjusts itself, so you don\'t have to.'
+                : 'Calibrated to your data, lifted by your protocol.'
+            }
+            subline={
+              isMaya
+                ? 'Your advisor watches your usage patterns and adjusts deliveries so you never run out — or end up with too much.'
+                : 'Optimized in real time from Whoop, Oura, and price intelligence. Every change is logged and reversible.'
+            }
+            size="lg"
+            tint="green"
+            overlay="medium"
+          >
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
+              <CheckCircle2 size={12} strokeWidth={2.5} />
+              Every action reversible
+            </div>
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
+              <Sparkles size={12} strokeWidth={2.5} />
+              {isMaya ? '2 actions this month' : '6 actions this month'}
+            </div>
+          </LifestyleHero>
+        </section>
 
         {/* ── Bento stat row ─────────────────────────────────────── */}
-        <section className="mb-5 grid grid-cols-12 gap-4">
-          {/* Active subscriptions — green */}
+        <section className="mb-6 grid grid-cols-12 gap-4">
           <div className="col-span-3 overflow-hidden rounded-2xl border border-[#C3E6CB] bg-gradient-to-br from-[#F1FAF3] via-[#E8F5EC] to-[#DDF0E1] p-5">
             <div className="mb-2 flex items-center gap-1.5">
               <Package size={13} className="text-[#0A6B3C]" strokeWidth={2.5} />
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#0A6B3C]">
+              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#0A6B3C]">
                 Active
               </span>
             </div>
@@ -143,11 +164,10 @@ export default function SubscriptionsPage() {
             <div className="mt-1 text-[11.5px] text-[#3A6E4E]">autoship subscriptions</div>
           </div>
 
-          {/* Saved this year — teal, with sparkline */}
           <div className="col-span-4 overflow-hidden rounded-2xl border border-[#A7DDDC] bg-gradient-to-br from-[#E5F6F5] via-[#D4EFEE] to-[#BFE6E4] p-5">
             <div className="mb-2 flex items-center gap-1.5">
               <TrendingDown size={13} className="text-[#0E9594]" strokeWidth={2.5} />
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#0E9594]">
+              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#0E9594]">
                 Saved by auto-tuning
               </span>
             </div>
@@ -158,11 +178,10 @@ export default function SubscriptionsPage() {
             <div className="mt-1 text-[11.5px] text-[#1F6E6D]">YTD · {isMaya ? '2 actions taken' : '6 actions taken'}</div>
           </div>
 
-          {/* Next delivery — purple */}
           <div className="col-span-3 overflow-hidden rounded-2xl border border-[#D6C8F0] bg-gradient-to-br from-[#F4F0FB] via-[#EDE6F8] to-[#E2D9F4] p-5">
             <div className="mb-2 flex items-center gap-1.5">
               <Calendar size={13} className="text-[#6B4FBC]" strokeWidth={2.5} />
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#6B4FBC]">
+              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#6B4FBC]">
                 Next delivery
               </span>
             </div>
@@ -172,11 +191,10 @@ export default function SubscriptionsPage() {
             </div>
           </div>
 
-          {/* Paused — coral */}
           <div className="col-span-2 overflow-hidden rounded-2xl border border-[#FFC7B0] bg-gradient-to-br from-[#FFF1E8] via-[#FFE8DC] to-[#FFD9C4] p-5">
             <div className="mb-2 flex items-center gap-1.5">
               <PauseCircle size={13} className="text-[#FF6B4A]" strokeWidth={2.5} />
-              <span className="text-[10px] font-bold uppercase tracking-widest text-[#D14800]">
+              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#D14800]">
                 Paused
               </span>
             </div>
@@ -193,8 +211,8 @@ export default function SubscriptionsPage() {
           </div>
         </section>
 
-        {/* ── Recently optimized AIMoment with delta chips ─────────── */}
-        <section className="mb-5">
+        {/* ── Recently optimized digest ───────────────────────────── */}
+        <section className="mb-7">
           <AIMoment
             eyebrow="Recently optimized"
             headline="I made these adjustments this month"
@@ -233,9 +251,34 @@ export default function SubscriptionsPage() {
           </AIMoment>
         </section>
 
+        {/* ── Section transition: editorial quote ─────────────────── */}
+        <section className="mb-7">
+          <EditorialQuote
+            variant="tinted"
+            tint="teal"
+            quote={
+              isMaya
+                ? "The right supplement at the wrong time is the wrong supplement. Your routine should adjust to your life, not the other way around."
+                : "Auto-tuning isn't about removing decisions — it's about removing the boring ones so you can spend the budget on the decisions that matter."
+            }
+            attribution="Dr. Sarah Chen, ND"
+            credential="iHerb Wellness Hub clinical reviewer"
+            portraitUrl={EXPERT_DR_CHEN.url}
+          />
+        </section>
+
         <div className="grid grid-cols-12 gap-5">
-          {/* ── LEFT: Subscription cards ─────────────────────────── */}
+          {/* ── LEFT: Subscription cards + automation rules ──────── */}
           <section className="col-span-8 space-y-4">
+            <div className="mb-1">
+              <div className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#0A6B3C]">
+                Your subscriptions
+              </div>
+              <h2 className="mt-1 text-[20px] font-bold text-[#1A1A1A]" style={{ letterSpacing: '-0.01em' }}>
+                {autoshipItems.length} {autoshipItems.length === 1 ? 'item' : 'items'} on autoship
+              </h2>
+            </div>
+
             {autoshipItems.map((item) => {
               const isSkipped = skipped[item.productId];
               const isPaused = paused[item.productId];
@@ -254,8 +297,9 @@ export default function SubscriptionsPage() {
                 >
                   <div className="p-5">
                     <div className="flex items-start gap-4">
+                      {/* Product image — bigger and more polished */}
                       <div className="flex-shrink-0">
-                        <div className="relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-xl border border-[#E8E8E8] bg-white">
+                        <div className="relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-xl border border-[#E8E8E8] bg-gradient-to-br from-white to-[#FAFAFA] p-2">
                           <img
                             src={item.imageUrl}
                             alt={item.name}
@@ -263,18 +307,18 @@ export default function SubscriptionsPage() {
                             loading="lazy"
                           />
                           {item.autoshipNote && (
-                            <div className="absolute -bottom-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#0A6B3C] ring-2 ring-white">
-                              <Sparkles size={9} className="text-white" strokeWidth={3} />
+                            <div className="absolute -bottom-1.5 -right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-[#0A6B3C] ring-2 ring-white">
+                              <Sparkles size={11} className="text-white" strokeWidth={3} />
                             </div>
                           )}
                         </div>
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <div className="text-[10.5px] font-bold uppercase tracking-wide text-[#0A6B3C]">
+                        <div className="text-[10.5px] font-bold uppercase tracking-[0.15em] text-[#0A6B3C]">
                           {item.brand}
                         </div>
-                        <div className="text-[15px] font-semibold leading-snug text-[#1A1A1A]">
+                        <div className="text-[15.5px] font-semibold leading-snug text-[#1A1A1A]">
                           {item.name}
                         </div>
                         <div className="mt-0.5 text-[12px] text-[#666]">
@@ -321,7 +365,6 @@ export default function SubscriptionsPage() {
                         )}
                       </div>
 
-                      {/* Adherence ring + sparkline */}
                       <div className="flex flex-shrink-0 flex-col items-end gap-1.5">
                         <AdherenceRing
                           percentage={item.adherence30d}
@@ -382,7 +425,6 @@ export default function SubscriptionsPage() {
                         Replace
                       </button>
 
-                      {/* Right-aligned: last adjustment context */}
                       {item.productId === 'now-mag-glycinate' && (
                         <div className="ml-auto text-right">
                           <div className="text-[10px] text-[#AAA]">Last adjustment</div>
@@ -421,11 +463,20 @@ export default function SubscriptionsPage() {
               );
             })}
 
+            {/* Trust badge strip — quality assurance */}
+            <div className="pt-2">
+              <TrustBadgeStrip
+                badges={['nsf', 'informed-sport', 'third-party', 'non-gmo', 'gmp']}
+                density="loose"
+                background="tinted"
+              />
+            </div>
+
             {/* Automation rules — purple-tinted */}
             <div className="overflow-hidden rounded-2xl border border-[#D6C8F0] bg-gradient-to-br from-white via-white to-[#F4F0FB] p-5">
               <div className="mb-3 flex items-center justify-between">
                 <div>
-                  <div className="text-[10.5px] font-bold uppercase tracking-widest text-[#6B4FBC]">
+                  <div className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#6B4FBC]">
                     Automation rules
                   </div>
                   <p className="mt-0.5 text-[12px] text-[#666]">
@@ -472,9 +523,22 @@ export default function SubscriptionsPage() {
             </div>
           </section>
 
-          {/* ── RIGHT: Action queue + savings panel ─────────────── */}
+          {/* ── RIGHT: Action queue + savings + expert ───────────── */}
           <aside className="col-span-4">
             <div className="sticky top-[140px] space-y-4">
+              <ExpertCallout
+                portraitUrl={EXPERT_DR_CHEN.url}
+                name="Dr. Sarah Chen"
+                credentials="ND, MS"
+                title="Naturopathic Doctor · Wellness Hub"
+                endorsement={
+                  isMaya
+                    ? 'Reviews every protocol shift the advisor recommends for you. Your stack is on her safe-to-self-tune list.'
+                    : 'Backs your longevity protocol. Recommended your bisglycinate-first sleep approach 3 months ago.'
+                }
+                expertiseChips={['Sleep', 'Mineral repletion', 'Allergy protocols']}
+              />
+
               <div>
                 <div className="mb-2 flex items-baseline justify-between">
                   <h2 className="text-[16px] font-bold text-[#1A1A1A]">Agent actions</h2>
@@ -503,7 +567,7 @@ export default function SubscriptionsPage() {
               <div className="overflow-hidden rounded-2xl border border-[#A7DDDC] bg-gradient-to-br from-[#E5F6F5] via-[#D4EFEE] to-[#BFE6E4] p-5">
                 <div className="mb-2 flex items-center gap-2">
                   <Zap size={14} className="text-[#0E9594]" strokeWidth={2.5} />
-                  <span className="text-[10.5px] font-bold uppercase tracking-widest text-[#0E9594]">
+                  <span className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#0E9594]">
                     Advisor savings
                   </span>
                 </div>
@@ -543,7 +607,6 @@ export default function SubscriptionsPage() {
                 </div>
               </div>
 
-              {/* Reversibility trust strip */}
               <div className="rounded-xl border border-[#E0E0E0] bg-white p-4">
                 <div className="flex items-start gap-2.5">
                   <CheckCircle2 size={16} className="mt-0.5 flex-shrink-0 text-[#0A6B3C]" strokeWidth={2.5} />

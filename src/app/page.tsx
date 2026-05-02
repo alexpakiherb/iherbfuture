@@ -31,6 +31,7 @@ import { Sparkline } from '@/components/Sparkline';
 import { StreakHeatmap } from '@/components/StreakHeatmap';
 import { usePersona } from '@/components/PersonaProvider';
 import { getForecast } from '@/data/healthForecast';
+import { MORNING_HERO_MAYA, MORNING_HERO_DANIEL } from '@/data/lifestyleImages';
 
 // Mock 30-day adherence trend (used for sparklines on home stats).
 const ADHERENCE_TREND_MAYA = [62, 68, 71, 70, 74, 78, 75, 80, 82, 79, 84, 86, 83, 87, 85, 88, 90, 88, 92, 91, 90, 94, 92, 93, 95, 94, 96, 95, 97, 98];
@@ -89,8 +90,21 @@ export default function TodayPage() {
         <section className="mb-4 grid grid-cols-12 gap-4">
           {/* Greeting + now-stack — large tile, 8 cols */}
           <div className="col-span-8 overflow-hidden rounded-2xl border border-[#E0E0E0] bg-white">
-            <div className="h-[3px] bg-gradient-to-r from-[#0A6B3C] via-[#79A83C] to-[#0A6B3C]" />
-            <div className="px-7 pt-6 pb-5">
+            {/* Lifestyle band — persona-aware morning aesthetic */}
+            <div className="relative h-[140px] w-full overflow-hidden">
+              <img
+                src={persona.id === 'maya' ? MORNING_HERO_MAYA.url : MORNING_HERO_DANIEL.url}
+                alt={persona.id === 'maya' ? MORNING_HERO_MAYA.alt : MORNING_HERO_DANIEL.alt}
+                className="absolute inset-0 h-full w-full object-cover"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-white via-white/30 to-transparent" />
+              <div className="absolute right-5 top-4 inline-flex items-center gap-1.5 rounded-full bg-white/85 px-2.5 py-1 text-[10.5px] font-semibold text-[#1A1A1A] backdrop-blur-sm">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#0A6B3C]" />
+                {persona.id === 'maya' ? 'Austin · Spring' : 'Seattle · Spring'}
+              </div>
+            </div>
+            <div className="px-7 pt-5 pb-5">
               <div className="mb-3 flex items-center gap-2 text-[#0A6B3C]">
                 <TimeIcon size={16} strokeWidth={2.5} />
                 <span className="text-[11px] font-bold uppercase tracking-widest">

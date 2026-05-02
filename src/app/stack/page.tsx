@@ -26,8 +26,10 @@ import { AIMoment } from '@/components/AIMoment';
 import { AdherenceRing } from '@/components/AdherenceRing';
 import { Sparkline } from '@/components/Sparkline';
 import { StreakHeatmap } from '@/components/StreakHeatmap';
+import { EditorialQuote } from '@/components/EditorialQuote';
 import { usePersona } from '@/components/PersonaProvider';
 import { StackItem } from '@/data/personas';
+import { STACK_HERO, EXPERT_DR_CHEN } from '@/data/lifestyleImages';
 
 const TIME_GROUPS: { key: StackItem['timeOfDay']; label: string; icon: typeof Sun; description: string; color: string; bg: string; border: string }[] = [
   { key: 'morning',      label: 'Morning',      icon: Sunrise,  description: 'With breakfast or first thing',     color: '#FF6B4A', bg: '#FFF1E8', border: '#FFC7B0' },
@@ -39,6 +41,7 @@ const TIME_GROUPS: { key: StackItem['timeOfDay']; label: string; icon: typeof Su
 
 // Mock 30-day adherence trends per item (slightly varied per supplement).
 function trendFor(adherence: number): number[] {
+  // Build a 30-day series ending near the given adherence.
   const series: number[] = [];
   let v = Math.max(40, adherence - 25);
   for (let i = 0; i < 30; i++) {
@@ -87,21 +90,41 @@ export default function StackPage() {
       <Header />
 
       <main className="mx-auto w-full max-w-[1280px] flex-1 px-8 py-6">
-        {/* ── Header ─────────────────────────────────────────────────── */}
-        <div className="mb-5 flex items-end justify-between">
-          <div>
-            <div className="mb-1.5 flex items-center gap-1.5 text-[#0A6B3C]">
-              <Sparkles size={13} strokeWidth={2.5} />
-              <span className="text-[10.5px] font-bold uppercase tracking-widest">
-                Your Daily Stack
-              </span>
+        {/* ── Lifestyle hero band — wellness ritual aesthetic ────────── */}
+        <section className="mb-5 overflow-hidden rounded-2xl">
+          <div className="relative h-[180px] w-full">
+            <img
+              src={STACK_HERO.url}
+              alt={STACK_HERO.alt}
+              className="absolute inset-0 h-full w-full object-cover"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-black/10" />
+            <div className="relative flex h-full flex-col justify-end p-7">
+              <div className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-white/85">
+                {persona.id === 'maya' ? 'A simple ritual' : 'A precise protocol'}
+              </div>
+              <h1
+                className="mt-1 font-bold leading-[1.1] text-white"
+                style={{ fontSize: '32px', letterSpacing: '-0.01em' }}
+              >
+                {persona.firstName}&rsquo;s daily stack
+              </h1>
+              <p className="mt-1 max-w-[560px] text-[13px] text-white/85">
+                {persona.id === 'maya'
+                  ? 'Three supplements, anchored to morning and evening routines that fit how you already live.'
+                  : 'Twelve supplements, calibrated to your biometrics, your training cycle, and the windows of your day.'}
+              </p>
             </div>
-            <h1 className="text-[28px] font-bold text-[#1A1A1A]">
-              {persona.firstName}&rsquo;s routine · {persona.stackSize} supplements
-            </h1>
-            <p className="mt-1 text-[13.5px] text-[#666]">
-              Anchored to your {persona.routine.morningTime} morning and {persona.routine.eveningTime} evening windows.
-            </p>
+          </div>
+        </section>
+
+        {/* ── Sub-header strip ─────────────────────────────────────── */}
+        <div className="mb-5 flex items-center justify-between">
+          <div className="text-[13px] text-[#666]">
+            <span className="font-semibold text-[#1A1A1A]">{persona.stackSize} supplements</span>
+            <span className="mx-2 text-[#CCC]">·</span>
+            Anchored to {persona.routine.morningTime} morning and {persona.routine.eveningTime} evening windows
           </div>
           <button className="flex items-center gap-1.5 rounded-full bg-[#0A6B3C] px-4 py-2 text-[13px] font-bold text-white shadow-sm transition-all hover:bg-[#085131] active:scale-[0.98]">
             <Plus size={14} strokeWidth={2.5} />

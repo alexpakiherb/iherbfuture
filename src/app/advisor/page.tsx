@@ -24,8 +24,11 @@ import Footer from '@/components/Footer';
 import { AgentActionCard } from '@/components/AgentActionCard';
 import { ContextPill } from '@/components/AIMoment';
 import { Sparkline } from '@/components/Sparkline';
+import { ExpertCallout } from '@/components/ExpertCallout';
+import { TrustBadgeStrip } from '@/components/TrustBadgeStrip';
 import { usePersona } from '@/components/PersonaProvider';
 import { AgentAction } from '@/data/personas';
+import { EXPERT_DR_CHEN } from '@/data/lifestyleImages';
 
 type StateTab = 'all' | 'pending' | 'taken' | 'paused';
 type CategoryFilter = 'all' | AgentAction['category'];
@@ -227,6 +230,31 @@ export default function AdvisorPage() {
           </div>
         </section>
 
+        {/* ── Expert callout + trust strip ─────────────────────── */}
+        <section className="mb-5 grid grid-cols-12 gap-4">
+          <div className="col-span-7">
+            <ExpertCallout
+              portraitUrl={EXPERT_DR_CHEN.url}
+              name="Dr. Sarah Chen"
+              credentials="ND, MS"
+              title="Naturopathic Doctor · iHerb Wellness Hub"
+              endorsement={
+                isMaya
+                  ? 'Reviews every protocol your advisor recommends and only ships changes that match the published Wellness Hub research. You can trust the AI because she can.'
+                  : 'Backs your longevity protocol and personally reviewed your sleep stack 3 months ago. Your advisor can act in this lane without re-asking.'
+              }
+              expertiseChips={['Sleep', 'Mineral repletion', 'Allergy protocols', 'Longevity']}
+            />
+          </div>
+          <div className="col-span-5 flex items-center">
+            <TrustBadgeStrip
+              badges={['third-party', 'gmp', 'non-gmo', 'usp']}
+              density="loose"
+              background="tinted"
+            />
+          </div>
+        </section>
+
         <div className="grid grid-cols-12 gap-5">
           {/* ── LEFT: Chat panel + automation rules ─────────── */}
           <section className="col-span-7 space-y-4">
@@ -421,7 +449,7 @@ export default function AdvisorPage() {
               </div>
 
               {/* Category filter chips */}
-              <div className="mb-3 flex items-center gap-1.5 flex-wrap">
+              <div className="mb-3 flex flex-wrap items-center gap-1.5">
                 <Filter size={11} className="text-[#888]" strokeWidth={2.5} />
                 <button
                   onClick={() => setCategoryFilter('all')}
