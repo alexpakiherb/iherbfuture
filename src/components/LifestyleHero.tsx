@@ -39,19 +39,21 @@ const HEIGHT_STYLES = {
 };
 
 // Tint adds a soft colored wash on top of the dark gradient to anchor the
-// hero to a section's color zone. Keep these subtle.
+// hero to a section's color zone. Keep these subtle so the underlying photo
+// still reads. The vertical bottom-up gradient lets the top of the image
+// breathe while the bottom gets enough darkness for legible overlay text.
 const TINT_GRADIENTS = {
-  neutral: 'from-black/55 via-black/25 to-black/10',
-  green:   'from-[#0A6B3C]/65 via-[#0A6B3C]/25 to-black/15',
-  coral:   'from-[#7B4022]/60 via-[#D14800]/20 to-black/15',
-  teal:    'from-[#0A4A4A]/65 via-[#0E9594]/25 to-black/15',
-  purple:  'from-[#3A2680]/65 via-[#6B4FBC]/25 to-black/15',
+  neutral: 'from-black/75 via-black/35 to-transparent',
+  green:   'from-[#0A2A1A]/80 via-[#0A6B3C]/25 to-transparent',
+  coral:   'from-[#3D1A0A]/75 via-[#D14800]/15 to-transparent',
+  teal:    'from-[#06292A]/80 via-[#0E9594]/20 to-transparent',
+  purple:  'from-[#1F1247]/80 via-[#6B4FBC]/20 to-transparent',
 };
 
 const OVERLAY_STRENGTH = {
-  soft:   'opacity-75',
-  medium: 'opacity-95',
-  strong: 'opacity-100',
+  soft:   'opacity-60',
+  medium: 'opacity-80',
+  strong: 'opacity-95',
 };
 
 const ALIGN_STYLES = {
@@ -85,9 +87,9 @@ export function LifestyleHero({
         loading="lazy"
       />
 
-      {/* Gradient overlay for text legibility */}
+      {/* Gradient overlay for text legibility — bottom is dark, top stays clear */}
       <div
-        className={`absolute inset-0 bg-gradient-to-r ${TINT_GRADIENTS[tint]} ${OVERLAY_STRENGTH[overlay]}`}
+        className={`absolute inset-0 bg-gradient-to-t ${TINT_GRADIENTS[tint]} ${OVERLAY_STRENGTH[overlay]}`}
       />
 
       {/* Content */}
