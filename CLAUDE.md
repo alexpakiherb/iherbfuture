@@ -19,15 +19,25 @@ A clickable, multi-page Next.js prototype showcasing iHerb's future state as a p
 
 ## 2026 Brand Refresh Tokens (same as Search 2.0)
 
-- **Primary green ("Evergreen"):** `#0A6B3C` — header, CTAs, AI moment accents, active nav
-- **Action Orange:** `#D14800` — promotions, discounts, sale, "Add to cart"
-- **Trust Blue:** `#1558A6` — links, credibility signals
-- **Light tints:** `#F1FAF3` (light green), `#FFF7F1` (light orange), `#FAFBFA` (off-white surface)
-- **Borders:** `#C3E6CB` (light green), `#FFD9C4` (light orange), `#E0E0E0` / `#F0F0F0` (neutral)
+**Core palette:**
+- **Primary green ("Evergreen"):** `#0A6B3C` — header, CTAs, AI moment accents, active nav, subscription category
+- **Action Orange:** `#D14800` — promotions, discounts, sale, "Add to cart", bundle category
+- **Trust Blue:** `#1558A6` — links, credibility signals, biometric data pills
+
+**Extended accent palette (added in bento refresh, May 2 2026):**
+- **Coral:** `#FF6B4A` — streaks, energy, "act now" moments. Tints: `#FFF1E8`, `#FFE8DC`, `#FFD9C4`. Border: `#FFC7B0`.
+- **Deep Purple:** `#6B4FBC` — protocol category, achievements, longevity/cognitive themes. Tints: `#F4F0FB`, `#EDE6F8`, `#E2D9F4`. Border: `#D6C8F0`.
+- **Teal:** `#0E9594` — rewards, hydration, inventory category, connected apps. Tints: `#E5F6F5`, `#D4EFEE`, `#BFE6E4`. Border: `#A7DDDC`.
+
+**Light tints + borders:**
+- Greens: `#F1FAF3` / `#E8F5EC` / `#DDF0E1` / border `#C3E6CB`
+- Oranges: `#FFF7F1` / `#FFEFE2` / border `#FFD9C4`
+- Off-white surface: `#FAFBFA`, neutral border `#E0E0E0` / `#F0F0F0`
 - **Page bg:** `#FAFAFA`. Text: `#1A1A1A` / `#444` / `#666` / `#888`
-- **Typography:** Noto Sans, weights 400/500/600/700
-- **Border radius:** Pill (`9999px`) for badges, buttons, search bar; `12px–16px` for cards
-- **Spacing:** 4px base grid
+
+**Typography:** Noto Sans, weights 400/500/600/700
+**Border radius:** Pill (`9999px`) for badges, buttons, search bar; `12px–16px` for cards
+**Spacing:** 4px base grid
 
 ## Page Map
 
@@ -52,7 +62,10 @@ A clickable, multi-page Next.js prototype showcasing iHerb's future state as a p
   - `card` (default): white bg, 3px green gradient accent bar on top (`#0A6B3C → #79A83C → #0A6B3C`), Sparkles + uppercase tracking-widest eyebrow, headline, body, optional children, "Powered by iHerb Wellness Hub" footer
   - `inline`: tinted light-green container (`#F1FAF3`), left-edge green accent bar, no shadow — for slimmer inline contexts
 - **`ContextPill`** — small pill with sparkle that labels *why* something is shown ("Based on your sleep goal", "Whoop recovery: 84%"). Two variants: `default` (green, behavioral context) and `data` (blue, biometric context).
-- **`AgentActionCard`** (`src/components/AgentActionCard.tsx`) — visualizes one autonomous action by the advisor. Three states: `taken` (✓ done for you), `pending` (clock + Approve / Skip buttons), `paused`. Includes savings badge, category tag (subscription/bundle/protocol/inventory/price), timestamp.
+- **`AgentActionCard`** (`src/components/AgentActionCard.tsx`) — visualizes one autonomous action by the advisor. Three states: `taken` (✓ done for you), `pending` (clock + Approve / Skip buttons), `paused`. Visual recipe: left-edge category-colored strip, status pill, category pill, timestamp, title (1 line) + body (line-clamped to 1–2), then a **delta row** with a chip + optional sparkline.
+  - Categories map to colors: `subscription` → green, `bundle` → orange, `protocol` → purple, `inventory` → teal, `price` → gold.
+  - Pass `compact` to drop into 3-up grids (smaller padding, line-clamp-1, no sparkline).
+  - Pass `delta?: ActionDelta` to control the chip — `{ label, direction: 'up'|'down'|'date'|'savings', sparkline?: number[], color? }`. If omitted but `action.savings` is set, a "Saved $X" chip is auto-inferred.
 
 ### Persona system
 
@@ -72,6 +85,8 @@ A clickable, multi-page Next.js prototype showcasing iHerb's future state as a p
 - **`AdherenceRing`** — circular progress ring used on Home, Stack, Subscriptions
 - **Search 2.0 ported components**: `AIContextualHeader`, `AIAnswerCard`, `SmartFilterPills`, `FilterSidebar`, `ProductCardGrid`, `ProductCardList` — used on `/search` and `/product/[id]`
 - **`BundleCollage`** (`src/components/BundleCollage.tsx`) — 3-product overlapped bottle collage on a tinted gradient backdrop. Center bottle is the hero (larger, on top, no rotation); flanking bottles are smaller and rotated outward. Used on Home bundle cards and the Wellness Hub article hero. Props: `images: [string, string, string]`, `tint?: 'green' | 'orange' | 'blue'`, `size?: 'sm' | 'md' | 'lg'`. Always pass real Cloudinary product URLs.
+- **`Sparkline`** (`src/components/Sparkline.tsx`) — tiny inline SVG trend line. Drop into stat tiles, agent action deltas, anywhere a metric is mentioned. Props: `values: number[]`, `width=60`, `height=18`, `color?` (hex), `filled?=true`, `showLastPoint?=true`. No axes, no labels — just shape with optional fill. Pair with a number, never alone.
+- **`StreakHeatmap`** (`src/components/StreakHeatmap.tsx`) — 30-day GitHub-style calendar grid (6×5). Each cell tints by 0..1 dose-percentage. Props: `values?: number[]` (default mock pattern), `size?=9`, `gap?=2`, `color?` (hex base), `emptyColor?`. Used on Home streak tile (coral) and could be used on Stack page.
 
 ## Visual Recipe (the through-line)
 
@@ -81,6 +96,10 @@ A clickable, multi-page Next.js prototype showcasing iHerb's future state as a p
 4. Light-tint surfaces (`#F1FAF3`, `#FFF7F1`, `#FAFBFA`) for AI/agentic moments; pure white for neutral content
 5. Subtle motion: `animate-[fadeIn_200ms_ease-out]`, `active:scale-[0.97]`, `hover:-translate-y-0.5` — no aggressive transitions
 6. Pills (`rounded-full`) for everything interactive: badges, buttons, filter chips, action chips, time toggles, day-of-week selectors
+7. **Bento bias for layouts**: prefer varied tile sizes (`col-span-{4,6,8}` mixed in the same row) over uniform 4-col grids. Pair a hero tile (8 cols) with a content-rich accent tile (4 cols) — e.g., greeting + streak heatmap on Home Row 1.
+8. **Color zones, not all green**: lean on the extended palette (coral / purple / teal) so each tile reads as a different category at a glance. Streak/energy → coral. Longevity/protocol/achievement → purple. Rewards/hydration/inventory → teal.
+9. **Every metric gets a sparkline**: when a number is shown (adherence %, savings $, streak days), include a `<Sparkline>` of its 30-day trend or a `<StreakHeatmap>` for binary daily data. Numbers without a trend look static.
+10. **Cut prose, surface deltas**: AgentActionCard body is line-clamped; the actual *effect* of the action lives in a delta chip ("Saved $18.99", "Sleep score ↑ 12%", "May 18 → May 21"). Don't write paragraphs explaining what a chip can show.
 
 ## Git & Deployment Workflow (mirrors Search 2.0)
 
@@ -138,27 +157,26 @@ Array.from(document.querySelectorAll('img'))
 ```
 Brand prefixes seen: `cgn` (California Gold), `now` (NOW Foods), `thr` (Thorne), `lex` (Life Extension), `nuu` (Nuun), `slg`/`sol` (Solgar), `drb` (Doctor's Best), `jar`/`jrw` (Jarrow), `gol` (Garden of Life), `nbr` (NutraBio), `ncs`/`nwy` (Nature's Way), `sre` (Sports Research). LMNT is not on iHerb — substitute with Nuun (`nuu/nuu02050/u/30.jpg`).
 
-### 2. Less text-heavy
+### 2. Less text-heavy ✅ (mostly done — May 2, 2026)
 
-The current AI moments and agent action cards are paragraph-heavy. Compress and visualize:
+`AgentActionCard` was rewritten with delta chips + line-clamped body; this cascades to Home, Cart, Subscriptions, Forecast wherever the card appears. Remaining:
 
-- **AgentActionCard `detail`** — many of the Maya/Daniel mock actions have 2–3 sentence explanations. Trim to 1 short sentence + a small visual delta (e.g., "Sleep score ↑ 12%" with a sparkline thumb, "Saved $18.99" with a tiny coin icon, "Delivery moved May 18 → May 21" with a date pill).
 - **AIMoment body** — many cards include both a `body` prop AND children. Pick one default — typically chips/CTAs are stronger than prose. Reserve `body` for the rare case where the explanation is the point.
 - **Wellness Hub article inline AIMoment** — currently has a long body; could be 1 sentence + 2 chips.
 - **Onboarding step descriptions** — every step has a subtitle paragraph; many can become a single sentence + an inline diagram or progress visualization.
 - **Forecast page detail panels** — UV / pollen / AQI details are paragraph form; should be data-viz-first (mini bars, thresholds, trend arrows).
 
-### 3. Make it more visual
+### 3. Make it more visual ✅ (Home done — May 2, 2026)
 
-The May 1 imagery sweep crossed off bundle collages and the Wellness Hub hero. Remaining:
+Home page rebuilt as a varied bento grid in commit `9bd2fee`: greeting + coral streak tile (with `StreakHeatmap`) on Row 1; forecast strip + green adherence tile (with `Sparkline`) + teal rewards tile (with savings sparkline) on Row 2; pending actions and advisor-handled tightened to 2-up / 3-up; achievements moved into a purple gradient tile. New accent palette (coral / purple / teal) breaks up the previously green-dominant page.
 
-- **Sparklines / trend lines** wherever a metric is mentioned (sleep score, HRV, adherence over time, savings YTD)
+Remaining surfaces (apply the same pattern):
+
 - **Bigger Health Forecast strip** — current 7-day strip is small; on the Forecast page itself, make it the visual hero with prominent UV/pollen meters
 - **Real workout / wearable iconography** instead of emoji for Whoop, Oura, Garmin, Apple Health, Levels CGM — pull SVG logos
 - **Subtle illustrations** in onboarding for each step (currently all text + pills)
-- **Daily Stack timeline** could use a vertical timeline visualization instead of stacked grouped boxes
-- **Streak card** could include a 30-day calendar heatmap, not just a number
-- **Adherence rings** could be more prominent on Home; currently small in the side rail
+- **Daily Stack timeline** could use a vertical timeline visualization instead of stacked grouped boxes; replace the 4 equal stat tiles at the top with a varied bento mirroring Home (one large streak tile w/ `StreakHeatmap`, smaller tiles for adherence + delivery + earned).
+- **Subscriptions page** — full-width cards are uniform; would benefit from same bento treatment + sparklines.
 - **Bundle savings on Smart Cart** — visualize as a progress bar ("save 15% with bundle") instead of just a price line
 
 ### 4. Copy + content polish (lower priority)
