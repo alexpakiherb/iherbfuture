@@ -24,7 +24,7 @@ const WELLNESS_NAV = [
   { id: 'stack', label: 'My Stack', href: '/stack' },
   { id: 'forecast', label: 'Health Forecast', href: '/forecast' },
   { id: 'subscriptions', label: 'Subscriptions', href: '/subscriptions' },
-  { id: 'wellness-hub', label: 'Wellness Hub', href: '/wellness-hub/magnesium-guide' },
+  { id: 'advisor', label: 'Wellness Advisor', href: '/advisor' },
 ];
 
 export default function Header({ initialQuery = '', onSearch }: HeaderProps) {
