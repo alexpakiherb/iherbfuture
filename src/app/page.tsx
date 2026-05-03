@@ -406,8 +406,12 @@ export default function TodayPage() {
                     save: '4-week supply',
                     tint: 'orange' as const,
                     images: [
+                      // Life Extension Alpha-Lipoic Acid + Biotin (mitochondrial energy)
                       'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/lex/lex45706/u/94.jpg',
-                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/jar/jar05079/u/36.jpg',
+                      // Jarrow Vegan B-Right — center hero of the collage. Replaces a previously
+                      // 404'ing 'jar/jar05079' URL (wrong brand prefix; correct prefix is 'jrw').
+                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/jrw/jrw01006/u/114.jpg',
+                      // NOW Magnesium Malate (energy form of magnesium)
                       'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/now/now01300/u/82.jpg',
                     ] as [string, string, string],
                   },
