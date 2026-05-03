@@ -218,3 +218,28 @@ Still flagged (not yet done):
 - Several products in the persona stacks reference specific iHerb SKUs that may not exist; align with real Search 2.0 product IDs so the click-through to PDP shows a real product
 - The Wellness Hub article is currently magnesium-only; a second article (e.g. omega-3 or sleep) would let the cross-linking from Daniel's content feel less repetitive
 - Mobile responsiveness is untested — current breakpoints assume ≥1280px viewport
+
+## Session log — May 2 2026 (UI/UX polish pass)
+
+A round of small but visible fixes after a review pass through the deployed prototype. All shipped to production.
+
+**Persona rename — Maya → Judy.** The wellness beginner's display name is now "Judy" everywhere copy is rendered (`firstName: 'Judy'`, initials `JR`, `Good morning, Judy`, etc.). The persona key `persona.id` is still `'maya'` and constants like `SUGGESTED_QUESTIONS_MAYA`, `ADHERENCE_TREND_MAYA`, conditionals like `persona.id === 'maya'` and the `isMaya` boolean are intentionally **not** renamed — that would have been a cascading multi-file refactor with no functional benefit. The display name flows through `persona.firstName` so pages picked it up automatically. New persona keys should pick a fresh ID rather than reuse `'maya'`.
+
+**Promo bar contrast.** "Free shipping…" and "24/7 Support" links in the green promo bar were rendering blue (browser default link color) and unreadable. Fixed with belt-and-suspenders: both inline `style={{ color: '#FFFFFF' }}` and Tailwind `!text-white visited:!text-white hover:!text-white` classes so all link states (visited / hover / focus) stay white.
+
+**Ecommerce-fit hero imagery.** Subscriptions and Stack heroes were artsy single-bottle macros that read as editorial, not as "shop here." Swapped to:
+- **Subscriptions:** `1704694671866-f83e0b91df09` — row of recognizable branded vitamin bottles (NOW Foods, Life Extension, etc.) on a wellness specialty-store shelf.
+- **Stack:** `1528272252360-5efd274e36fb` — wall of supplement bottles in a display case.
+
+**Forecast Austin hero — 404 fix.** The previously-shipped Unsplash ID `1531219432768-9f540ec081f3` started returning 404, leaving the Forecast hero as a peach gradient with alt text. Replaced with `1682458855022-b71fa850a085` — bluebonnets + oak tree + wooden fence in warm Hill Country light. Verified loading on the CDN before shipping. **New rule logged in the imagery section:** Unsplash IDs can quietly retire even after working previously, and `plus.unsplash.com/premium_photo-...` results are paid-tier and resolve 404 on the public CDN — only photos whose og:image points to `images.unsplash.com/photo-...` are usable for free.
+
+**Energy Boost bundle — center bottle 404.** Judy's "Steady energy · Without the crash" starter bundle in `src/app/page.tsx` had a broken center hero in the `BundleCollage` (rendered as a blank silhouette). Root cause was a wrong brand prefix — the iHerb Cloudinary path used `jar/jar05079` but the correct prefix for Jarrow Formulas is `jrw`. Swapped to `jrw/jrw01006/u/114.jpg` (Jarrow Vegan B-Right). Bundle now reads as a textbook ALA + B-complex + magnesium-malate energy stack.
+
+### What's next (UI/UX refinement — pick up here next session)
+
+The user wants to keep refining the UI/UX. Open candidates already noted in this file (don't re-enumerate; this is just a "where to start" list):
+
+- The "Refinements still flagged" list in the editorial section (real wearable SVG iconography, onboarding illustrations, Smart Cart progress-bar savings viz, PDP editorial recipe).
+- The copy + content polish list (deeper advisor mock responses, second Wellness Hub article, mobile breakpoints, real Search 2.0 product IDs in persona stacks).
+- Audit other product/lifestyle URLs across the codebase for the same brand-prefix pitfall that bit `jar/jar05079` — there may be other broken images we haven't noticed yet. A defensive pass with a `<img onError>` fallback or a build-time URL-check script would catch these without manual review.
+- General taste pass on bento density, color zones across pages, and whether the AIMoment / AgentActionCard recipes are still earning their space everywhere they appear.
