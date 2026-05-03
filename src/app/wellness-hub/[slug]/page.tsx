@@ -2,7 +2,7 @@
 
 // Wellness Hub — Long-form editorial article page.
 // Hardcoded to "magnesium-guide" content; unrecognized slugs fall back to same.
-// Personalized mid-article AIMoment differs between Maya and Daniel.
+// Personalized mid-article AIMoment differs between Judy (id 'maya') and Daniel.
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';

@@ -1,6 +1,6 @@
 // ── Persona Definitions ───────────────────────────────────────────────────
 // Two personas demonstrate how the iHerb experience adapts to who you are.
-// Maya is at the start of her wellness journey; Daniel is an advanced
+// Judy is at the start of her wellness journey; Daniel is an advanced
 // optimizer with a deep stack and connected data sources.
 
 export type PersonaId = 'maya' | 'daniel';
@@ -89,12 +89,12 @@ export interface Persona {
   cartItemCount: number;
 }
 
-// ── Maya — Wellness Beginner ──────────────────────────────────────────────
+// ── Judy — Wellness Beginner ──────────────────────────────────────────────
 
 export const maya: Persona = {
   id: 'maya',
-  firstName: 'Maya',
-  initials: 'MR',
+  firstName: 'Judy',
+  initials: 'JR',
   avatarColor: '#D14800',
   age: 28,
   city: 'Austin',
@@ -118,9 +118,9 @@ export const maya: Persona = {
     workoutDays: 'Tue · Thu · Sat',
   },
   greetingByTime: {
-    morning: 'Good morning, Maya',
-    afternoon: 'Hey Maya',
-    evening: 'Winding down, Maya?',
+    morning: 'Good morning, Judy',
+    afternoon: 'Hey Judy',
+    evening: 'Winding down, Judy?',
   },
   contextHints: [
     'Based on your sleep goal',

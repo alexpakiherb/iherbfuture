@@ -35,7 +35,7 @@ Then open http://localhost:3000.
 
 Two switchable personas demonstrate how the experience adapts to who you are:
 
-**Maya** — 28, Austin, TX. Wellness Beginner with 3 supplements, building her first routine. Goals: sleep, energy, immune support. Apple Health connected.
+**Judy** — 28, Austin, TX. Wellness Beginner with 3 supplements, building her first routine. Goals: sleep, energy, immune support. Apple Health connected.
 
 **Daniel** — 42, Seattle, WA. Advanced Optimizer with 12+ supplements, longevity protocol. Goals: longevity, cognitive performance, athletic recovery, sleep. Whoop, Oura, Garmin, Levels CGM all connected.
 
@@ -71,7 +71,7 @@ src/
     [Search 2.0 ported]        AIContextualHeader, AIAnswerCard, SmartFilterPills,
                                FilterSidebar, ProductCardGrid, ProductCardList
   data/
-    personas.ts                Maya & Daniel persona definitions (stack, agent
+    personas.ts                Judy & Daniel persona definitions (stack, agent
                                actions, achievements, connected apps, etc.)
     healthForecast.ts          Per-persona 7-day forecast + AI insights
     products.ts                31 mock products (from Search 2.0)

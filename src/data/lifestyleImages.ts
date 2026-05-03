@@ -65,10 +65,13 @@ export const HYDRATION_LIFESTYLE: LifestyleImage = {
 // ── Subscriptions page heroes ────────────────────────────────────────────────
 
 export const SUBSCRIPTIONS_HERO: LifestyleImage = {
-  // Wellness flat lay — supplements + journal + plant.
-  url: 'https://images.unsplash.com/photo-1556228720-195a672e8a03?w=1800&q=80&auto=format&fit=crop',
-  alt: 'Premium amber bottles arranged in warm light',
-  credit: 'Volodymyr Hryshchenko / Unsplash',
+  // Row of recognizable branded vitamin/supplement bottles — true wellness
+  // specialty-store retail aesthetic (Swanson, NOW Foods, etc.). Reads as
+  // "shop shelf" rather than artsy macro, which fits an ecommerce subscription
+  // hero better than abstract amber bottles.
+  url: 'https://images.unsplash.com/photo-1704694671866-f83e0b91df09?w=1800&q=80&auto=format&fit=crop',
+  alt: 'Row of branded vitamin bottles arranged like a wellness specialty store shelf',
+  credit: 'Unsplash',
 };
 
 export const DELIVERY_LIFESTYLE: LifestyleImage = {
@@ -81,10 +84,12 @@ export const DELIVERY_LIFESTYLE: LifestyleImage = {
 // ── Stack page hero (wellness ritual) ────────────────────────────────────────
 
 export const STACK_HERO: LifestyleImage = {
-  // Supplements in soft daylight — minimalist ritual.
-  url: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=1800&q=80&auto=format&fit=crop',
-  alt: 'Daily supplement ritual in soft natural light',
-  credit: 'Diana Polekhina / Unsplash',
+  // Wall of supplement bottles — display-case aesthetic. Feels like a curated
+  // shelf, which suits "My Stack" (the user's daily lineup) better than a
+  // single-bottle macro.
+  url: 'https://images.unsplash.com/photo-1528272252360-5efd274e36fb?w=1800&q=80&auto=format&fit=crop',
+  alt: 'Wall of labeled supplement bottles on a specialty-store display shelf',
+  credit: 'Unsplash',
 };
 
 // ── Advisor expert portraits ─────────────────────────────────────────────────

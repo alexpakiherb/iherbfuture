@@ -56,14 +56,23 @@ export default function Header({ initialQuery = '', onSearch }: HeaderProps) {
 
   return (
     <header className="sticky top-0 z-50 shadow-sm">
-      {/* Promo bar */}
+      {/* Promo bar — force white on all link states (visited/hover/focus) so
+          browser default link colors don't bleed through against the green. */}
       <div className="bg-[#0A6B3C]">
         <div className="flex h-9 items-center justify-between gap-8 px-8">
-          <a href={currentPromo.link} className="text-[13px] font-medium text-white hover:underline">
+          <a
+            href={currentPromo.link}
+            style={{ color: '#FFFFFF' }}
+            className="text-[13px] font-medium !text-white visited:!text-white hover:!text-white hover:underline"
+          >
             {currentPromo.text}
           </a>
           <div className="flex flex-shrink-0 items-center gap-5">
-            <a href="#" className="text-[13px] font-medium text-white hover:underline">
+            <a
+              href="#"
+              style={{ color: '#FFFFFF' }}
+              className="text-[13px] font-medium !text-white visited:!text-white hover:!text-white hover:underline"
+            >
               24/7 Support
             </a>
             <button className="flex items-center gap-1 text-[13px] font-medium text-white hover:underline">

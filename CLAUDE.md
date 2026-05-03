@@ -74,10 +74,10 @@ A clickable, multi-page Next.js prototype showcasing iHerb's future state as a p
 - **`PersonaProvider`** (`src/components/PersonaProvider.tsx`) — React context exposing `persona`, `personaId`, `setPersonaId`, `timeOfDay`, `setTimeOfDay`, `greeting`. Persists to `localStorage`. **Always renders the Provider** even when not yet hydrated — earlier versions returned a non-Provider wrapper before hydration which broke SSR/prerender. Visibility toggle is on a wrapper div, not the Provider.
 - **`PersonaSwitcher`** — floating bottom-right control with persona + time-of-day toggles. Used by reviewers to demonstrate dynamic adaptation.
 - **Personas** are in `src/data/personas.ts`:
-  - **Maya** — 28, Austin TX, wellness beginner with 3 supplements. Primary goals: sleep, energy, immune. Apple Health connected only.
+  - **Judy** — 28, Austin TX, wellness beginner with 3 supplements. Primary goals: sleep, energy, immune. Apple Health connected only. **NOTE:** display name is "Judy" but `persona.id` is still `'maya'` (and constants like `SUGGESTED_QUESTIONS_MAYA`, `ADHERENCE_TREND_MAYA`, conditionals like `persona.id === 'maya'`) intentionally kept the old key to avoid a cascading refactor. Pages render the display name via `persona.firstName`. If you need to add a new persona key, choose a fresh ID — don't reuse `'maya'`.
   - **Daniel** — 42, Seattle WA, advanced biohacker with 12+ supplements. Goals: longevity, cognitive, athletic, sleep. Whoop, Oura, Garmin, Levels CGM all connected.
   - Each persona has full mock data: `stack`, `agentActions`, `achievements`, `connectedApps`, `routine`, `contextHints`, etc.
-- **Every page MUST personalize copy and choices via `usePersona().persona.id`.** Maya gets beginner-friendly framing; Daniel gets data-rich biohacker framing.
+- **Every page MUST personalize copy and choices via `usePersona().persona.id`.** Judy (id `'maya'`) gets beginner-friendly framing; Daniel gets data-rich biohacker framing.
 
 ### Other shared components
 
@@ -99,10 +99,10 @@ A clickable, multi-page Next.js prototype showcasing iHerb's future state as a p
 
 ### Lifestyle imagery library
 
-- `src/data/lifestyleImages.ts` — typed map of curated Unsplash + Pexels CDN URLs covering: persona-aware morning hero (Maya/Daniel), location-aware Forecast hero (Austin/Seattle), seasonal lifestyle vignettes (allergy/hydration), Subscriptions hero (premium amber bottles), Stack hero (supplement ritual), expert portraits (Dr. Chen / Dr. Patel), supplement still-lifes.
+- `src/data/lifestyleImages.ts` — typed map of curated Unsplash + Pexels CDN URLs covering: persona-aware morning hero (Judy/Daniel), location-aware Forecast hero (Austin/Seattle), seasonal lifestyle vignettes (allergy/hydration), Subscriptions hero (row of branded vitamin bottles — ecommerce specialty-store shelf vibe), Stack hero (display wall of supplement bottles), expert portraits (Dr. Chen / Dr. Patel), supplement still-lifes. **Imagery rule of thumb:** for ecommerce/store-context heroes, prefer recognizable retail bottles or shelves over moody single-bottle macros — the latter look artsy but read as editorial, not as "shop here."
 - All royalty-free; pulled via plain `<img>` tags (no Next.js Image optimization), so no `remotePatterns` allowlist needed in `next.config.ts`. URLs include `?w=NNNN&q=80` params so we ship reasonable file sizes (1800 for heroes, 1200 for inline, 400 for thumbs).
 - **Always use this library** rather than hardcoding lifestyle URLs in pages. If you add a new image, append to the file with comment, alt text, and credit.
-- **Verify URL works before shipping**: not every Unsplash photo ID is actually live. If a hero renders as a gray gradient, the image 404'd — swap to a known-good URL (e.g., `1556228720-195a672e8a03` amber bottles, `1584308666744-24d5c474f2ae` supplement ritual, `1441974231531-c6227db76b6e` PNW forest, `1531219432768-9f540ec081f3` Texas hill country).
+- **Verify URL works before shipping**: not every Unsplash photo ID is actually live. If a hero renders as a gray gradient, the image 404'd — swap to a known-good URL. Verified ecommerce-fit IDs as of May 2 2026: `1704694671866-f83e0b91df09` (row of branded vitamin bottles — current Subscriptions hero), `1528272252360-5efd274e36fb` (supplement bottle wall — current Stack hero), `1556228720-195a672e8a03` (amber bottles), `1584308666744-24d5c474f2ae` (supplement ritual), `1441974231531-c6227db76b6e` (PNW forest), `1531219432768-9f540ec081f3` (Texas hill country).
 
 ## Visual Recipe (the through-line)
 
@@ -157,7 +157,7 @@ The build deploys, but there's a meaningful gap between *the prototype works* an
 
 Done in commit `f5b7fee`. Every product surface now uses real iHerb Cloudinary images:
 
-- **`src/data/personas.ts`** — All `StackItem.imageUrl` and `AgentAction.productImage` fields now point to real `cloudinary.images-iherb.com/.../images/<brand>/<sku>/u/<n>.jpg` URLs (Maya: CGN D3 5000, NOW Mag Glycinate, CGN Vit C; Daniel: Thorne creatine/omega/bisglycinate/collagen/ashwagandha + LE NMN/Quercetin + Nuun substituted for LMNT).
+- **`src/data/personas.ts`** — All `StackItem.imageUrl` and `AgentAction.productImage` fields now point to real `cloudinary.images-iherb.com/.../images/<brand>/<sku>/u/<n>.jpg` URLs (Judy: CGN D3 5000, NOW Mag Glycinate, CGN Vit C; Daniel: Thorne creatine/omega/bisglycinate/collagen/ashwagandha + LE NMN/Quercetin + Nuun substituted for LMNT).
 - **PDP** — main image, 4-thumb row, and smart pairing all wired to real Cloudinary URLs (uses `product.image` from products.ts, with the MOCK_PRODUCT fallback also pointing to a real URL).
 - **Cart** — `CartItem.emoji` field renamed to `imageUrl`; all line items render real images. Free-shipping upsell also has a thumbnail.
 - **Subscriptions** — removed the `productEmoji(category)` helper; subscription cards use `item.imageUrl` directly.
