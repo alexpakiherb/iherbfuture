@@ -33,10 +33,11 @@ export const MORNING_HERO_DANIEL: LifestyleImage = {
 // ── Forecast page heroes (location-aware) ───────────────────────────────────
 
 export const FORECAST_HERO_AUSTIN: LifestyleImage = {
-  // Hill country sunrise, warm dry climate.
-  url: 'https://images.unsplash.com/photo-1531219432768-9f540ec081f3?w=1800&q=80&auto=format&fit=crop',
-  alt: 'Texas hill country in golden morning light',
-  credit: 'Carlos Alfonso / Unsplash',
+  // Bluebonnets + oak tree + wooden fence under a warm Hill Country sky —
+  // iconic Austin spring lifestyle. Replaces a previously-404'ing photo.
+  url: 'https://images.unsplash.com/photo-1682458855022-b71fa850a085?w=1800&q=80&auto=format&fit=crop',
+  alt: 'Texas hill country bluebonnets and live oak in warm evening light',
+  credit: 'Unsplash',
 };
 
 export const FORECAST_HERO_SEATTLE: LifestyleImage = {
