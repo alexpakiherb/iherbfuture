@@ -235,11 +235,53 @@ A round of small but visible fixes after a review pass through the deployed prot
 
 **Energy Boost bundle — center bottle 404.** Judy's "Steady energy · Without the crash" starter bundle in `src/app/page.tsx` had a broken center hero in the `BundleCollage` (rendered as a blank silhouette). Root cause was a wrong brand prefix — the iHerb Cloudinary path used `jar/jar05079` but the correct prefix for Jarrow Formulas is `jrw`. Swapped to `jrw/jrw01006/u/114.jpg` (Jarrow Vegan B-Right). Bundle now reads as a textbook ALA + B-complex + magnesium-malate energy stack.
 
+## Session log — May 3 2026 (Editorial v2 — production polish pass)
+
+User feedback going into this session: "Take inspiration from Apple, Patagonia, ASOS, Nike. The Forecast page imagery and colors are the bar; the rest of the site has too many big text boxes that look busy and especially strange when wide and skinny across the desktop. I want production polish, not prototype." Scope: codify a recipe first, sweep all pages.
+
+**Recipe** (now baked into `globals.css` + new components):
+
+1. Typography — bigger displays with negative tracking. New utility classes: `.font-serif-display` (Fraunces, variable opsz axis), `.eyebrow` (11.5px, .18em tracking), `.display-1` (clamp 40-64px), `.headline-1`, `.headline-2`, `.lede` (17px, max-w 640), `.body-lg`, `.section-v2` (72/88px vertical rhythm), `.hairline` (1px gradient divider). Hero headlines now run clamp(40px, 6.4vw, 76px) on `size="xl"` LifestyleHero — Apple/Patagonia territory.
+
+2. Color discipline — the gradient pastel everywhere look is gone. Default surface is white on `bg-[#FAFAFA]`. Tinted gradients (coral/teal/purple/green pastels) survive only as semantic accents (one streak tile, one achievement section, etc.), never as the default tile background. Borders dropped from 1px solid to `ring-1 ring-[#EFEFEF]` (a hair lighter, no harsh corners).
+
+3. Layout — bento bias retired. Pages now flow vertically as distinct editorial sections with consistent rhythm (~80-100px between sections). Wide-skinny tiles converted to `EditorialSplit` (50/50 photo + content) when they have an image story, or `MetricRow` (clean horizontal stat strip with hairline dividers) when they're numbers, or just dropped. Side rails on Stack/Subscriptions removed in favor of full-width sections.
+
+**New shared primitives** (`src/components/`):
+
+- **`SectionHeader.tsx`** — eyebrow + display headline + lede (max-width 640px so it never goes wide-skinny) + optional right-aligned CTA. Pass `serif` for editorial moments. Use one per section.
+- **`EditorialSplit.tsx`** — photo on one side, content on the other. Accepts `ratio` (`'balanced'`, `'image-heavy'`, `'content-heavy'`), `reverse`, `minHeight`. `headline` is optional — pass `children` for arbitrary content (e.g. a flat AIMoment).
+- **`MetricRow.tsx`** — 2-5 stats in a row. Each stat: small-caps label, large value with negative tracking, optional unit, caption, sparkline trend, accent color. Set `hero: true` on one stat for serif Fraunces display + 56px size.
+- **AIMoment** got a new `variant: 'flat'` — no border, no shadow, no accent bar. Use inside other layout primitives (EditorialSplit) so AIMoment doesn't dominate.
+
+**Pages rebuilt:**
+
+- **Today (`/`)** — Full-bleed `LifestyleHero` (size lg, serif) with greeting overlay → `MetricRow` (streak / adherence / saved / next delivery) → 3-up "Today's ritual" product cards → `EditorialSplit` showing the day's Health Forecast hero insight (photo left, flat AIMoment + product CTA right) → pending advisor actions (when present) → 3-up curated bundle merch row → 3-up "Recently handled by advisor" → Wellness Hub `EditorialSplit`. Connected apps + achievements moved to /stack.
+- **My Stack (`/stack`)** — Hero (md, serif) → MetricRow → today's progress strip → "The day" section with each time-of-day group as its own editorial sub-section (no gradient pastel headers; just an icon + colored eyebrow + supplement count) → flat AIMoment insight → achievements grid (purple accent ring on hover, no pastel gradient backgrounds).
+- **Subscriptions (`/subscriptions`)** — Hero → MetricRow → "Recently optimized" digest (cleaner bullet rows, separate `ring-1` cards) → editorial quote section break → subscription list (single list with hairline rows, no pastel gradients) → trust strip → expert + savings `EditorialSplit` → action queue → automation rules.
+- **Wellness Advisor (`/advisor`)** — Editorial page header (serif display) → MetricRow → expert + trust split → 7/5 console split (chat + automation rules left, action queue right) with all the gradient pastel chrome stripped from automation rules.
+- **Cart (`/cart`)** — Serif display header ("N items, ready when you are.") → cleaner cart-item rows (no header strip, lighter padding, larger product thumbs) → flat AIMoment for bundle savings → simpler agent action section (eyebrow + bold heading) → cleaner trust row using divide-x.
+- **Health Forecast (`/forecast`)** — Hero size bumped to `lg` (was `xl`) and given `serif` + `rounded="lg"` for consistency with the new system; rest of the page is unchanged because it was already the bar.
+
+**Pages intentionally untouched** (not driving the user's "prototype-y" complaint):
+
+- SERP, PDP, Wellness Hub article, Onboarding. The audit flagged Onboarding as best-in-class hierarchy already; SERP and PDP are standard ecommerce shapes that don't suffer from the wide-skinny problem. They can get a follow-up touch later if needed.
+
+**Build infra fix:**
+
+- New `src/types/lucide-react.d.ts` — module shim with `LucideIcon` type and a curated list of every icon used in the codebase. The lucide-react package's published types stop resolving cleanly when node_modules is rebuilt cross-platform (Windows install → Linux build), so this keeps the `next build` TS pass green. If you import a new icon from lucide-react, add its name to this shim.
+- `next/font/google` Fraunces config: must NOT pass `weight` when using `axes: ['opsz']` (variable font axis). The right invocation is `Fraunces({ variable: '--font-fraunces', subsets: ['latin'] })` — opsz comes for free, no weight array allowed.
+
+**New rule logged:** when running `npm install` in the temp wellness-push clone after copying node_modules from the Windows mount, two platform-specific binaries don't get pulled in automatically — `lightningcss-linux-x64-gnu` (lives at `node_modules/@tailwindcss/node/node_modules/lightningcss/`) and `@tailwindcss/oxide-linux-x64-gnu` (lives at `node_modules/@tailwindcss/oxide/node_modules/`). Symptom: `next build` errors with "Cannot find module '../lightningcss.linux-x64-gnu.node'" or "Cannot find module './tailwindcss-oxide.linux-x64-gnu.node'". Fix: re-fetch each parent package after the npm install (e.g. `cd node_modules/@tailwindcss/node/node_modules && rm -rf lightningcss && npm install lightningcss@VERSION --no-save`), or download the platform tarball from the registry and place it manually under each package's `node_modules/@tailwindcss/{name}-linux-x64-gnu/`.
+
 ### What's next (UI/UX refinement — pick up here next session)
 
-The user wants to keep refining the UI/UX. Open candidates already noted in this file (don't re-enumerate; this is just a "where to start" list):
+The editorial v2 system is in place. Open candidates:
 
-- The "Refinements still flagged" list in the editorial section (real wearable SVG iconography, onboarding illustrations, Smart Cart progress-bar savings viz, PDP editorial recipe).
-- The copy + content polish list (deeper advisor mock responses, second Wellness Hub article, mobile breakpoints, real Search 2.0 product IDs in persona stacks).
-- Audit other product/lifestyle URLs across the codebase for the same brand-prefix pitfall that bit `jar/jar05079` — there may be other broken images we haven't noticed yet. A defensive pass with a `<img onError>` fallback or a build-time URL-check script would catch these without manual review.
-- General taste pass on bento density, color zones across pages, and whether the AIMoment / AgentActionCard recipes are still earning their space everywhere they appear.
+- **PDP & SERP** with the editorial recipe — both were intentionally skipped because they didn't drive the "prototype-y" complaint, but they'd benefit from the new SectionHeader / typography hierarchy / lighter chrome. The PDP could get a `LifestyleHero` for hero category products and an `EditorialSplit` for the smart-pairing section.
+- **Onboarding illustrations** — the audit said hierarchy is best-in-class, but each step is still text + emoji + form. A subtle illustration per step would make it feel premium.
+- **Real wearable SVG iconography** — the connected-apps + persona avatars still use emoji (⌚ 💍 ❤️). Replacing with real SVG marks for Whoop / Oura / Garmin / Apple Health / Levels CGM is the highest visual ROI cosmetic change left.
+- **Smart Cart bundle savings progress bar** — visualizing "$X saved by bundling" as a progress bar instead of a price line.
+- **Mobile responsiveness pass** — current breakpoints still assume ≥1280px viewport in many places. Forecast and Cart already use `md:`/`lg:` breakpoints; Today/Stack/Subscriptions/Advisor were rewritten with grid-cols-1/sm:grid-cols-2/lg:grid-cols-N so they should be mostly OK but untested under 1024px.
+- **Defensive image audit** — the brand-prefix pitfall (`jar/jar05079` 404'ing because the correct prefix is `jrw/jrw01006`) hasn't been swept. A build-time URL check or `<img onError>` fallback would catch these without manual review.
+- **Deeper advisor mock chat responses** — 4-6 more keyword paths so the demo doesn't feel scripted on the first dozen prompts.
