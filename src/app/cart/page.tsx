@@ -26,6 +26,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { AIMoment, ContextPill } from '@/components/AIMoment';
 import { AgentActionCard } from '@/components/AgentActionCard';
+import { Billboard } from '@/components/Billboard';
 import { usePersona } from '@/components/PersonaProvider';
 import { AgentAction } from '@/data/personas';
 
@@ -251,31 +252,30 @@ export default function CartPage() {
         };
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#FAFAFA]">
+    <div className="flex min-h-screen flex-col">
       <Header />
 
-      <main className="mx-auto w-full max-w-[1280px] flex-1 px-6 pt-12 pb-24 md:px-10 md:pt-16 md:pb-32">
+      <main className="flex-1">
+        {/* ── Billboard hero (v3) ──────────────────────────────────── */}
+        <section className="mx-auto w-full max-w-[1500px] px-4 pt-4 sm:px-6 md:px-8 md:pt-6">
+          <Billboard
+            surface="oat"
+            size="sm"
+            eyebrow={`Your cart · ${visibleItems.length} ${visibleItems.length === 1 ? 'item' : 'items'}`}
+            headline={
+              persona.id === 'maya'
+                ? <>Ready when <em className="not-italic font-serif-display italic">you</em> are.</>
+                : <>Curated. Price-locked. <em className="not-italic font-serif-display italic">Yours.</em></>
+            }
+            body={
+              persona.id === 'maya'
+                ? 'Your advisor found a way to save before you check out — apply or skip below.'
+                : 'Your advisor curated this cart, locked prices, and found a bundle worth your while.'
+            }
+          />
+        </section>
 
-        {/* ── Editorial page header ───────────────────────────────── */}
-        <div className="mb-12">
-          <div className="mb-3 flex items-center gap-1.5 text-[#0A6B3C]">
-            <ShoppingCart size={13} strokeWidth={2.5} />
-            <span className="text-[11.5px] font-bold uppercase" style={{ letterSpacing: '0.18em' }}>
-              Your Cart
-            </span>
-          </div>
-          <h1
-            className="font-serif-display text-[36px] font-bold text-[#1A1A1A] md:text-[52px]"
-            style={{ letterSpacing: '-0.022em', lineHeight: 1.04 }}
-          >
-            {visibleItems.length} {visibleItems.length === 1 ? 'item' : 'items'}, ready when you are.
-          </h1>
-          <p className="mt-4 max-w-[560px] text-[16px] text-[#555]" style={{ lineHeight: 1.55 }}>
-            {persona.id === 'maya'
-              ? 'Your advisor found a way to save before you check out — apply or skip below.'
-              : 'Your advisor curated this cart, locked prices, and found a bundle worth your while.'}
-          </p>
-        </div>
+      <div className="mx-auto w-full max-w-[1280px] flex-1 px-6 pt-12 pb-24 md:px-10 md:pt-16 md:pb-32">
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_380px]">
 
@@ -614,6 +614,7 @@ export default function CartPage() {
             </div>
           </div>
         </div>
+      </div>
       </main>
 
       <Footer />

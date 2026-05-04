@@ -21,7 +21,8 @@ import Footer from '@/components/Footer';
 import { AgentActionCard } from '@/components/AgentActionCard';
 import { ContextPill } from '@/components/AIMoment';
 import { SectionHeader } from '@/components/SectionHeader';
-import { MetricRow, type Metric } from '@/components/MetricRow';
+import { Bento, BentoTile } from '@/components/BentoTile';
+import { Billboard } from '@/components/Billboard';
 import { ExpertCallout } from '@/components/ExpertCallout';
 import { TrustBadgeStrip } from '@/components/TrustBadgeStrip';
 import { usePersona } from '@/components/PersonaProvider';
@@ -141,69 +142,81 @@ export default function AdvisorPage() {
     setInput('');
   };
 
-  const metrics: Metric[] = [
-    {
-      label: 'Awaiting you',
-      value: stateCounts.pending.toString(),
-      caption: stateCounts.pending === 0 ? 'all clear' : stateCounts.pending === 1 ? 'recommendation pending' : 'recommendations pending',
-      accent: '#FF6B4A',
-      hero: true,
-    },
-    {
-      label: 'Actions taken',
-      value: totalActions.toString(),
-      caption: 'last 30 days',
-      trend: actionsTrend,
-      accent: '#0A6B3C',
-    },
-    {
-      label: 'You saved',
-      value: savings,
-      caption: 'via auto-tuning',
-      trend: savingsTrend,
-      accent: '#0E9594',
-    },
-    {
-      label: 'Approval rate',
-      value: approval,
-      caption: 'of suggestions accepted',
-      trend: approvalTrend,
-      accent: '#6B4FBC',
-    },
-  ];
+  // (advisor stats now rendered as a 4-tile Bento)
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#FAFAFA]">
+    <div className="flex min-h-screen flex-col">
       <Header />
 
       <main className="flex-1">
-        {/* ── 1. Editorial page header ───────────────────────────────── */}
-        <section className="mx-auto w-full max-w-[1280px] px-6 pt-12 md:px-10 md:pt-16">
-          <div className="mb-3 inline-flex items-center gap-1.5 text-[#0A6B3C]">
-            <Sparkles size={13} strokeWidth={2.5} />
-            <span className="text-[11.5px] font-bold uppercase" style={{ letterSpacing: '0.18em' }}>
-              Your Wellness Advisor
-            </span>
-          </div>
-          <h1
-            className="font-serif-display text-[36px] font-bold text-[#1A1A1A] md:text-[52px]"
-            style={{ letterSpacing: '-0.022em', lineHeight: 1.04 }}
-          >
-            Ask anything. Approve actions. See the work.
-          </h1>
-          <p className="mt-4 max-w-[640px] text-[16px] text-[#555]" style={{ lineHeight: 1.55 }}>
-            Your advisor learns from your goals, your data, and the iHerb Wellness Hub. Every action is logged and reversible.
-          </p>
+        {/* ── 1. Billboard hero — ink-black brand moment (v3) ────────── */}
+        <section className="mx-auto w-full max-w-[1500px] px-4 pt-4 sm:px-6 md:px-8 md:pt-6">
+          <Billboard
+            surface="ink"
+            size="md"
+            eyebrow="Your Wellness Advisor"
+            headline={<>Ask anything. <em className="not-italic font-serif-display italic">Approve.</em> See the work.</>}
+            body="Your advisor learns from your goals, your data, and the iHerb Wellness Hub. Every action is logged and reversible."
+            ctaLabel="Open the chat"
+            ctaHref="#chat"
+            secondaryCtaLabel="See what it handled"
+            secondaryCtaHref="#queue"
+          />
         </section>
 
-        {/* ── 2. Stat row ────────────────────────────────────────────── */}
-        <section className="mx-auto w-full max-w-[1280px] px-6 py-12 md:px-10 md:py-16">
-          <MetricRow metrics={metrics} />
+        {/* ── 2. Stat bento — 4 tiles, mixed accents ─────────────────── */}
+        <section className="mx-auto w-full max-w-[1500px] px-4 pt-6 sm:px-6 md:px-8 md:pt-8">
+          <Bento>
+            <BentoTile
+              variant="stat"
+              span="col-span-6 lg:col-span-3"
+              surface="oat"
+              label="Awaiting you"
+              value={stateCounts.pending.toString()}
+              caption={stateCounts.pending === 0 ? 'All clear.' : stateCounts.pending === 1 ? 'One recommendation pending.' : `${stateCounts.pending} pending.`}
+              accent="#0F1815"
+              serif
+              size="xl"
+              minHeight="240px"
+            />
+            <BentoTile
+              variant="stat"
+              span="col-span-6 lg:col-span-3"
+              surface="bone"
+              label="Actions taken"
+              value={totalActions.toString()}
+              caption="last 30 days"
+              trend={actionsTrend}
+              accent="#0A6B3C"
+              size="lg"
+              minHeight="240px"
+            />
+            <BentoTile
+              variant="stat"
+              span="col-span-6 lg:col-span-3"
+              surface="forest"
+              label="You saved"
+              value={savings}
+              caption="via auto-tuning"
+              trend={savingsTrend}
+              accent="#FFFFFF"
+              size="lg"
+              minHeight="240px"
+            />
+            <BentoTile
+              variant="stat"
+              span="col-span-6 lg:col-span-3"
+              surface="bone"
+              label="Approval rate"
+              value={approval}
+              caption="of suggestions accepted"
+              trend={approvalTrend}
+              accent="#6B4FBC"
+              size="lg"
+              minHeight="240px"
+            />
+          </Bento>
         </section>
-
-        <div className="mx-auto w-full max-w-[1280px] px-6 md:px-10">
-          <hr className="hairline" />
-        </div>
 
         {/* ── 3. Expert + trust ──────────────────────────────────────── */}
         <section className="mx-auto w-full max-w-[1280px] px-6 pt-16 md:px-10 md:pt-20">
@@ -233,7 +246,7 @@ export default function AdvisorPage() {
         </section>
 
         {/* ── 4. Chat + queue console ────────────────────────────────── */}
-        <section className="mx-auto w-full max-w-[1280px] px-6 pt-20 pb-24 md:px-10 md:pt-24 md:pb-32">
+        <section id="chat" className="mx-auto w-full max-w-[1280px] px-6 pt-20 pb-24 md:px-10 md:pt-24 md:pb-32">
           <SectionHeader
             eyebrow="The console"
             headline="Talk to it. Watch it work."
@@ -379,7 +392,7 @@ export default function AdvisorPage() {
             </div>
 
             {/* RIGHT: Action queue */}
-            <div className="col-span-12 lg:col-span-5">
+            <div id="queue" className="col-span-12 lg:col-span-5">
               <div className="lg:sticky lg:top-[140px]">
                 <div className="mb-4 flex items-baseline justify-between">
                   <h3 className="text-[20px] font-bold text-[#1A1A1A]" style={{ letterSpacing: '-0.012em' }}>

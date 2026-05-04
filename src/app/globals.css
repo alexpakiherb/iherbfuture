@@ -82,7 +82,9 @@ body {
 }
 
 body {
-  background-color: var(--iherb-gray-bg);
+  /* v3 (May 4 2026): warm cream base instead of cool gray. Aesop / Le Labo
+     wellness palette — cream feels expensive, gray feels like a SaaS dashboard. */
+  background-color: #F5F1EA;
   color: var(--iherb-text-primary);
   font-family: "Noto Sans", system-ui, -apple-system, sans-serif;
   font-size: 16px;
@@ -282,4 +284,53 @@ select {
   height: 1px;
   background: linear-gradient(to right, transparent, #E5E5E5 12%, #E5E5E5 88%, transparent);
   margin: 0;
+}
+
+
+/* ────────────────────────────────────────────────────────────────
+   v3 palette tokens (May 4 2026) — Aesop/Patagonia warm earth tones. */
+
+.billboard-ink {
+  background: #0F1815;
+  color: #F5F1EA;
+}
+
+.billboard-cream {
+  background: #F5F1EA;
+  color: #1A1A1A;
+}
+
+.billboard-oat {
+  background: #E8E0D2;
+  color: #1A1A1A;
+}
+
+.tile-bone {
+  background: #FBF9F4;
+  border-radius: 1.25rem;
+  overflow: hidden;
+}
+
+.tile-oat {
+  background: #E8E0D2;
+  border-radius: 1.25rem;
+  overflow: hidden;
+}
+
+.motion-lift {
+  transition: transform 320ms cubic-bezier(0.2, 0.8, 0.2, 1),
+              box-shadow 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.motion-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 40px rgba(15, 24, 21, 0.08), 0 4px 8px rgba(15, 24, 21, 0.04);
+}
+
+.media-zoom > img {
+  transition: transform 600ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
+}
+.media-zoom:hover > img {
+  transform: scale(1.04);
 }

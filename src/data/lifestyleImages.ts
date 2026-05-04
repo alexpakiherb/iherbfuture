@@ -125,6 +125,56 @@ export const SUPPLEMENT_STILLLIFE_NEUTRAL: LifestyleImage = {
   credit: 'Pexels',
 };
 
+// ── v3 additions (May 4 2026) — bento photo tiles & editorial breaks ────────
+
+export const RITUAL_KITCHEN: LifestyleImage = {
+  url: 'https://images.pexels.com/photos/4099355/pexels-photo-4099355.jpeg?auto=compress&cs=tinysrgb&w=1400',
+  alt: 'Warm morning kitchen ritual with light streaming in',
+  credit: 'Pexels',
+};
+
+export const RITUAL_HANDS: LifestyleImage = {
+  url: 'https://images.pexels.com/photos/3683074/pexels-photo-3683074.jpeg?auto=compress&cs=tinysrgb&w=1400',
+  alt: 'Hands holding wellness capsules',
+  credit: 'Pexels',
+};
+
+export const RITUAL_EVENING: LifestyleImage = {
+  url: 'https://images.pexels.com/photos/3768910/pexels-photo-3768910.jpeg?auto=compress&cs=tinysrgb&w=1400',
+  alt: 'Cozy evening interior with warm light',
+  credit: 'Pexels',
+};
+
+export const RITUAL_WORKOUT: LifestyleImage = {
+  url: 'https://images.pexels.com/photos/4148897/pexels-photo-4148897.jpeg?auto=compress&cs=tinysrgb&w=1400',
+  alt: 'Athletic training gear in warm gym light',
+  credit: 'Pexels',
+};
+
+export const RITUAL_HYDRATE: LifestyleImage = {
+  url: 'https://images.pexels.com/photos/3683081/pexels-photo-3683081.jpeg?auto=compress&cs=tinysrgb&w=1400',
+  alt: 'Glass of water and supplements on warm counter',
+  credit: 'Pexels',
+};
+
+export const RITUAL_BOTTLES_WOOD: LifestyleImage = {
+  url: 'https://images.pexels.com/photos/5938567/pexels-photo-5938567.jpeg?auto=compress&cs=tinysrgb&w=1400',
+  alt: 'Amber apothecary bottles arranged on wooden surface',
+  credit: 'Pexels',
+};
+
+export const RITUAL_FLATLAY: LifestyleImage = {
+  url: 'https://images.pexels.com/photos/4047030/pexels-photo-4047030.jpeg?auto=compress&cs=tinysrgb&w=1400',
+  alt: 'Editorial supplement flatlay with greenery',
+  credit: 'Pexels',
+};
+
+export const RITUAL_NIGHT_SKY: LifestyleImage = {
+  url: 'https://images.pexels.com/photos/957061/milky-way-starry-sky-night-sky-star-957061.jpeg?auto=compress&cs=tinysrgb&w=1400',
+  alt: 'Starry night sky',
+  credit: 'Pexels',
+};
+
 // ── Convenience map ─────────────────────────────────────────────────────────
 
 export const LIFESTYLE_IMAGES = {
@@ -141,4 +191,12 @@ export const LIFESTYLE_IMAGES = {
   expertPatel: EXPERT_DR_PATEL,
   supplementAmber: SUPPLEMENT_STILLLIFE_AMBER,
   supplementNeutral: SUPPLEMENT_STILLLIFE_NEUTRAL,
+  ritualKitchen: RITUAL_KITCHEN,
+  ritualHands: RITUAL_HANDS,
+  ritualEvening: RITUAL_EVENING,
+  ritualWorkout: RITUAL_WORKOUT,
+  ritualHydrate: RITUAL_HYDRATE,
+  ritualBottlesWood: RITUAL_BOTTLES_WOOD,
+  ritualFlatlay: RITUAL_FLATLAY,
+  ritualNightSky: RITUAL_NIGHT_SKY,
 } as const;

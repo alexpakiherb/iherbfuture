@@ -27,7 +27,7 @@ import { AdherenceRing } from '@/components/AdherenceRing';
 import { Sparkline } from '@/components/Sparkline';
 import { LifestyleHero } from '@/components/LifestyleHero';
 import { SectionHeader } from '@/components/SectionHeader';
-import { MetricRow, type Metric } from '@/components/MetricRow';
+import { Bento, BentoTile } from '@/components/BentoTile';
 import { EditorialSplit } from '@/components/EditorialSplit';
 import { ExpertCallout } from '@/components/ExpertCallout';
 import { TrustBadgeStrip } from '@/components/TrustBadgeStrip';
@@ -37,6 +37,7 @@ import {
   SUBSCRIPTIONS_HERO,
   EXPERT_DR_CHEN,
   DELIVERY_LIFESTYLE,
+  RITUAL_FLATLAY,
 } from '@/data/lifestyleImages';
 
 function freqLabel(days: number): string {
@@ -111,44 +112,15 @@ export default function SubscriptionsPage() {
         { text: 'Bundled NMN + Quercetin + Resveratrol into Longevity Stack.', delta: 'Saved $31.20/mo', dir: 'savings' as const },
       ];
 
-  const metrics: Metric[] = [
-    {
-      label: 'Active',
-      value: activeCount.toString(),
-      unit: 'subs',
-      caption: 'all on autoship',
-      accent: '#0A6B3C',
-      hero: true,
-    },
-    {
-      label: 'Saved by auto-tuning',
-      value: savedThisYear,
-      caption: `YTD · ${isMaya ? '2' : '6'} actions taken`,
-      trend: savingsTrend,
-      accent: '#0E9594',
-    },
-    {
-      label: 'Next delivery',
-      value: nextDelivery.split(' ')[1] ?? nextDelivery,
-      unit: nextDelivery.split(' ')[0] ?? '',
-      caption: `${isMaya ? '2' : '4'} items in this box`,
-      accent: '#6B4FBC',
-    },
-    {
-      label: 'Paused',
-      value: (isMaya ? pausedCount : pausedCount + 1).toString(),
-      caption: isMaya ? (pausedCount === 0 ? 'all running' : 'by you or AI') : 'LMNT overstock',
-      accent: '#FF6B4A',
-    },
-  ];
+  // (metrics rendered as a Bento with mixed photo + stat tiles)
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#FAFAFA]">
+    <div className="flex min-h-screen flex-col">
       <Header />
 
       <main className="flex-1">
         {/* ── 1. Editorial hero ──────────────────────────────────────── */}
-        <section className="mx-auto w-full max-w-[1440px] px-4 pt-4 sm:px-6 md:px-8 md:pt-6">
+        <section className="mx-auto w-full max-w-[1500px] px-4 pt-4 sm:px-6 md:px-8 md:pt-6">
           <LifestyleHero
             imageUrl={SUBSCRIPTIONS_HERO.url}
             alt={SUBSCRIPTIONS_HERO.alt}
@@ -180,14 +152,58 @@ export default function SubscriptionsPage() {
           </LifestyleHero>
         </section>
 
-        {/* ── 2. Stat row ────────────────────────────────────────────── */}
-        <section className="mx-auto w-full max-w-[1280px] px-6 py-12 md:px-10 md:py-16">
-          <MetricRow metrics={metrics} />
+        {/* ── 2. Bento — stats mixed with photo tile (v3) ────────────── */}
+        <section className="mx-auto w-full max-w-[1500px] px-4 pt-6 sm:px-6 md:px-8 md:pt-8">
+          <Bento>
+            <BentoTile
+              variant="stat"
+              span="col-span-12 lg:col-span-3"
+              surface="ink"
+              label="Active"
+              value={activeCount.toString()}
+              unit="subs"
+              caption="All on autoship."
+              accent="#F5F1EA"
+              serif
+              size="xl"
+              minHeight="280px"
+            />
+            <BentoTile
+              variant="stat"
+              span="col-span-6 lg:col-span-3"
+              surface="bone"
+              label="Saved by auto-tuning"
+              value={savedThisYear}
+              caption={`YTD · ${isMaya ? '2' : '6'} actions taken.`}
+              trend={savingsTrend}
+              accent="#0E9594"
+              size="lg"
+              minHeight="280px"
+            />
+            <BentoTile
+              variant="photo"
+              span="col-span-6 lg:col-span-3"
+              imageUrl={RITUAL_FLATLAY.url}
+              alt={RITUAL_FLATLAY.alt}
+              eyebrow="In your box"
+              caption={isMaya ? 'Two compounds, May tenth.' : 'Four compounds, May tenth.'}
+              overlay="medium"
+              minHeight="280px"
+            />
+            <BentoTile
+              variant="stat"
+              span="col-span-12 lg:col-span-3"
+              surface="oat"
+              label="Paused"
+              value={(isMaya ? pausedCount : pausedCount + 1).toString()}
+              caption={isMaya ? (pausedCount === 0 ? 'All running.' : 'By you or AI.') : 'LMNT overstock.'}
+              accent="#0F1815"
+              serif
+              size="xl"
+              minHeight="280px"
+            />
+          </Bento>
         </section>
-
-        <div className="mx-auto w-full max-w-[1280px] px-6 md:px-10">
-          <hr className="hairline" />
-        </div>
 
         {/* ── 3. Recently optimized — flat AIMoment ──────────────────── */}
         <section className="mx-auto w-full max-w-[1280px] px-6 pt-16 md:px-10 md:pt-20">
