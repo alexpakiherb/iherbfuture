@@ -28,14 +28,24 @@ interface LifestyleHeroProps {
   align?: 'left' | 'center' | 'right';
   /** Tint hue for the overlay gradient. Default neutral. */
   tint?: 'neutral' | 'green' | 'coral' | 'teal' | 'purple';
+  /** Use Fraunces serif for the headline (editorial moments). May 3 2026. */
+  serif?: boolean;
+  /** Round corners. Default 'lg' (24px). 'none' for full-bleed page heroes. */
+  rounded?: 'none' | 'md' | 'lg';
   className?: string;
 }
 
 const HEIGHT_STYLES = {
-  sm: 'h-[200px]',
-  md: 'h-[300px]',
-  lg: 'h-[420px]',
-  xl: 'h-[520px]',
+  sm: 'h-[260px]',
+  md: 'h-[400px]',
+  lg: 'h-[520px]',
+  xl: 'h-[640px]',
+};
+
+const ROUNDED_STYLES = {
+  none: 'rounded-none',
+  md: 'rounded-2xl',
+  lg: 'rounded-3xl',
 };
 
 // Tint adds a soft colored wash on top of the dark gradient to anchor the
@@ -73,11 +83,21 @@ export function LifestyleHero({
   overlay = 'medium',
   align = 'left',
   tint = 'neutral',
+  serif = false,
+  rounded = 'lg',
   className = '',
 }: LifestyleHeroProps) {
+  // Display sizes — bumped May 3 2026. Patagonia/Apple territory:
+  // hero headlines need to dominate the viewport.
+  const headlineSize =
+    size === 'xl' ? 'clamp(40px, 6.4vw, 76px)' :
+    size === 'lg' ? 'clamp(34px, 4.8vw, 60px)' :
+    size === 'md' ? 'clamp(28px, 3.6vw, 44px)' :
+                    'clamp(22px, 2.8vw, 32px)';
+
   return (
     <div
-      className={`relative w-full overflow-hidden rounded-2xl ${HEIGHT_STYLES[size]} ${className}`}
+      className={`relative w-full overflow-hidden ${ROUNDED_STYLES[rounded]} ${HEIGHT_STYLES[size]} ${className}`}
     >
       {/* Background image */}
       <img
@@ -94,30 +114,35 @@ export function LifestyleHero({
 
       {/* Content */}
       <div
-        className={`relative flex h-full flex-col justify-end p-7 lg:p-9 ${ALIGN_STYLES[align]}`}
+        className={`relative flex h-full flex-col justify-end p-7 md:p-10 lg:p-14 ${ALIGN_STYLES[align]}`}
       >
         {eyebrow && (
-          <div className="mb-2 text-[10.5px] font-bold uppercase tracking-[0.18em] text-white/85">
+          <div
+            className="mb-4 text-[11.5px] font-bold uppercase text-white/90"
+            style={{ letterSpacing: '0.18em', lineHeight: 1 }}
+          >
             {eyebrow}
           </div>
         )}
         <h1
-          className="font-bold leading-[1.1] text-white"
+          className={`font-bold text-white max-w-[20ch] ${serif ? 'font-serif-display' : ''}`}
           style={{
-            // Editorial-feeling display via stretched tracking and large size.
-            // Using inline style so we don't fight against any global typography.
-            fontSize: size === 'xl' ? '44px' : size === 'lg' ? '36px' : size === 'md' ? '30px' : '24px',
-            letterSpacing: '-0.01em',
+            fontSize: headlineSize,
+            letterSpacing: '-0.022em',
+            lineHeight: 1.04,
           }}
         >
           {headline}
         </h1>
         {subline && (
-          <p className="mt-2 max-w-[640px] text-[14px] leading-relaxed text-white/90">
+          <p
+            className="mt-4 max-w-[560px] text-[15.5px] text-white/90"
+            style={{ lineHeight: 1.55 }}
+          >
             {subline}
           </p>
         )}
-        {children && <div className="mt-3 flex flex-wrap gap-1.5">{children}</div>}
+        {children && <div className="mt-5 flex flex-wrap gap-2">{children}</div>}
       </div>
     </div>
   );

@@ -1,43 +1,53 @@
 'use client';
 
-// Home page — bento-grid personalized landing that morphs by persona,
-// time of day, season, and recent activity. Sets the visual bar for the whole
-// prototype: varied tile sizes, color zones per category, sparklines on every
-// metric, real product imagery, AIMoment / AgentActionCard reusable patterns.
+// Today / Home — editorial v2 (May 3, 2026).
+//
+// Rebuilt from a bento-everywhere dashboard into an editorial flow inspired
+// by Patagonia (full-bleed photo + magazine pacing) and ASOS/Nike (tight
+// merchandising rows for the bundle/recipe sections). Every section is a
+// distinct moment with a real headline, not a tile in a sea of tiles.
+//
+// Section flow:
+//   1. Lifestyle hero (photo + greeting + persona context chips)
+//   2. Stat row (streak / adherence / saved / next delivery — no card chrome)
+//   3. Morning/evening ritual (3-up product cards, clean)
+//   4. Health Forecast editorial split (image + AI insight + product CTA)
+//   5. Pending advisor actions (when any)
+//   6. Curated bundles (3-up merchandising row)
+//   7. Recently handled by advisor (3-up agent cards)
+//   8. Wellness Hub article (editorial split)
+//
+// Connected apps + achievements moved to /stack — Today is for action.
 
 import {
   ArrowRight,
   Sun,
   Moon,
   Cloud,
-  Flame,
-  Award,
   ShoppingBag,
-  Activity,
-  Sparkles,
-  TrendingUp,
-  CalendarDays,
-  Heart,
 } from 'lucide-react';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { AIMoment, ContextPill } from '@/components/AIMoment';
+import { AIMoment } from '@/components/AIMoment';
 import { AgentActionCard } from '@/components/AgentActionCard';
-import { HealthForecastStrip } from '@/components/HealthForecastStrip';
-import { AdherenceRing } from '@/components/AdherenceRing';
+import { LifestyleHero } from '@/components/LifestyleHero';
+import { SectionHeader } from '@/components/SectionHeader';
+import { EditorialSplit } from '@/components/EditorialSplit';
+import { MetricRow, type Metric } from '@/components/MetricRow';
 import { BundleCollage } from '@/components/BundleCollage';
-import { Sparkline } from '@/components/Sparkline';
-import { StreakHeatmap } from '@/components/StreakHeatmap';
 import { usePersona } from '@/components/PersonaProvider';
 import { getForecast } from '@/data/healthForecast';
-import { MORNING_HERO_MAYA, MORNING_HERO_DANIEL } from '@/data/lifestyleImages';
+import {
+  MORNING_HERO_MAYA,
+  MORNING_HERO_DANIEL,
+  ALLERGY_LIFESTYLE,
+  SUPPLEMENT_STILLLIFE_AMBER,
+} from '@/data/lifestyleImages';
 
-// Mock 30-day adherence trend (used for sparklines on home stats).
+// 30-day adherence + savings trend mocks — drive the stat row sparklines.
 const ADHERENCE_TREND_MAYA = [62, 68, 71, 70, 74, 78, 75, 80, 82, 79, 84, 86, 83, 87, 85, 88, 90, 88, 92, 91, 90, 94, 92, 93, 95, 94, 96, 95, 97, 98];
 const ADHERENCE_TREND_DANIEL = [88, 90, 91, 89, 93, 94, 92, 95, 94, 96, 97, 95, 96, 98, 97, 96, 98, 97, 99, 98, 99, 100, 99, 100, 99, 100, 100, 99, 100, 100];
-
-// Mock 30-day "savings" trend
 const SAVINGS_TREND_MAYA = [0, 2, 4, 5, 8, 12, 15, 18, 18, 19, 22, 23, 23, 25, 28, 32, 35, 35, 38, 42, 44, 47, 50, 52, 55, 58, 62, 65, 68, 71];
 const SAVINGS_TREND_DANIEL = [12, 25, 38, 47, 62, 75, 88, 95, 105, 118, 130, 138, 150, 165, 178, 188, 195, 210, 225, 238, 250, 265, 278, 292, 305, 318, 330, 342, 355, 368];
 
@@ -45,8 +55,10 @@ export default function TodayPage() {
   const { persona, timeOfDay, greeting } = usePersona();
   const forecast = getForecast(persona.id);
 
-  // Filter stack by current time of day
-  const now = persona.stack.filter((s) => {
+  const isMaya = persona.id === 'maya';
+
+  // Filter stack to current time of day for the "ritual" section.
+  const ritual = persona.stack.filter((s) => {
     if (timeOfDay === 'morning') return s.timeOfDay === 'morning' || s.timeOfDay === 'pre-workout';
     if (timeOfDay === 'evening') return s.timeOfDay === 'evening';
     return s.timeOfDay === 'midday' || s.timeOfDay === 'morning';
@@ -60,230 +72,324 @@ export default function TodayPage() {
   );
 
   const TimeIcon = timeOfDay === 'morning' ? Sun : timeOfDay === 'evening' ? Moon : Cloud;
-
   const heroInsight = forecast.insights[0];
 
-  const adherenceTrend = persona.id === 'maya' ? ADHERENCE_TREND_MAYA : ADHERENCE_TREND_DANIEL;
-  const savingsTrend = persona.id === 'maya' ? SAVINGS_TREND_MAYA : SAVINGS_TREND_DANIEL;
+  const adherenceTrend = isMaya ? ADHERENCE_TREND_MAYA : ADHERENCE_TREND_DANIEL;
+  const savingsTrend = isMaya ? SAVINGS_TREND_MAYA : SAVINGS_TREND_DANIEL;
+  const totalSaved = savingsTrend[savingsTrend.length - 1];
 
-  // Time-aware copy below greeting
-  const timeMessage =
-    timeOfDay === 'morning' && persona.id === 'maya'
+  // Subline copy for the hero — time-of-day + persona aware.
+  const heroSubline =
+    timeOfDay === 'morning' && isMaya
       ? "Here's your morning stack and what your advisor noticed overnight."
-      : timeOfDay === 'morning' && persona.id === 'daniel'
+      : timeOfDay === 'morning' && !isMaya
         ? 'HRV is trending +6 vs your baseline. Whoop says you\'re cleared for a higher-strain day.'
-        : timeOfDay === 'afternoon' && persona.id === 'maya'
+        : timeOfDay === 'afternoon' && isMaya
           ? 'Halfway through the day — keep your hydration and energy steady.'
-          : timeOfDay === 'afternoon' && persona.id === 'daniel'
+          : timeOfDay === 'afternoon' && !isMaya
             ? 'Strain target on track. Your advisor moved the LMNT into your pre-workout window.'
-            : timeOfDay === 'evening' && persona.id === 'maya'
+            : timeOfDay === 'evening' && isMaya
               ? 'Time to wind down. Magnesium glycinate goes 30 minutes before bed.'
               : 'Wind-down stack ready. Glycine + magnesium queued. Ashwagandha on board for cortisol.';
+
+  // Time label for the hero eyebrow.
+  const timeLabel =
+    timeOfDay === 'morning' ? 'Your morning brief' :
+    timeOfDay === 'evening' ? 'Your evening brief' :
+                              'Your afternoon brief';
+
+  // Next-delivery surfacing — first autoship in the persona stack.
+  const nextDelivery = persona.stack.find((s) => s.autoship)?.nextDelivery ?? '—';
+
+  // Stats for the MetricRow.
+  const metrics: Metric[] = [
+    {
+      label: 'Streak',
+      value: persona.streakDays.toString(),
+      unit: 'days',
+      caption: isMaya ? 'next milestone 21' : '180+ achieved',
+      accent: '#FF6B4A',
+      hero: true,
+    },
+    {
+      label: '30-day adherence',
+      value: `${avgAdherence}`,
+      unit: '%',
+      caption: avgAdherence >= 90 ? 'Crushing it.' : avgAdherence >= 75 ? 'Solid week.' : 'Room to grow.',
+      trend: adherenceTrend,
+      accent: '#0A6B3C',
+    },
+    {
+      label: 'Saved by advisor',
+      value: `$${totalSaved}`,
+      caption: 'this year · subscriptions + bundles',
+      trend: savingsTrend,
+      accent: '#0E9594',
+    },
+    {
+      label: 'Next delivery',
+      value: nextDelivery.split(' ')[1] ?? nextDelivery,
+      unit: nextDelivery.split(' ')[0] ?? '',
+      caption: `${persona.stack.filter((s) => s.autoship).length} subscriptions active`,
+      accent: '#1A1A1A',
+    },
+  ];
+
+  // Curated bundle data (per persona). Imagery = real iHerb Cloudinary URLs.
+  const bundles = isMaya
+    ? [
+        {
+          badge: 'Beginner Bundle',
+          title: 'Sleep foundations',
+          subtitle: '3-supplement starter for deeper rest',
+          price: '$48',
+          save: 'Save 12%',
+          tint: 'green' as const,
+          images: [
+            'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/cgn/cgn01066/u/159.jpg',
+            'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/now/now01289/u/62.jpg',
+            'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/cgn/cgn00932/u/298.jpg',
+          ] as [string, string, string],
+        },
+        {
+          badge: '3rd-Party Tested',
+          title: 'Quality Promise picks',
+          subtitle: 'NSF & Informed Choice — gold-tier brands only',
+          price: 'From $14',
+          save: 'Verified clean',
+          tint: 'blue' as const,
+          images: [
+            'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/cgn/cgn01330/u/350.jpg',
+            'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/lex/lex25359/u/8.jpg',
+            'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/sre/sre09180/u/8.jpg',
+          ] as [string, string, string],
+        },
+        {
+          badge: 'Energy Boost',
+          title: 'Steady energy',
+          subtitle: 'Without the afternoon crash',
+          price: '$32',
+          save: '4-week supply',
+          tint: 'orange' as const,
+          images: [
+            'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/lex/lex45706/u/94.jpg',
+            'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/jrw/jrw01006/u/114.jpg',
+            'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/now/now01300/u/82.jpg',
+          ] as [string, string, string],
+        },
+      ]
+    : [
+        {
+          badge: 'Longevity Stack',
+          title: 'Cellular longevity',
+          subtitle: '5-supplement protocol · NMN + quercetin foundation',
+          price: '$184',
+          save: 'Save 18%',
+          tint: 'green' as const,
+          images: [
+            'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/lex/lex23443/u/24.jpg',
+            'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/lex/lex23023/u/66.jpg',
+            'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/cgn/cgn00934/u/221.jpg',
+          ] as [string, string, string],
+        },
+        {
+          badge: '3rd-Party Tested',
+          title: 'Quality Promise picks',
+          subtitle: 'Thorne, NSF, Informed Sport — verified clean',
+          price: 'From $14',
+          save: 'Verified clean',
+          tint: 'blue' as const,
+          images: [
+            'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/thr/thr00635/u/61.jpg',
+            'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/thr/thr00644/u/96.jpg',
+            'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/thr/thr00690/u/50.jpg',
+          ] as [string, string, string],
+        },
+        {
+          badge: 'Performance Stack',
+          title: 'Z2 cardio support',
+          subtitle: 'Pre / intra / post — Whoop & Oura calibrated',
+          price: '$96',
+          save: '4-week supply',
+          tint: 'orange' as const,
+          images: [
+            'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/thr/thr00635/u/61.jpg',
+            'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/nuu/nuu02050/u/30.jpg',
+            'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/thr/thr01311/u/96.jpg',
+          ] as [string, string, string],
+        },
+      ];
 
   return (
     <div className="flex min-h-screen flex-col bg-[#FAFAFA]">
       <Header />
 
-      <main className="mx-auto w-full max-w-[1280px] flex-1 px-8 py-6">
-
-        {/* ─── ROW 1: Hero greeting (8) + Streak heatmap tile (4) ────────── */}
-        <section className="mb-4 grid grid-cols-12 gap-4">
-          {/* Greeting + now-stack — large tile, 8 cols */}
-          <div className="col-span-8 overflow-hidden rounded-2xl border border-[#E0E0E0] bg-white">
-            {/* Lifestyle band — persona-aware morning aesthetic */}
-            <div className="relative h-[140px] w-full overflow-hidden">
-              <img
-                src={persona.id === 'maya' ? MORNING_HERO_MAYA.url : MORNING_HERO_DANIEL.url}
-                alt={persona.id === 'maya' ? MORNING_HERO_MAYA.alt : MORNING_HERO_DANIEL.alt}
-                className="absolute inset-0 h-full w-full object-cover"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-white via-white/30 to-transparent" />
-              <div className="absolute right-5 top-4 inline-flex items-center gap-1.5 rounded-full bg-white/85 px-2.5 py-1 text-[10.5px] font-semibold text-[#1A1A1A] backdrop-blur-sm">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#0A6B3C]" />
-                {persona.id === 'maya' ? 'Austin · Spring' : 'Seattle · Spring'}
-              </div>
-            </div>
-            <div className="px-7 pt-5 pb-5">
-              <div className="mb-3 flex items-center gap-2 text-[#0A6B3C]">
-                <TimeIcon size={16} strokeWidth={2.5} />
-                <span className="text-[11px] font-bold uppercase tracking-widest">
-                  {timeOfDay === 'morning' ? 'Your morning' : timeOfDay === 'evening' ? 'Your evening' : 'Your afternoon'}
-                </span>
-              </div>
-              <h1 className="text-[30px] font-bold leading-tight text-[#1A1A1A]">{greeting}</h1>
-              <p className="mt-1.5 text-[14px] text-[#555]">{timeMessage}</p>
-
-              <div className="mt-4 flex flex-wrap gap-1.5">
-                {persona.contextHints.slice(0, persona.id === 'daniel' ? 4 : 3).map((hint) => (
-                  <ContextPill
-                    key={hint}
-                    label={hint}
-                    variant={
-                      hint.toLowerCase().includes('whoop') ||
-                      hint.toLowerCase().includes('hrv') ||
-                      hint.toLowerCase().includes('oura') ||
-                      hint.toLowerCase().includes('z2')
-                        ? 'data'
-                        : 'default'
-                    }
-                  />
-                ))}
-              </div>
-            </div>
-
-            <div className="border-t border-[#F0F0F0] bg-[#FAFBFA] px-7 py-4">
-              <div className="mb-3 flex items-baseline justify-between">
-                <div>
-                  <div className="text-[10.5px] font-bold uppercase tracking-widest text-[#666]">
-                    {timeOfDay === 'morning' ? 'Morning stack' : timeOfDay === 'evening' ? 'Evening stack' : 'Now in your routine'}
-                  </div>
-                  <div className="text-[12.5px] text-[#555]">
-                    {now.length} {now.length === 1 ? 'supplement' : 'supplements'} · {timeOfDay === 'evening'
-                      ? `Anchored to ${persona.routine.eveningTime}`
-                      : `Anchored to ${persona.routine.morningTime}`}
-                  </div>
-                </div>
-                <Link
-                  href="/stack"
-                  className="flex items-center gap-0.5 text-[12px] font-medium text-[#1558A6] hover:underline"
-                >
-                  Full stack
-                  <ArrowRight size={11} strokeWidth={2.5} />
-                </Link>
-              </div>
-
-              <div className="grid grid-cols-3 gap-2.5">
-                {now.slice(0, 3).map((item) => (
-                  <div
-                    key={item.productId}
-                    className="flex items-center gap-2.5 rounded-xl border border-[#E8E8E8] bg-white p-2.5 transition-all hover:border-[#0A6B3C]"
-                  >
-                    <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#EBEBEB] bg-white">
-                      <img src={item.imageUrl} alt={item.name} className="h-full w-full object-contain" loading="lazy" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="truncate text-[10.5px] font-bold uppercase tracking-wide text-[#0A6B3C]">
-                        {item.brand}
-                      </div>
-                      <div className="truncate text-[12px] font-semibold text-[#1A1A1A]">
-                        {item.name.replace(/—.*$/, '').trim()}
-                      </div>
-                      <div className="text-[10.5px] text-[#666]">
-                        {item.dose} · {item.reasonShort}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                {now.length === 0 && (
-                  <div className="col-span-3 text-center text-[12px] italic text-[#999]">
-                    No supplements scheduled for this part of the day.
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Streak hero tile — 4 cols, coral accent, with calendar heatmap */}
-          <div className="col-span-4 overflow-hidden rounded-2xl border border-[#FFC7B0] bg-gradient-to-br from-[#FFF1E8] via-[#FFE8DC] to-[#FFD9C4] p-6">
-            <div className="mb-2 flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/70">
-                <Flame size={14} className="text-[#FF6B4A]" strokeWidth={2.5} />
-              </div>
-              <span className="text-[10.5px] font-bold uppercase tracking-widest text-[#D14800]">
-                {persona.id === 'maya' ? 'Your streak' : 'Long-term streak'}
-              </span>
-            </div>
-            <div className="flex items-baseline gap-2">
-              <span className="text-[44px] font-bold leading-none text-[#1A1A1A]">{persona.streakDays}</span>
-              <span className="text-[13px] font-semibold text-[#D14800]">days</span>
-            </div>
-            <div className="mt-1 text-[11.5px] text-[#7B4022]">
-              consistent dosing · {persona.id === 'maya' ? 'next milestone 21' : '180+ achieved'}
-            </div>
-
-            {/* 30-day heatmap */}
-            <div className="mt-4">
-              <div className="mb-1.5 text-[9.5px] font-bold uppercase tracking-widest text-[#7B4022]">
-                Last 30 days
-              </div>
-              <StreakHeatmap color="#FF6B4A" emptyColor="#FFE0D0" size={11} gap={3} />
-            </div>
-          </div>
-        </section>
-
-        {/* ─── ROW 2: 4-tile bento (forecast 6 + 3 small tiles 2+2+2) ────── */}
-        <section className="mb-4 grid grid-cols-12 gap-4">
-          {/* Forecast strip — 6 cols */}
-          <div className="col-span-6">
-            <HealthForecastStrip days={forecast.days} city={forecast.city} state={forecast.state} />
-          </div>
-
-          {/* Adherence with sparkline — 3 cols */}
-          <Link
-            href="/stack"
-            className="col-span-3 group flex flex-col justify-between overflow-hidden rounded-2xl border border-[#C3E6CB] bg-gradient-to-br from-[#F1FAF3] via-[#E8F5EC] to-[#DDF0E1] p-5 transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(10,107,60,0.08)]"
+      <main className="flex-1">
+        {/* ── 1. Editorial hero — full-bleed photography with overlay ────── */}
+        <section className="mx-auto w-full max-w-[1440px] px-4 pt-4 sm:px-6 md:px-8 md:pt-6">
+          <LifestyleHero
+            imageUrl={isMaya ? MORNING_HERO_MAYA.url : MORNING_HERO_DANIEL.url}
+            alt={isMaya ? MORNING_HERO_MAYA.alt : MORNING_HERO_DANIEL.alt}
+            eyebrow={timeLabel}
+            headline={greeting.replace(',', ', ')}
+            subline={heroSubline}
+            size="lg"
+            tint={isMaya ? 'coral' : 'green'}
+            overlay="medium"
+            serif
+            rounded="lg"
           >
-            <div>
-              <div className="mb-2 flex items-center gap-1.5">
-                <TrendingUp size={13} className="text-[#0A6B3C]" strokeWidth={2.5} />
-                <span className="text-[10px] font-bold uppercase tracking-widest text-[#0A6B3C]">
-                  30-day adherence
-                </span>
-              </div>
-              <div className="flex items-baseline gap-2">
-                <AdherenceRing percentage={avgAdherence} size={56} />
-              </div>
-            </div>
-            <div className="mt-3">
-              <div className="text-[10.5px] font-medium text-[#1F5034]">
-                {avgAdherence >= 90 ? 'Crushing it.' : avgAdherence >= 75 ? 'Solid.' : 'Room to grow.'}
-              </div>
-              <div className="mt-1.5">
-                <Sparkline values={adherenceTrend} color="#0A6B3C" width={120} height={20} />
-              </div>
-            </div>
-          </Link>
-
-          {/* Rewards / spend mini-tile — 3 cols, teal */}
-          <div className="col-span-3 flex flex-col justify-between overflow-hidden rounded-2xl border border-[#A7DDDC] bg-gradient-to-br from-[#E5F6F5] via-[#D4EFEE] to-[#BFE6E4] p-5">
-            <div>
-              <div className="mb-2 flex items-center gap-1.5">
-                <ShoppingBag size={13} className="text-[#0E9594]" strokeWidth={2.5} />
-                <span className="text-[10px] font-bold uppercase tracking-widest text-[#0E9594]">
-                  Rewards balance
-                </span>
-              </div>
-              <div className="text-[28px] font-bold leading-none text-[#0A4A4A]">${persona.rewardCredits}.00</div>
-              <div className="mt-1 text-[10.5px] text-[#1F6E6D]">
-                ${persona.spentThisYear} spent in 2026
-              </div>
-            </div>
-            <div className="mt-3">
-              <div className="text-[9.5px] font-bold uppercase tracking-widest text-[#1F6E6D]">
-                Saved by advisor
-              </div>
-              <Sparkline values={savingsTrend} color="#0E9594" width={120} height={20} />
-            </div>
-          </div>
+            {persona.contextHints.slice(0, isMaya ? 3 : 4).map((hint) => (
+              <span
+                key={hint}
+                className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3.5 py-1.5 text-[12px] font-semibold text-white backdrop-blur-md"
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-white/80" />
+                {hint}
+              </span>
+            ))}
+          </LifestyleHero>
         </section>
 
-        {/* ─── ROW 3: Pending agent actions ──────────────────────────────── */}
-        {pendingActions.length > 0 && (
-          <section className="mb-4">
-            <div className="mb-3 flex items-baseline justify-between">
-              <div>
-                <h2 className="text-[18px] font-bold text-[#1A1A1A]">Awaiting your approval</h2>
-                <p className="text-[12px] text-[#666]">
-                  {pendingActions.length} {pendingActions.length === 1 ? 'recommendation' : 'recommendations'} from your advisor
-                </p>
-              </div>
-              <Link href="/advisor" className="flex items-center gap-1 text-[12px] font-medium text-[#1558A6] hover:underline">
-                Open advisor
-                <ArrowRight size={11} strokeWidth={2.5} />
-              </Link>
+        {/* ── 2. Stat row — clean, no card chrome ───────────────────────── */}
+        <section className="mx-auto w-full max-w-[1280px] px-6 py-12 md:px-10 md:py-16">
+          <MetricRow metrics={metrics} />
+        </section>
+
+        {/* Hairline breaks the page into editorial movements. */}
+        <div className="mx-auto w-full max-w-[1280px] px-6 md:px-10">
+          <hr className="hairline" />
+        </div>
+
+        {/* ── 3. Today's ritual — section header + 3-up product cards ─── */}
+        <section className="mx-auto w-full max-w-[1280px] px-6 pt-16 md:px-10 md:pt-20">
+          <SectionHeader
+            eyebrow={
+              <span className="inline-flex items-center gap-1.5">
+                <TimeIcon size={12} strokeWidth={2.5} />
+                {timeOfDay === 'morning' ? 'Right now · morning' : timeOfDay === 'evening' ? 'Right now · evening' : 'Right now · midday'}
+              </span>
+            }
+            headline={
+              timeOfDay === 'evening'
+                ? 'Your wind-down ritual'
+                : timeOfDay === 'afternoon'
+                  ? 'Steady through the afternoon'
+                  : 'This morning, on your bench'
+            }
+            lede={
+              timeOfDay === 'evening'
+                ? `Anchored to ${persona.routine.eveningTime}. Magnesium 30 minutes before lights out.`
+                : `Anchored to ${persona.routine.morningTime}. ${ritual.length} ${ritual.length === 1 ? 'supplement' : 'supplements'} on deck.`
+            }
+            ctaLabel="Full stack"
+            ctaHref="/stack"
+          />
+
+          {ritual.length > 0 ? (
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {ritual.slice(0, 3).map((item) => (
+                <Link
+                  key={item.productId}
+                  href={`/product/${item.productId}`}
+                  className="group relative flex flex-col gap-5 overflow-hidden rounded-2xl bg-white p-6 ring-1 ring-[#EFEFEF] transition-all hover:-translate-y-0.5 hover:ring-[#0A6B3C]"
+                >
+                  <div className="aspect-[4/3] overflow-hidden rounded-xl bg-[#FAFBFA]">
+                    <img
+                      src={item.imageUrl}
+                      alt={item.name}
+                      className="h-full w-full object-contain p-3 transition-transform group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  </div>
+                  <div>
+                    <div className="text-[11px] font-bold uppercase text-[#0A6B3C]" style={{ letterSpacing: '0.14em' }}>
+                      {item.brand}
+                    </div>
+                    <div className="mt-1.5 text-[16px] font-semibold leading-snug text-[#1A1A1A]">
+                      {item.name.replace(/—.*$/, '').trim()}
+                    </div>
+                    <div className="mt-2 text-[13px] text-[#666]">
+                      {item.dose} · {item.reasonShort}
+                    </div>
+                  </div>
+                </Link>
+              ))}
             </div>
-            <div className="grid grid-cols-2 gap-3">
+          ) : (
+            <p className="text-[14px] italic text-[#999]">
+              No supplements scheduled for this part of the day.
+            </p>
+          )}
+        </section>
+
+        {/* ── 4. Health Forecast editorial split ─────────────────────── */}
+        <section className="mx-auto w-full max-w-[1280px] px-6 pt-24 md:px-10 md:pt-28">
+          <EditorialSplit
+            imageUrl={isMaya ? ALLERGY_LIFESTYLE.url : SUPPLEMENT_STILLLIFE_AMBER.url}
+            alt={isMaya ? ALLERGY_LIFESTYLE.alt : SUPPLEMENT_STILLLIFE_AMBER.alt}
+            ratio="content-heavy"
+            minHeight="440px"
+          >
+            <AIMoment
+              variant="flat"
+              eyebrow={`Health forecast · ${forecast.city}`}
+              headline={heroInsight.title}
+              body={heroInsight.body}
+              footerLabel={`Powered by iHerb Wellness Hub · ${forecast.city}, ${forecast.state}`}
+              footerRight={
+                <Link
+                  href="/forecast"
+                  className="inline-flex items-center gap-1 text-[12.5px] font-semibold text-[#0A6B3C] hover:underline"
+                >
+                  {heroInsight.ctaLabel}
+                  <ArrowRight size={12} strokeWidth={2.5} />
+                </Link>
+              }
+            >
+              {heroInsight.productSuggestion && (
+                <div className="flex items-center gap-4 rounded-2xl border border-[#EFEFEF] bg-white p-4">
+                  <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#F2F2F2] bg-white">
+                    {heroInsight.productSuggestion.imageUrl ? (
+                      <img
+                        src={heroInsight.productSuggestion.imageUrl}
+                        alt={heroInsight.productSuggestion.name}
+                        className="h-full w-full object-contain p-1.5"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <span className="text-[22px]">💊</span>
+                    )}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-[14px] font-semibold text-[#1A1A1A]">
+                      {heroInsight.productSuggestion.name}
+                    </div>
+                    <div className="text-[12.5px] text-[#666]">
+                      {heroInsight.productSuggestion.reason}
+                    </div>
+                  </div>
+                  <button className="flex-shrink-0 rounded-full bg-[#0A6B3C] px-4 py-2 text-[12.5px] font-bold text-white transition-colors hover:bg-[#085131]">
+                    Add to cart
+                  </button>
+                </div>
+              )}
+            </AIMoment>
+          </EditorialSplit>
+        </section>
+
+        {/* ── 5. Pending advisor actions (only when present) ──────────── */}
+        {pendingActions.length > 0 && (
+          <section className="mx-auto w-full max-w-[1280px] px-6 pt-24 md:px-10 md:pt-28">
+            <SectionHeader
+              eyebrow="Awaiting your nod"
+              eyebrowColor="#D14800"
+              headline={`${pendingActions.length} ${pendingActions.length === 1 ? 'recommendation' : 'recommendations'} from your advisor`}
+              lede="Each one is reversible. Approve, skip, or open the conversation in your Wellness Advisor."
+              ctaLabel="Open advisor"
+              ctaHref="/advisor"
+            />
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
               {pendingActions.slice(0, 2).map((a) => (
                 <AgentActionCard key={a.id} action={a} />
               ))}
@@ -291,280 +397,98 @@ export default function TodayPage() {
           </section>
         )}
 
-        {/* ─── ROW 4: AIMoment from forecast (full width) ─────────────────── */}
-        <section className="mb-4">
-          <AIMoment
-            eyebrow="From your Health Forecast"
-            headline={heroInsight.title}
-            footerLabel={`Powered by iHerb Wellness Hub · ${forecast.city}, ${forecast.state}`}
-            footerRight={
-              <Link
-                href="/forecast"
-                className="flex items-center gap-0.5 text-[11px] font-medium text-[#1558A6] hover:underline"
-              >
-                {heroInsight.ctaLabel}
-                <ArrowRight size={10} strokeWidth={2.5} />
-              </Link>
+        {/* ── 6. Curated bundles — merchandising row (ASOS density) ──── */}
+        <section className="mx-auto w-full max-w-[1280px] px-6 pt-24 md:px-10 md:pt-28">
+          <SectionHeader
+            eyebrow={isMaya ? 'Curated for beginners' : 'Curated for your protocol'}
+            headline={isMaya ? 'Stacks our wellness experts recommend most' : 'Picks from longevity researchers'}
+            lede={isMaya
+              ? 'Trusted starter sets — small commitments that move the needle on sleep, energy, and immune support.'
+              : 'Five-supplement protocols backed by clinical research and curated by our quality team.'
             }
-          >
-            {heroInsight.productSuggestion && (
-              <div className="flex items-center gap-3 rounded-xl border border-[#E8E8E8] bg-[#FAFBFA] p-3">
-                <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg border border-[#EBEBEB] bg-white shadow-[0_1px_4px_rgba(0,0,0,0.06)]">
-                  {heroInsight.productSuggestion.imageUrl ? (
-                    <img
-                      src={heroInsight.productSuggestion.imageUrl}
-                      alt={heroInsight.productSuggestion.name}
-                      className="h-full w-full object-contain"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <span className="text-[20px]">💊</span>
-                  )}
+            ctaLabel="Shop all bundles"
+            ctaHref="/search?q=bundle"
+          />
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {bundles.map((card, i) => (
+              <Link
+                key={i}
+                href="/search?q=bundle"
+                className="group relative flex flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-[#EFEFEF] transition-all hover:-translate-y-1 hover:ring-[#0A6B3C]"
+              >
+                <div className="absolute right-4 top-4 z-20 rounded-full bg-white/95 px-2.5 py-1 text-[10.5px] font-bold text-[#1A1A1A] backdrop-blur" style={{ letterSpacing: '0.06em' }}>
+                  {card.badge}
                 </div>
-                <div className="min-w-0 flex-1">
-                  <div className="truncate text-[13px] font-semibold text-[#1A1A1A]">
-                    {heroInsight.productSuggestion.name}
-                  </div>
-                  <div className="text-[11.5px] text-[#666]">
-                    {heroInsight.productSuggestion.reason}
+                <BundleCollage images={card.images} alt={card.title} tint={card.tint} size="md" />
+                <div className="flex flex-1 flex-col p-6">
+                  <h3 className="text-[18px] font-bold leading-snug text-[#1A1A1A]" style={{ letterSpacing: '-0.012em' }}>
+                    {card.title}
+                  </h3>
+                  <p className="mt-1.5 text-[13.5px] text-[#666]" style={{ lineHeight: 1.55 }}>
+                    {card.subtitle}
+                  </p>
+                  <div className="mt-auto flex items-end justify-between pt-5">
+                    <div className="text-[22px] font-bold text-[#1A1A1A]" style={{ letterSpacing: '-0.015em' }}>
+                      {card.price}
+                    </div>
+                    <div className="text-[12px] font-semibold text-[#D14800]">
+                      {card.save}
+                    </div>
                   </div>
                 </div>
-                <button className="rounded-full bg-[#0A6B3C] px-3 py-1.5 text-[12px] font-bold text-white hover:bg-[#085131]">
-                  Add to cart
-                </button>
-              </div>
-            )}
-          </AIMoment>
+              </Link>
+            ))}
+          </div>
         </section>
 
-        {/* ─── ROW 5: Things your advisor handled (3-up bento) ───────────── */}
-        <section className="mb-4">
-          <div className="mb-3 flex items-baseline justify-between">
-            <div>
-              <h2 className="text-[18px] font-bold text-[#1A1A1A]">Things your advisor handled</h2>
-              <p className="text-[12px] text-[#666]">
-                Autonomous actions on your behalf · all reversible
-              </p>
-            </div>
-            <Link href="/advisor" className="flex items-center gap-1 text-[12px] font-medium text-[#1558A6] hover:underline">
-              Full audit log
-              <ArrowRight size={11} strokeWidth={2.5} />
-            </Link>
-          </div>
-          <div className="grid grid-cols-3 gap-3">
+        {/* ── 7. Recently handled by advisor ─────────────────────────── */}
+        <section className="mx-auto w-full max-w-[1280px] px-6 pt-24 md:px-10 md:pt-28">
+          <SectionHeader
+            eyebrow="Hands-off"
+            headline="Recently handled by your advisor"
+            lede="Autonomous actions on your behalf — every one reversible from your audit log."
+            ctaLabel="Full audit log"
+            ctaHref="/advisor"
+          />
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {recentActions.map((a) => (
               <AgentActionCard key={a.id} action={a} compact />
             ))}
           </div>
         </section>
 
-        {/* ─── ROW 6: Curated bundles (3-up collages) ────────────────────── */}
-        <section className="mb-4">
-          <div className="mb-3 flex items-baseline justify-between">
-            <div>
-              <h2 className="text-[18px] font-bold text-[#1A1A1A]">
-                {persona.id === 'maya' ? 'Curated for beginners' : 'Curated for your protocol'}
-              </h2>
-              <p className="text-[12px] text-[#666]">
-                {persona.id === 'maya'
-                  ? 'Trusted starter stacks our wellness experts recommend most'
-                  : 'Picks from longevity researchers + our quality team'}
-              </p>
-            </div>
-          </div>
-          <div className="grid grid-cols-3 gap-4">
-            {(persona.id === 'maya'
-              ? [
-                  {
-                    badge: 'Beginner Bundle',
-                    title: 'Sleep Foundations · 3-supplement starter',
-                    price: '$48',
-                    save: 'Save 12%',
-                    tint: 'green' as const,
-                    images: [
-                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/cgn/cgn01066/u/159.jpg',
-                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/now/now01289/u/62.jpg',
-                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/cgn/cgn00932/u/298.jpg',
-                    ] as [string, string, string],
-                  },
-                  {
-                    badge: '3rd-Party Tested',
-                    title: 'Quality Promise picks · Gold-tier brands only',
-                    price: 'From $14',
-                    save: 'NSF & Informed Choice',
-                    tint: 'blue' as const,
-                    images: [
-                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/cgn/cgn01330/u/350.jpg',
-                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/lex/lex25359/u/8.jpg',
-                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/sre/sre09180/u/8.jpg',
-                    ] as [string, string, string],
-                  },
-                  {
-                    badge: 'Energy Boost',
-                    title: 'Steady energy · Without the crash',
-                    price: '$32',
-                    save: '4-week supply',
-                    tint: 'orange' as const,
-                    images: [
-                      // Life Extension Alpha-Lipoic Acid + Biotin (mitochondrial energy)
-                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/lex/lex45706/u/94.jpg',
-                      // Jarrow Vegan B-Right — center hero of the collage. Replaces a previously
-                      // 404'ing 'jar/jar05079' URL (wrong brand prefix; correct prefix is 'jrw').
-                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/jrw/jrw01006/u/114.jpg',
-                      // NOW Magnesium Malate (energy form of magnesium)
-                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/now/now01300/u/82.jpg',
-                    ] as [string, string, string],
-                  },
-                ]
-              : [
-                  {
-                    badge: 'Longevity Stack',
-                    title: 'Cellular Longevity · 5-supplement protocol',
-                    price: '$184',
-                    save: 'Save 18%',
-                    tint: 'green' as const,
-                    images: [
-                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/lex/lex23443/u/24.jpg',
-                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/lex/lex23023/u/66.jpg',
-                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/cgn/cgn00934/u/221.jpg',
-                    ] as [string, string, string],
-                  },
-                  {
-                    badge: '3rd-Party Tested',
-                    title: 'Quality Promise picks · Gold-tier brands only',
-                    price: 'From $14',
-                    save: 'NSF & Informed Choice',
-                    tint: 'blue' as const,
-                    images: [
-                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/thr/thr00635/u/61.jpg',
-                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/thr/thr00644/u/96.jpg',
-                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/thr/thr00690/u/50.jpg',
-                    ] as [string, string, string],
-                  },
-                  {
-                    badge: 'Performance Stack',
-                    title: 'Z2 cardio support · Pre/intra/post stack',
-                    price: '$96',
-                    save: '4-week supply',
-                    tint: 'orange' as const,
-                    images: [
-                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/thr/thr00635/u/61.jpg',
-                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/nuu/nuu02050/u/30.jpg',
-                      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/thr/thr01311/u/96.jpg',
-                    ] as [string, string, string],
-                  },
-                ]
-            ).map((card, i) => (
-              <Link
-                key={i}
-                href="/search?q=bundle"
-                className="group relative overflow-hidden rounded-2xl border border-[#E0E0E0] bg-white transition-all hover:-translate-y-0.5 hover:border-[#0A6B3C] hover:shadow-[0_8px_24px_rgba(10,107,60,0.08)]"
-              >
-                <div className="absolute right-3 top-3 z-20 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-bold text-[#0A6B3C] backdrop-blur">
-                  {card.badge}
-                </div>
-                <BundleCollage images={card.images} alt={card.title} tint={card.tint} size="md" />
-                <div className="p-4">
-                  <h3 className="text-[14px] font-semibold leading-snug text-[#1A1A1A]">{card.title}</h3>
-                  <div className="mt-3 flex items-end justify-between">
-                    <div className="text-[18px] font-bold text-[#1A1A1A]">{card.price}</div>
-                    <div className="text-[11px] font-medium text-[#D14800]">{card.save}</div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        {/* ─── ROW 7: Bento — Connected apps (8) + Achievements (4) ──────── */}
-        <section className="mb-4 grid grid-cols-12 gap-4">
-          <div className="col-span-8 overflow-hidden rounded-2xl border border-[#E0E0E0] bg-white p-5">
-            <div className="mb-3 flex items-center gap-2">
-              <Activity size={15} className="text-[#0E9594]" strokeWidth={2.5} />
-              <span className="text-[10.5px] font-bold uppercase tracking-widest text-[#666]">
-                Connected to your day
-              </span>
-            </div>
-            <div className="grid grid-cols-4 gap-3">
-              {persona.connectedApps.map((app) => (
-                <div
-                  key={app.name}
-                  className={`flex items-center gap-2 rounded-xl border p-2.5 ${
-                    app.status === 'connected'
-                      ? 'border-[#A7DDDC] bg-[#E5F6F5]'
-                      : 'border-dashed border-[#E0E0E0] bg-white'
-                  }`}
-                >
-                  <div className="text-[18px]">{app.icon}</div>
-                  <div className="min-w-0 flex-1">
-                    <div className="truncate text-[12px] font-semibold text-[#1A1A1A]">{app.name}</div>
-                    <div className={`text-[10px] ${app.status === 'connected' ? 'text-[#0E9594]' : 'text-[#888]'}`}>
-                      {app.status === 'connected' ? `Synced ${app.lastSync}` : 'Connect'}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="col-span-4 overflow-hidden rounded-2xl border border-[#D6C8F0] bg-gradient-to-br from-[#F4F0FB] via-[#EDE6F8] to-[#E2D9F4] p-5">
-            <div className="mb-3 flex items-center gap-2">
-              <Award size={15} className="text-[#6B4FBC]" strokeWidth={2.5} />
-              <span className="text-[10.5px] font-bold uppercase tracking-widest text-[#6B4FBC]">
-                Recent achievements
-              </span>
-            </div>
-            <div className="space-y-2">
-              {persona.achievements.slice(0, 3).map((a) => (
-                <div key={a.id} className="flex items-center gap-2.5 rounded-lg bg-white/70 px-2.5 py-1.5 backdrop-blur">
-                  <div className="text-[20px]">{a.emoji}</div>
-                  <div className="flex-1">
-                    <div className="text-[12.5px] font-semibold text-[#1A1A1A]">{a.label}</div>
-                    <div className="text-[10.5px] text-[#6B4FBC]">Earned {a.earned}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ─── ROW 8: Wellness Hub editorial entry ───────────────────────── */}
-        <section className="mb-6">
-          <Link
-            href="/wellness-hub/magnesium-guide"
-            className="group flex items-center gap-5 overflow-hidden rounded-2xl border border-[#D9EADF] bg-gradient-to-r from-white via-white to-[#F1FAF3] p-5 transition-all hover:border-[#0A6B3C]"
+        {/* ── 8. Wellness Hub editorial split ────────────────────────── */}
+        <section className="mx-auto w-full max-w-[1280px] px-6 pt-24 pb-24 md:px-10 md:pt-28 md:pb-32">
+          <EditorialSplit
+            imageUrl="https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=1400&q=80&auto=format&fit=crop"
+            alt="Magnesium supplement still life"
+            eyebrow="Wellness Hub · Recommended for you"
+            headline={
+              isMaya
+                ? 'The magnesium guide: glycinate vs citrate vs malate.'
+                : 'Magnesium forms & cognitive performance: what the research says.'
+            }
+            body={
+              isMaya
+                ? 'Why your advisor recommended glycinate for sleep — and when it makes sense to switch forms. A 6-minute read.'
+                : 'Threonate, taurate, and glycinate — when to use each, and what your sleep data should be telling you.'
+            }
+            ratio="balanced"
+            minHeight="360px"
+            reverse
           >
-            <div className="relative flex h-20 w-20 flex-shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-gradient-to-br from-[#F1FAF3] via-[#E8F5EC] to-[#DDF0E1] p-2">
-              <img
-                src="https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/now/now01289/u/62.jpg"
-                alt=""
-                className="h-full w-full object-contain"
-                loading="lazy"
-              />
-            </div>
-            <div className="flex-1">
-              <div className="mb-1 flex items-center gap-2">
-                <Sparkles size={11} className="text-[#0A6B3C]" strokeWidth={2.5} />
-                <span className="text-[10px] font-bold uppercase tracking-widest text-[#0A6B3C]">
-                  Wellness Hub · Recommended for you
-                </span>
-                <span className="rounded-full bg-[#FFF7F1] px-2 py-0.5 text-[9.5px] font-bold uppercase text-[#D14800]">
-                  6 min read
-                </span>
-              </div>
-              <h3 className="text-[16px] font-bold text-[#1A1A1A] group-hover:text-[#0A6B3C]">
-                {persona.id === 'maya'
-                  ? 'The Magnesium Guide: Glycinate vs Citrate vs Malate'
-                  : 'Magnesium Forms & Cognitive Performance: What the Research Says'}
-              </h3>
-              <p className="mt-1 text-[12.5px] text-[#666]">
-                {persona.id === 'maya'
-                  ? 'Why your advisor recommended glycinate for sleep — and when to consider switching forms.'
-                  : 'Threonate, taurate, and glycinate — when to use each, and what your sleep data should tell you.'}
-              </p>
-            </div>
-            <ArrowRight size={20} className="text-[#999] group-hover:text-[#0A6B3C]" />
-          </Link>
+            <Link
+              href="/wellness-hub/magnesium-guide"
+              className="inline-flex items-center gap-2 rounded-full bg-[#1A1A1A] px-6 py-3 text-[13px] font-semibold text-white transition-colors hover:bg-[#0A6B3C]"
+            >
+              Read the guide
+              <ArrowRight size={14} strokeWidth={2.5} />
+            </Link>
+            <span className="inline-flex items-center gap-1.5 text-[12.5px] font-medium text-[#666]">
+              <ShoppingBag size={13} strokeWidth={2.25} />
+              6 min read · 3 products mentioned
+            </span>
+          </EditorialSplit>
         </section>
       </main>
 

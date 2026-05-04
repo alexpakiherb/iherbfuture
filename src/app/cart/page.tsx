@@ -254,54 +254,55 @@ export default function CartPage() {
     <div className="flex min-h-screen flex-col bg-[#FAFAFA]">
       <Header />
 
-      <main className="mx-auto w-full max-w-[1280px] flex-1 px-8 py-6">
+      <main className="mx-auto w-full max-w-[1280px] flex-1 px-6 pt-12 pb-24 md:px-10 md:pt-16 md:pb-32">
 
-        {/* ── Page header ───────────────────────────────────────── */}
-        <div className="mb-5">
-          <div className="mb-1.5 flex items-center gap-1.5 text-[#0A6B3C]">
+        {/* ── Editorial page header ───────────────────────────────── */}
+        <div className="mb-12">
+          <div className="mb-3 flex items-center gap-1.5 text-[#0A6B3C]">
             <ShoppingCart size={13} strokeWidth={2.5} />
-            <span className="text-[10.5px] font-bold uppercase tracking-widest">Your Cart</span>
+            <span className="text-[11.5px] font-bold uppercase" style={{ letterSpacing: '0.18em' }}>
+              Your Cart
+            </span>
           </div>
-          <h1 className="text-[26px] font-bold text-[#1A1A1A]">
-            {visibleItems.length} {visibleItems.length === 1 ? 'item' : 'items'} in your cart
+          <h1
+            className="font-serif-display text-[36px] font-bold text-[#1A1A1A] md:text-[52px]"
+            style={{ letterSpacing: '-0.022em', lineHeight: 1.04 }}
+          >
+            {visibleItems.length} {visibleItems.length === 1 ? 'item' : 'items'}, ready when you are.
           </h1>
-          <p className="mt-1 text-[13.5px] text-[#666]">
+          <p className="mt-4 max-w-[560px] text-[16px] text-[#555]" style={{ lineHeight: 1.55 }}>
             {persona.id === 'maya'
-              ? 'Your advisor found a way to save before you check out.'
-              : 'Your advisor curated this cart and found bundle savings.'}
+              ? 'Your advisor found a way to save before you check out — apply or skip below.'
+              : 'Your advisor curated this cart, locked prices, and found a bundle worth your while.'}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_380px]">
 
           {/* ── LEFT: Cart items + AI moments ──────────────────── */}
           <div className="space-y-4">
 
             {/* Cart items list */}
-            <div className="overflow-hidden rounded-2xl border border-[#E0E0E0] bg-white shadow-[0_2px_16px_rgba(10,107,60,0.04)]">
-              <div className="border-b border-[#F0F0F0] bg-[#FAFBFA] px-5 py-3">
-                <span className="text-[11px] font-bold uppercase tracking-widest text-[#666]">Cart items</span>
-              </div>
-
+            <div className="overflow-hidden rounded-2xl bg-white ring-1 ring-[#EFEFEF]">
               <div className="divide-y divide-[#F4F4F4]">
                 {visibleItems.map((item) => (
-                  <div key={item.id} className="px-5 py-4">
-                    <div className="flex gap-4">
+                  <div key={item.id} className="px-7 py-6">
+                    <div className="flex gap-5">
                       {/* Product image */}
-                      <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border border-[#EBEBEB] bg-white">
+                      <div className="flex h-20 w-20 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#FAFBFA]">
                         <img
                           src={item.imageUrl}
                           alt={item.name}
-                          className="h-full w-full object-contain"
+                          className="h-full w-full object-contain p-2"
                           loading="lazy"
                         />
                       </div>
 
                       {/* Product info */}
                       <div className="flex-1 min-w-0">
-                        <div className="mb-0.5 text-[10px] font-bold uppercase tracking-wider text-[#0A6B3C]">{item.brand}</div>
-                        <div className="text-[13.5px] font-semibold leading-snug text-[#1A1A1A]">{item.name}</div>
-                        <div className="mt-0.5 text-[11.5px] text-[#888]">{item.dose}</div>
+                        <div className="mb-1 text-[10.5px] font-bold uppercase text-[#0A6B3C]" style={{ letterSpacing: '0.14em' }}>{item.brand}</div>
+                        <div className="text-[15.5px] font-semibold leading-snug text-[#1A1A1A]" style={{ letterSpacing: '-0.005em' }}>{item.name}</div>
+                        <div className="mt-1 text-[12.5px] text-[#888]">{item.dose}</div>
 
                         {/* Autoship toggle row */}
                         <div className="mt-2.5 flex flex-wrap items-center gap-2">
@@ -362,6 +363,8 @@ export default function CartPage() {
 
             {/* ── AIMoment 1: Bundle savings ───────────────────── */}
             <AIMoment
+              variant="flat"
+              className="rounded-2xl bg-white p-7 ring-1 ring-[#EFEFEF]"
               eyebrow="Your advisor noticed"
               headline={
                 persona.id === 'maya'
@@ -438,38 +441,38 @@ export default function CartPage() {
             )}
 
             {/* ── Things your advisor handled ──────────────────── */}
-            <div>
-              <div className="mb-3 flex items-baseline justify-between">
+            <div className="pt-4">
+              <div className="mb-5 flex items-baseline justify-between">
                 <div>
-                  <h2 className="text-[16px] font-bold text-[#1A1A1A]">Things your advisor handled for this cart</h2>
-                  <p className="text-[11.5px] text-[#666]">Autonomous actions · all reversible</p>
+                  <div className="text-[11px] font-bold uppercase text-[#0A6B3C]" style={{ letterSpacing: '0.18em' }}>Hands-off</div>
+                  <h2 className="mt-1.5 text-[20px] font-bold text-[#1A1A1A]" style={{ letterSpacing: '-0.012em' }}>What your advisor handled for this cart</h2>
                 </div>
-                <Link href="/advisor" className="flex items-center gap-0.5 text-[11px] font-medium text-[#1558A6] hover:underline">
+                <Link href="/advisor" className="inline-flex items-center gap-1 text-[12.5px] font-semibold text-[#1A1A1A] hover:text-[#0A6B3C]">
                   Full audit log
-                  <ArrowRight size={10} strokeWidth={2.5} />
+                  <ArrowRight size={12} strokeWidth={2.5} />
                 </Link>
               </div>
-              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {(persona.id === 'maya' ? MAYA_CART_ACTIONS : DANIEL_CART_ACTIONS).map((a) => (
                   <AgentActionCard key={a.id} action={a} />
                 ))}
               </div>
             </div>
 
-            {/* ── Trust strip ──────────────────────────────────── */}
-            <div className="grid grid-cols-3 gap-3">
+            {/* ── Trust strip — Patagonia/Apple cleaner row ───── */}
+            <div className="grid grid-cols-1 divide-x divide-y divide-[#EFEFEF] sm:grid-cols-3 sm:divide-y-0">
               {[
                 { icon: Package, label: '90-day money back', sub: 'No questions asked' },
                 { icon: Phone, label: '24/7 support', sub: 'Chat, email, or phone' },
                 { icon: Shield, label: 'Secure checkout', sub: 'SSL encrypted · PCI-DSS' },
-              ].map(({ icon: Icon, label, sub }) => (
-                <div key={label} className="flex items-center gap-2.5 rounded-xl border border-[#EBEBEB] bg-white p-3">
-                  <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[#F1FAF3]">
-                    <Icon size={14} className="text-[#0A6B3C]" strokeWidth={2} />
+              ].map(({ icon: Icon, label, sub }, i) => (
+                <div key={label} className={`flex items-center gap-3 px-5 py-5 ${i === 0 ? 'sm:pl-0' : ''} ${i === 2 ? 'sm:pr-0' : ''}`}>
+                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#F1FAF3]">
+                    <Icon size={16} className="text-[#0A6B3C]" strokeWidth={2} />
                   </div>
                   <div>
-                    <div className="text-[11.5px] font-semibold text-[#1A1A1A]">{label}</div>
-                    <div className="text-[10.5px] text-[#888]">{sub}</div>
+                    <div className="text-[13px] font-semibold text-[#1A1A1A]">{label}</div>
+                    <div className="text-[11.5px] text-[#888]">{sub}</div>
                   </div>
                 </div>
               ))}
@@ -479,11 +482,11 @@ export default function CartPage() {
           {/* ── RIGHT: Order summary ─────────────────────────── */}
           <div>
             <div className="sticky top-[130px]">
-              <div className="overflow-hidden rounded-2xl border border-[#E0E0E0] bg-white shadow-[0_2px_16px_rgba(10,107,60,0.07)]">
+              <div className="overflow-hidden rounded-2xl bg-white ring-1 ring-[#EFEFEF]">
 
                 {/* Summary header */}
-                <div className="border-b border-[#F0F0F0] bg-[#FAFBFA] px-5 py-3.5">
-                  <span className="text-[11px] font-bold uppercase tracking-widest text-[#666]">Order summary</span>
+                <div className="border-b border-[#F2F2F2] px-6 py-4">
+                  <span className="text-[11px] font-bold uppercase text-[#666]" style={{ letterSpacing: '0.18em' }}>Order summary</span>
                 </div>
 
                 <div className="px-5 py-4 space-y-2.5">

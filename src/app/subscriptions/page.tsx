@@ -1,23 +1,21 @@
 'use client';
 
-// Subscriptions — editorial rebuild.
-// Lifestyle hero (curated wellness ritual aesthetic), bento stat row,
-// recently-optimized digest with delta chips, magazine-style transitions
-// between sections, expert callout for trust, larger / more polished
-// subscription cards.
+// Subscriptions — editorial v2 (May 3, 2026).
+//
+// Hero · Stat row (clean) · Recently-optimized digest · Editorial quote ·
+// Subscription list (lighter cards) · Trust badges · Expert/savings split ·
+// Automation rules. Side rail is gone; everything reads vertically with
+// generous breathing room.
 
 import { useState } from 'react';
 import {
   Sparkles,
   ArrowRight,
   Calendar,
-  Package,
   PauseCircle,
   SkipForward,
   RefreshCw,
   Settings2,
-  TrendingDown,
-  Zap,
   CheckCircle2,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -28,6 +26,9 @@ import { AgentActionCard } from '@/components/AgentActionCard';
 import { AdherenceRing } from '@/components/AdherenceRing';
 import { Sparkline } from '@/components/Sparkline';
 import { LifestyleHero } from '@/components/LifestyleHero';
+import { SectionHeader } from '@/components/SectionHeader';
+import { MetricRow, type Metric } from '@/components/MetricRow';
+import { EditorialSplit } from '@/components/EditorialSplit';
 import { ExpertCallout } from '@/components/ExpertCallout';
 import { TrustBadgeStrip } from '@/components/TrustBadgeStrip';
 import { EditorialQuote } from '@/components/EditorialQuote';
@@ -35,9 +36,9 @@ import { usePersona } from '@/components/PersonaProvider';
 import {
   SUBSCRIPTIONS_HERO,
   EXPERT_DR_CHEN,
+  DELIVERY_LIFESTYLE,
 } from '@/data/lifestyleImages';
 
-// Frequency label helper
 function freqLabel(days: number): string {
   if (days === 30) return 'Every 30 days';
   if (days === 45) return 'Every 45 days';
@@ -45,7 +46,6 @@ function freqLabel(days: number): string {
   return `Every ${days} days`;
 }
 
-// Per-item adherence trend mock
 function trendFor(adherence: number): number[] {
   const series: number[] = [];
   let v = Math.max(40, adherence - 20);
@@ -58,7 +58,6 @@ function trendFor(adherence: number): number[] {
   return series;
 }
 
-// Mock 30-day cumulative savings trend
 const SAVINGS_TREND_MAYA = [0, 1, 2, 3, 5, 8, 10, 11, 11, 13, 14, 15, 15, 17, 18, 19, 20, 20, 21, 22, 22, 22, 22, 22, 22, 22, 22, 22, 23, 23];
 const SAVINGS_TREND_DANIEL = [12, 25, 38, 47, 62, 75, 88, 95, 105, 118, 130, 138, 150, 165, 178, 188, 195, 198, 198, 198, 198, 198, 198, 198, 198, 198, 198, 198, 198, 187];
 
@@ -68,13 +67,11 @@ export default function SubscriptionsPage() {
 
   const autoshipItems = persona.stack.filter((s) => s.autoship);
 
-  // Per-card action state
   const [skipped, setSkipped] = useState<Record<string, boolean>>({});
   const [paused, setPaused] = useState<Record<string, boolean>>({});
 
-  // Automation rules state
   const [rules, setRules] = useState([
-    { id: 'pause-overstock', rule: 'Pause autoship if I\'m overstocked', detail: 'Pauses when 21+ days of supply remain', on: true },
+    { id: 'pause-overstock', rule: "Pause autoship if I'm overstocked", detail: 'Pauses when 21+ days of supply remain', on: true },
     { id: 'lock-price', rule: 'Lock in prices when promos hit', detail: 'Applies to all active autoship items', on: true },
     { id: 'optimize-timing', rule: 'Auto-optimize delivery timing', detail: 'Adjusts dates based on actual usage pace', on: true },
     {
@@ -114,21 +111,51 @@ export default function SubscriptionsPage() {
         { text: 'Bundled NMN + Quercetin + Resveratrol into Longevity Stack.', delta: 'Saved $31.20/mo', dir: 'savings' as const },
       ];
 
+  const metrics: Metric[] = [
+    {
+      label: 'Active',
+      value: activeCount.toString(),
+      unit: 'subs',
+      caption: 'all on autoship',
+      accent: '#0A6B3C',
+      hero: true,
+    },
+    {
+      label: 'Saved by auto-tuning',
+      value: savedThisYear,
+      caption: `YTD · ${isMaya ? '2' : '6'} actions taken`,
+      trend: savingsTrend,
+      accent: '#0E9594',
+    },
+    {
+      label: 'Next delivery',
+      value: nextDelivery.split(' ')[1] ?? nextDelivery,
+      unit: nextDelivery.split(' ')[0] ?? '',
+      caption: `${isMaya ? '2' : '4'} items in this box`,
+      accent: '#6B4FBC',
+    },
+    {
+      label: 'Paused',
+      value: (isMaya ? pausedCount : pausedCount + 1).toString(),
+      caption: isMaya ? (pausedCount === 0 ? 'all running' : 'by you or AI') : 'LMNT overstock',
+      accent: '#FF6B4A',
+    },
+  ];
+
   return (
     <div className="flex min-h-screen flex-col bg-[#FAFAFA]">
       <Header />
 
-      <main className="mx-auto w-full max-w-[1280px] flex-1 px-8 py-6">
-
-        {/* ── Editorial hero ──────────────────────────────────────── */}
-        <section className="mb-6">
+      <main className="flex-1">
+        {/* ── 1. Editorial hero ──────────────────────────────────────── */}
+        <section className="mx-auto w-full max-w-[1440px] px-4 pt-4 sm:px-6 md:px-8 md:pt-6">
           <LifestyleHero
             imageUrl={SUBSCRIPTIONS_HERO.url}
             alt={SUBSCRIPTIONS_HERO.alt}
             eyebrow="Subscriptions · auto-tuned"
             headline={
               isMaya
-                ? 'A routine that adjusts itself, so you don\'t have to.'
+                ? "A routine that adjusts itself, so you don't have to."
                 : 'Calibrated to your data, lifted by your protocol.'
             }
             subline={
@@ -139,126 +166,74 @@ export default function SubscriptionsPage() {
             size="lg"
             tint="green"
             overlay="medium"
+            serif
+            rounded="lg"
           >
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3.5 py-1.5 text-[12px] font-semibold text-white backdrop-blur-md">
               <CheckCircle2 size={12} strokeWidth={2.5} />
               Every action reversible
-            </div>
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3.5 py-1.5 text-[12px] font-semibold text-white backdrop-blur-md">
               <Sparkles size={12} strokeWidth={2.5} />
               {isMaya ? '2 actions this month' : '6 actions this month'}
-            </div>
+            </span>
           </LifestyleHero>
         </section>
 
-        {/* ── Bento stat row ─────────────────────────────────────── */}
-        <section className="mb-6 grid grid-cols-12 gap-4">
-          <div className="col-span-3 overflow-hidden rounded-2xl border border-[#C3E6CB] bg-gradient-to-br from-[#F1FAF3] via-[#E8F5EC] to-[#DDF0E1] p-5">
-            <div className="mb-2 flex items-center gap-1.5">
-              <Package size={13} className="text-[#0A6B3C]" strokeWidth={2.5} />
-              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#0A6B3C]">
-                Active
-              </span>
-            </div>
-            <div className="text-[36px] font-bold leading-none text-[#1F5034]">{activeCount}</div>
-            <div className="mt-1 text-[11.5px] text-[#3A6E4E]">autoship subscriptions</div>
-          </div>
-
-          <div className="col-span-4 overflow-hidden rounded-2xl border border-[#A7DDDC] bg-gradient-to-br from-[#E5F6F5] via-[#D4EFEE] to-[#BFE6E4] p-5">
-            <div className="mb-2 flex items-center gap-1.5">
-              <TrendingDown size={13} className="text-[#0E9594]" strokeWidth={2.5} />
-              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#0E9594]">
-                Saved by auto-tuning
-              </span>
-            </div>
-            <div className="flex items-end gap-3">
-              <div className="text-[36px] font-bold leading-none text-[#0A4A4A]">{savedThisYear}</div>
-              <Sparkline values={savingsTrend} color="#0E9594" width={120} height={28} />
-            </div>
-            <div className="mt-1 text-[11.5px] text-[#1F6E6D]">YTD · {isMaya ? '2 actions taken' : '6 actions taken'}</div>
-          </div>
-
-          <div className="col-span-3 overflow-hidden rounded-2xl border border-[#D6C8F0] bg-gradient-to-br from-[#F4F0FB] via-[#EDE6F8] to-[#E2D9F4] p-5">
-            <div className="mb-2 flex items-center gap-1.5">
-              <Calendar size={13} className="text-[#6B4FBC]" strokeWidth={2.5} />
-              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#6B4FBC]">
-                Next delivery
-              </span>
-            </div>
-            <div className="text-[26px] font-bold leading-none text-[#3A2680]">{nextDelivery}</div>
-            <div className="mt-1 text-[11.5px] text-[#5C3FA8]">
-              {isMaya ? '2 items in this box' : '4 items in this box'}
-            </div>
-          </div>
-
-          <div className="col-span-2 overflow-hidden rounded-2xl border border-[#FFC7B0] bg-gradient-to-br from-[#FFF1E8] via-[#FFE8DC] to-[#FFD9C4] p-5">
-            <div className="mb-2 flex items-center gap-1.5">
-              <PauseCircle size={13} className="text-[#FF6B4A]" strokeWidth={2.5} />
-              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#D14800]">
-                Paused
-              </span>
-            </div>
-            <div className="text-[36px] font-bold leading-none text-[#7B4022]">
-              {isMaya ? pausedCount : pausedCount + 1}
-            </div>
-            <div className="mt-1 text-[11.5px] text-[#7B4022]">
-              {isMaya
-                ? pausedCount === 0
-                  ? 'all running'
-                  : 'by you or AI'
-                : 'LMNT overstock'}
-            </div>
-          </div>
+        {/* ── 2. Stat row ────────────────────────────────────────────── */}
+        <section className="mx-auto w-full max-w-[1280px] px-6 py-12 md:px-10 md:py-16">
+          <MetricRow metrics={metrics} />
         </section>
 
-        {/* ── Recently optimized digest ───────────────────────────── */}
-        <section className="mb-7">
-          <AIMoment
+        <div className="mx-auto w-full max-w-[1280px] px-6 md:px-10">
+          <hr className="hairline" />
+        </div>
+
+        {/* ── 3. Recently optimized — flat AIMoment ──────────────────── */}
+        <section className="mx-auto w-full max-w-[1280px] px-6 pt-16 md:px-10 md:pt-20">
+          <SectionHeader
             eyebrow="Recently optimized"
-            headline="I made these adjustments this month"
-            footerLabel="Powered by iHerb Wellness Hub · all reversible"
-            footerRight={
-              <Link
-                href="/advisor"
-                className="flex items-center gap-0.5 text-[11px] font-medium text-[#1558A6] hover:underline"
+            headline="What I adjusted this month"
+            lede="A monthly digest of timing tweaks, price locks, and dose changes I made on your behalf."
+            ctaLabel="Full audit log"
+            ctaHref="/advisor"
+          />
+          <ul className="space-y-3">
+            {aiSummaryBullets.map((b, i) => (
+              <li
+                key={i}
+                className="flex items-start gap-4 rounded-2xl bg-white p-5 ring-1 ring-[#EFEFEF]"
               >
-                Full audit log
-                <ArrowRight size={10} strokeWidth={2.5} />
-              </Link>
-            }
-          >
-            <ul className="mt-1 space-y-1.5">
-              {aiSummaryBullets.map((b, i) => (
-                <li key={i} className="flex items-start gap-2 rounded-lg border border-[#F0F0F0] bg-[#FAFBFA] px-3 py-2">
-                  <div className="mt-1 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-[#0A6B3C]/10">
-                    <Sparkles size={9} className="text-[#0A6B3C]" strokeWidth={3} />
-                  </div>
-                  <span className="flex-1 text-[12.5px] leading-snug text-[#444]">{b.text}</span>
-                  <span
-                    className={`flex-shrink-0 rounded-full px-2 py-0.5 text-[10.5px] font-bold ${
-                      b.dir === 'savings'
-                        ? 'bg-[#F1FAF3] text-[#0A6B3C]'
-                        : b.dir === 'up'
-                          ? 'bg-[#FFF1E8] text-[#FF6B4A]'
-                          : 'bg-[#EAF1FB] text-[#1558A6]'
-                    }`}
-                  >
-                    {b.delta}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </AIMoment>
+                <div className="mt-1 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-[#F1FAF3]">
+                  <Sparkles size={11} className="text-[#0A6B3C]" strokeWidth={3} />
+                </div>
+                <span className="flex-1 text-[14.5px] text-[#444]" style={{ lineHeight: 1.55 }}>
+                  {b.text}
+                </span>
+                <span
+                  className={`flex-shrink-0 self-center rounded-full px-3 py-1 text-[11.5px] font-bold ${
+                    b.dir === 'savings'
+                      ? 'bg-[#F1FAF3] text-[#0A6B3C]'
+                      : b.dir === 'up'
+                        ? 'bg-[#FFF1E8] text-[#FF6B4A]'
+                        : 'bg-[#EAF1FB] text-[#1558A6]'
+                  }`}
+                >
+                  {b.delta}
+                </span>
+              </li>
+            ))}
+          </ul>
         </section>
 
-        {/* ── Section transition: editorial quote ─────────────────── */}
-        <section className="mb-7">
+        {/* ── 4. Editorial quote section break ───────────────────────── */}
+        <section className="mx-auto w-full max-w-[1280px] px-6 pt-24 md:px-10 md:pt-28">
           <EditorialQuote
             variant="tinted"
             tint="teal"
             quote={
               isMaya
-                ? "The right supplement at the wrong time is the wrong supplement. Your routine should adjust to your life, not the other way around."
+                ? 'The right supplement at the wrong time is the wrong supplement. Your routine should adjust to your life, not the other way around.'
                 : "Auto-tuning isn't about removing decisions — it's about removing the boring ones so you can spend the budget on the decisions that matter."
             }
             attribution="Dr. Sarah Chen, ND"
@@ -267,19 +242,15 @@ export default function SubscriptionsPage() {
           />
         </section>
 
-        <div className="grid grid-cols-12 gap-5">
-          {/* ── LEFT: Subscription cards + automation rules ──────── */}
-          <section className="col-span-8 space-y-4">
-            <div className="mb-1">
-              <div className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#0A6B3C]">
-                Your subscriptions
-              </div>
-              <h2 className="mt-1 text-[20px] font-bold text-[#1A1A1A]" style={{ letterSpacing: '-0.01em' }}>
-                {autoshipItems.length} {autoshipItems.length === 1 ? 'item' : 'items'} on autoship
-              </h2>
-            </div>
-
-            {autoshipItems.map((item) => {
+        {/* ── 5. Subscription list ───────────────────────────────────── */}
+        <section className="mx-auto w-full max-w-[1280px] px-6 pt-24 md:px-10 md:pt-28">
+          <SectionHeader
+            eyebrow="Your subscriptions"
+            headline={`${autoshipItems.length} ${autoshipItems.length === 1 ? 'item' : 'items'} on autoship`}
+            lede="Skip, pause, swap, or adjust frequency without leaving the page. Adjustments are logged on each card."
+          />
+          <div className="overflow-hidden rounded-2xl bg-white ring-1 ring-[#EFEFEF]">
+            {autoshipItems.map((item, i) => {
               const isSkipped = skipped[item.productId];
               const isPaused = paused[item.productId];
               const itemTrend = trendFor(item.adherence30d);
@@ -287,344 +258,246 @@ export default function SubscriptionsPage() {
               return (
                 <div
                   key={item.productId}
-                  className={`overflow-hidden rounded-2xl border bg-white transition-all ${
-                    isPaused
-                      ? 'border-[#E0E0E0] opacity-75'
-                      : isSkipped
-                        ? 'border-[#E0E0E0]'
-                        : 'border-[#E0E0E0] hover:border-[#0A6B3C]'
-                  }`}
+                  className={`p-7 transition-colors ${i > 0 ? 'border-t border-[#F2F2F2]' : ''} ${isPaused ? 'opacity-65' : ''}`}
                 >
-                  <div className="p-5">
-                    <div className="flex items-start gap-4">
-                      {/* Product image — bigger and more polished */}
-                      <div className="flex-shrink-0">
-                        <div className="relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-xl border border-[#E8E8E8] bg-gradient-to-br from-white to-[#FAFAFA] p-2">
-                          <img
-                            src={item.imageUrl}
-                            alt={item.name}
-                            className="h-full w-full object-contain"
-                            loading="lazy"
-                          />
-                          {item.autoshipNote && (
-                            <div className="absolute -bottom-1.5 -right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-[#0A6B3C] ring-2 ring-white">
-                              <Sparkles size={11} className="text-white" strokeWidth={3} />
-                            </div>
-                          )}
+                  <div className="flex items-start gap-6">
+                    <div className="relative flex h-24 w-24 flex-shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[#FAFBFA]">
+                      <img
+                        src={item.imageUrl}
+                        alt={item.name}
+                        className="h-full w-full object-contain p-2"
+                        loading="lazy"
+                      />
+                      {item.autoshipNote && (
+                        <div className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-[#0A6B3C] ring-4 ring-white">
+                          <Sparkles size={11} className="text-white" strokeWidth={3} />
                         </div>
+                      )}
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <div className="text-[10.5px] font-bold uppercase text-[#0A6B3C]" style={{ letterSpacing: '0.14em' }}>
+                        {item.brand}
+                      </div>
+                      <div className="mt-1 text-[18px] font-semibold leading-snug text-[#1A1A1A]" style={{ letterSpacing: '-0.012em' }}>
+                        {item.name}
+                      </div>
+                      <div className="mt-1 text-[13px] text-[#666]">
+                        {item.dose} · {item.timeOfDay} · {item.reasonShort}
                       </div>
 
-                      <div className="flex-1 min-w-0">
-                        <div className="text-[10.5px] font-bold uppercase tracking-[0.15em] text-[#0A6B3C]">
-                          {item.brand}
-                        </div>
-                        <div className="text-[15.5px] font-semibold leading-snug text-[#1A1A1A]">
-                          {item.name}
-                        </div>
-                        <div className="mt-0.5 text-[12px] text-[#666]">
-                          {item.dose} · {item.timeOfDay} · {item.reasonShort}
-                        </div>
-
-                        <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
-                          {item.nextDelivery && !isPaused && !isSkipped && (
-                            <span className="inline-flex items-center gap-1 rounded-full border border-[#C3E6CB] bg-[#F1FAF3] px-2.5 py-1 text-[10.5px] font-semibold text-[#0A6B3C]">
-                              <Calendar size={9} strokeWidth={3} />
-                              Next: {item.nextDelivery}
-                            </span>
-                          )}
-                          {isPaused && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-[#F4F4F4] px-2.5 py-1 text-[10.5px] font-semibold text-[#888]">
-                              <PauseCircle size={9} strokeWidth={3} />
-                              Paused
-                            </span>
-                          )}
-                          {isSkipped && !isPaused && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-[#FFF7F1] px-2.5 py-1 text-[10.5px] font-semibold text-[#D14800]">
-                              <SkipForward size={9} strokeWidth={3} />
-                              Skipped
-                            </span>
-                          )}
-                          <span className="inline-flex items-center gap-1 rounded-full border border-[#B6CFEC] bg-[#EAF1FB] px-2.5 py-1 text-[10.5px] font-semibold text-[#1558A6]">
-                            {freqLabel(isMaya ? 30 : item.productId === 'thorne-creatine' ? 30 : 45)}
+                      <div className="mt-3 flex flex-wrap items-center gap-2">
+                        {item.nextDelivery && !isPaused && !isSkipped && (
+                          <span className="inline-flex items-center gap-1 rounded-full border border-[#C3E6CB] bg-[#F1FAF3] px-2.5 py-1 text-[11px] font-semibold text-[#0A6B3C]">
+                            <Calendar size={10} strokeWidth={3} />
+                            Next: {item.nextDelivery}
                           </span>
-                          {item.autoshipNote && (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-[#0A6B3C] px-2.5 py-1 text-[10.5px] font-semibold text-white">
-                              <Sparkles size={9} strokeWidth={3} />
-                              Auto-tuned
-                            </span>
-                          )}
-                        </div>
-
+                        )}
+                        {isPaused && (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-[#F4F4F4] px-2.5 py-1 text-[11px] font-semibold text-[#888]">
+                            <PauseCircle size={10} strokeWidth={3} />
+                            Paused
+                          </span>
+                        )}
+                        {isSkipped && !isPaused && (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-[#FFF7F1] px-2.5 py-1 text-[11px] font-semibold text-[#D14800]">
+                            <SkipForward size={10} strokeWidth={3} />
+                            Skipped
+                          </span>
+                        )}
+                        <span className="inline-flex items-center gap-1 rounded-full border border-[#B6CFEC] bg-[#EAF1FB] px-2.5 py-1 text-[11px] font-semibold text-[#1558A6]">
+                          {freqLabel(isMaya ? 30 : item.productId === 'thorne-creatine' ? 30 : 45)}
+                        </span>
                         {item.autoshipNote && (
-                          <div className="mt-2 flex items-start gap-1.5 rounded-lg border border-[#D9EADF] bg-[#F1FAF3] px-3 py-2">
-                            <Sparkles size={10} className="mt-0.5 flex-shrink-0 text-[#0A6B3C]" strokeWidth={3} />
-                            <span className="text-[11.5px] leading-snug text-[#444]">
-                              {item.autoshipNote}
-                            </span>
-                          </div>
+                          <span className="inline-flex items-center gap-1 rounded-full bg-[#0A6B3C] px-2.5 py-1 text-[11px] font-semibold text-white">
+                            <Sparkles size={10} strokeWidth={3} />
+                            Auto-tuned
+                          </span>
                         )}
                       </div>
 
-                      <div className="flex flex-shrink-0 flex-col items-end gap-1.5">
-                        <AdherenceRing
-                          percentage={item.adherence30d}
-                          size={56}
-                          label="30-day"
-                          color={
-                            item.adherence30d >= 90
-                              ? '#0A6B3C'
-                              : item.adherence30d >= 75
-                                ? '#B38900'
-                                : '#D14800'
-                          }
-                        />
-                        <Sparkline
-                          values={itemTrend}
-                          color={
-                            item.adherence30d >= 90
-                              ? '#0A6B3C'
-                              : item.adherence30d >= 75
-                                ? '#B38900'
-                                : '#D14800'
-                          }
-                          width={70}
-                          height={16}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="mt-4 flex items-center gap-2 border-t border-[#F4F4F4] pt-3">
-                      <button
-                        onClick={() => setSkipped((p) => ({ ...p, [item.productId]: !p[item.productId] }))}
-                        className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12px] font-semibold transition-all ${
-                          isSkipped
-                            ? 'border-[#0A6B3C] bg-[#F1FAF3] text-[#0A6B3C]'
-                            : 'border-[#D0D0D0] text-[#666] hover:border-[#999] hover:text-[#333]'
-                        }`}
-                      >
-                        <SkipForward size={11} strokeWidth={2.5} />
-                        {isSkipped ? 'Unskip next' : 'Skip next'}
-                      </button>
-                      <button
-                        onClick={() => setPaused((p) => ({ ...p, [item.productId]: !p[item.productId] }))}
-                        className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12px] font-semibold transition-all ${
-                          isPaused
-                            ? 'border-[#0A6B3C] bg-[#F1FAF3] text-[#0A6B3C]'
-                            : 'border-[#D0D0D0] text-[#666] hover:border-[#999] hover:text-[#333]'
-                        }`}
-                      >
-                        <PauseCircle size={11} strokeWidth={2.5} />
-                        {isPaused ? 'Resume' : 'Pause'}
-                      </button>
-                      <button className="flex items-center gap-1.5 rounded-full border border-[#D0D0D0] px-3 py-1.5 text-[12px] font-semibold text-[#666] transition-all hover:border-[#999] hover:text-[#333]">
-                        <RefreshCw size={11} strokeWidth={2.5} />
-                        Adjust frequency
-                      </button>
-                      <button className="flex items-center gap-1.5 rounded-full border border-[#D0D0D0] px-3 py-1.5 text-[12px] font-semibold text-[#666] transition-all hover:border-[#999] hover:text-[#333]">
-                        <Settings2 size={11} strokeWidth={2.5} />
-                        Replace
-                      </button>
-
-                      {item.productId === 'now-mag-glycinate' && (
-                        <div className="ml-auto text-right">
-                          <div className="text-[10px] text-[#AAA]">Last adjustment</div>
-                          <div className="text-[10.5px] font-medium text-[#666]">
-                            Moved 3 days later · April 19
-                          </div>
-                        </div>
-                      )}
-                      {item.productId === 'cgn-vit-d3' && (
-                        <div className="ml-auto text-right">
-                          <div className="text-[10px] text-[#AAA]">Last adjustment</div>
-                          <div className="text-[10.5px] font-medium text-[#666]">
-                            Price locked 20% off · April 27
-                          </div>
-                        </div>
-                      )}
-                      {item.productId === 'thorne-omega' && (
-                        <div className="ml-auto text-right">
-                          <div className="text-[10px] text-[#AAA]">Last adjustment</div>
-                          <div className="text-[10.5px] font-medium text-[#666]">
-                            Locked 3 deliveries · April 26
-                          </div>
-                        </div>
-                      )}
-                      {item.productId === 'thorne-creatine' && (
-                        <div className="ml-auto text-right">
-                          <div className="text-[10px] text-[#AAA]">Last adjustment</div>
-                          <div className="text-[10.5px] font-medium text-[#666]">
-                            Dose bumped to 6g · April 28
-                          </div>
-                        </div>
+                      {item.autoshipNote && (
+                        <p className="mt-3 max-w-[560px] text-[13px] text-[#555]" style={{ lineHeight: 1.55 }}>
+                          {item.autoshipNote}
+                        </p>
                       )}
                     </div>
+
+                    <div className="flex flex-shrink-0 flex-col items-end gap-2">
+                      <AdherenceRing
+                        percentage={item.adherence30d}
+                        size={64}
+                        label="30-day"
+                        color={
+                          item.adherence30d >= 90 ? '#0A6B3C' :
+                          item.adherence30d >= 75 ? '#B38900' : '#D14800'
+                        }
+                      />
+                      <Sparkline
+                        values={itemTrend}
+                        color={
+                          item.adherence30d >= 90 ? '#0A6B3C' :
+                          item.adherence30d >= 75 ? '#B38900' : '#D14800'
+                        }
+                        width={86}
+                        height={20}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-[#F4F4F4] pt-4">
+                    <button
+                      onClick={() => setSkipped((p) => ({ ...p, [item.productId]: !p[item.productId] }))}
+                      className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-[12.5px] font-semibold transition-all ${
+                        isSkipped
+                          ? 'border-[#0A6B3C] bg-[#F1FAF3] text-[#0A6B3C]'
+                          : 'border-[#E0E0E0] text-[#444] hover:border-[#999]'
+                      }`}
+                    >
+                      <SkipForward size={12} strokeWidth={2.5} />
+                      {isSkipped ? 'Unskip next' : 'Skip next'}
+                    </button>
+                    <button
+                      onClick={() => setPaused((p) => ({ ...p, [item.productId]: !p[item.productId] }))}
+                      className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-[12.5px] font-semibold transition-all ${
+                        isPaused
+                          ? 'border-[#0A6B3C] bg-[#F1FAF3] text-[#0A6B3C]'
+                          : 'border-[#E0E0E0] text-[#444] hover:border-[#999]'
+                      }`}
+                    >
+                      <PauseCircle size={12} strokeWidth={2.5} />
+                      {isPaused ? 'Resume' : 'Pause'}
+                    </button>
+                    <button className="inline-flex items-center gap-1.5 rounded-full border border-[#E0E0E0] px-3.5 py-2 text-[12.5px] font-semibold text-[#444] transition-all hover:border-[#999]">
+                      <RefreshCw size={12} strokeWidth={2.5} />
+                      Adjust frequency
+                    </button>
+                    <button className="inline-flex items-center gap-1.5 rounded-full border border-[#E0E0E0] px-3.5 py-2 text-[12.5px] font-semibold text-[#444] transition-all hover:border-[#999]">
+                      <Settings2 size={12} strokeWidth={2.5} />
+                      Replace
+                    </button>
+
+                    {item.productId === 'now-mag-glycinate' && (
+                      <span className="ml-auto text-[11.5px] font-medium text-[#888]">
+                        Last adjusted · Moved 3 days later · April 19
+                      </span>
+                    )}
+                    {item.productId === 'cgn-vit-d3' && (
+                      <span className="ml-auto text-[11.5px] font-medium text-[#888]">
+                        Last adjusted · Price locked 20% off · April 27
+                      </span>
+                    )}
+                    {item.productId === 'thorne-omega' && (
+                      <span className="ml-auto text-[11.5px] font-medium text-[#888]">
+                        Last adjusted · Locked 3 deliveries · April 26
+                      </span>
+                    )}
+                    {item.productId === 'thorne-creatine' && (
+                      <span className="ml-auto text-[11.5px] font-medium text-[#888]">
+                        Last adjusted · Dose bumped to 6g · April 28
+                      </span>
+                    )}
                   </div>
                 </div>
               );
             })}
+          </div>
 
-            {/* Trust badge strip — quality assurance */}
-            <div className="pt-2">
-              <TrustBadgeStrip
-                badges={['nsf', 'informed-sport', 'third-party', 'non-gmo', 'gmp']}
-                density="loose"
-                background="tinted"
-              />
-            </div>
+          <div className="mt-8">
+            <TrustBadgeStrip
+              badges={['nsf', 'informed-sport', 'third-party', 'non-gmo', 'gmp']}
+              density="loose"
+              background="white"
+            />
+          </div>
+        </section>
 
-            {/* Automation rules — purple-tinted */}
-            <div className="overflow-hidden rounded-2xl border border-[#D6C8F0] bg-gradient-to-br from-white via-white to-[#F4F0FB] p-5">
-              <div className="mb-3 flex items-center justify-between">
-                <div>
-                  <div className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#6B4FBC]">
-                    Automation rules
-                  </div>
-                  <p className="mt-0.5 text-[12px] text-[#666]">
-                    Things your advisor handles without asking — toggle to customize
-                  </p>
-                </div>
-                <Link
-                  href="/advisor"
-                  className="text-[11px] font-medium text-[#1558A6] hover:underline"
-                >
-                  Manage in advisor →
-                </Link>
-              </div>
-              <div className="space-y-1.5">
-                {rules.map((r) => (
-                  <div
-                    key={r.id}
-                    className={`flex items-center justify-between rounded-lg border px-3 py-2.5 transition-all ${
-                      r.on
-                        ? 'border-[#D6C8F0] bg-white/70'
-                        : 'border-[#F0F0F0] bg-white hover:border-[#D9EADF] hover:bg-[#FAFBFA]'
-                    }`}
-                  >
-                    <div className="mr-4 min-w-0 flex-1">
-                      <div className="text-[12.5px] font-semibold text-[#1A1A1A]">{r.rule}</div>
-                      <div className="text-[11px] text-[#888]">{r.detail}</div>
-                    </div>
-                    <button
-                      onClick={() => toggleRule(r.id)}
-                      className={`relative h-5 w-9 flex-shrink-0 rounded-full transition-colors ${
-                        r.on ? 'bg-[#6B4FBC]' : 'bg-[#E0E0E0]'
-                      }`}
-                      aria-label={r.on ? 'Disable rule' : 'Enable rule'}
-                    >
-                      <div
-                        className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow-sm transition-all ${
-                          r.on ? 'left-[18px]' : 'left-0.5'
-                        }`}
-                      />
-                    </button>
-                  </div>
-                ))}
-              </div>
+        {/* ── 6. Expert + savings editorial split ────────────────────── */}
+        <section className="mx-auto w-full max-w-[1280px] px-6 pt-24 md:px-10 md:pt-28">
+          <EditorialSplit
+            imageUrl={DELIVERY_LIFESTYLE.url}
+            alt={DELIVERY_LIFESTYLE.alt}
+            eyebrow="Backed by clinical review"
+            headline="Dr. Sarah Chen reviews every protocol shift."
+            body={
+              isMaya
+                ? 'Your stack is on her safe-to-self-tune list. The advisor only acts within the boundaries she has approved for your goals.'
+                : 'She backs your longevity protocol. Recommended your bisglycinate-first sleep approach 3 months ago, and the data is bearing it out.'
+            }
+            ratio="balanced"
+            minHeight="380px"
+          >
+            <ExpertCallout
+              portraitUrl={EXPERT_DR_CHEN.url}
+              name="Dr. Sarah Chen"
+              credentials="ND, MS"
+              title="Naturopathic Doctor · Wellness Hub"
+              endorsement=""
+              expertiseChips={['Sleep', 'Mineral repletion', 'Allergy protocols']}
+              variant="inline"
+            />
+          </EditorialSplit>
+        </section>
+
+        {/* ── 7. Action queue ─────────────────────────────────────── */}
+        {agentSideActions.length > 0 && (
+          <section className="mx-auto w-full max-w-[1280px] px-6 pt-24 md:px-10 md:pt-28">
+            <SectionHeader
+              eyebrow="Live action queue"
+              headline="Subscription, inventory, and pricing intelligence"
+              lede={
+                isMaya
+                  ? 'Smaller actions handled in the background — you only see them if they pass a threshold worth knowing about.'
+                  : 'Real-time queue reflecting your data feeds. Every action is reversible from here or your audit log.'
+              }
+            />
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+              {agentSideActions.map((a) => (
+                <AgentActionCard key={a.id} action={a} />
+              ))}
             </div>
           </section>
+        )}
 
-          {/* ── RIGHT: Action queue + savings + expert ───────────── */}
-          <aside className="col-span-4">
-            <div className="sticky top-[140px] space-y-4">
-              <ExpertCallout
-                portraitUrl={EXPERT_DR_CHEN.url}
-                name="Dr. Sarah Chen"
-                credentials="ND, MS"
-                title="Naturopathic Doctor · Wellness Hub"
-                endorsement={
-                  isMaya
-                    ? 'Reviews every protocol shift the advisor recommends for you. Your stack is on her safe-to-self-tune list.'
-                    : 'Backs your longevity protocol. Recommended your bisglycinate-first sleep approach 3 months ago.'
-                }
-                expertiseChips={['Sleep', 'Mineral repletion', 'Allergy protocols']}
-              />
-
-              <div>
-                <div className="mb-2 flex items-baseline justify-between">
-                  <h2 className="text-[16px] font-bold text-[#1A1A1A]">Agent actions</h2>
-                  <span className="text-[11.5px] text-[#888]">
-                    {agentSideActions.length} subscription-related
-                  </span>
+        {/* ── 8. Automation rules ────────────────────────────────────── */}
+        <section className="mx-auto w-full max-w-[1280px] px-6 pt-24 pb-24 md:px-10 md:pt-28 md:pb-32">
+          <SectionHeader
+            eyebrow="Hands-off"
+            eyebrowColor="#6B4FBC"
+            headline="Automation rules"
+            lede="Behaviors your advisor handles without asking. Each rule is independently togglable."
+            ctaLabel="Manage in advisor"
+            ctaHref="/advisor"
+          />
+          <div className="overflow-hidden rounded-2xl bg-white ring-1 ring-[#EFEFEF]">
+            {rules.map((r, i) => (
+              <div
+                key={r.id}
+                className={`flex items-center justify-between gap-4 p-5 transition-colors ${
+                  i > 0 ? 'border-t border-[#F2F2F2]' : ''
+                } ${r.on ? 'bg-white' : 'bg-[#FAFAFA]'}`}
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="text-[14.5px] font-semibold text-[#1A1A1A]">{r.rule}</div>
+                  <div className="mt-0.5 text-[12.5px] text-[#888]">{r.detail}</div>
                 </div>
-                <p className="mb-3 text-[12px] text-[#666]">
-                  {isMaya
-                    ? 'Subscription, inventory, and price actions from your advisor'
-                    : 'Live queue — subscription, inventory, and pricing intelligence'}
-                </p>
-                <div className="space-y-2.5">
-                  {agentSideActions.map((a) => (
-                    <AgentActionCard key={a.id} action={a} compact />
-                  ))}
-                  {agentSideActions.length === 0 && (
-                    <div className="rounded-xl border border-dashed border-[#E0E0E0] py-8 text-center text-[12.5px] italic text-[#999]">
-                      No pending actions for subscriptions
-                    </div>
-                  )}
-                </div>
+                <button
+                  onClick={() => toggleRule(r.id)}
+                  className={`relative h-6 w-11 flex-shrink-0 rounded-full transition-colors ${
+                    r.on ? 'bg-[#6B4FBC]' : 'bg-[#E0E0E0]'
+                  }`}
+                  aria-label={r.on ? 'Disable rule' : 'Enable rule'}
+                >
+                  <div
+                    className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-all ${
+                      r.on ? 'left-[22px]' : 'left-0.5'
+                    }`}
+                  />
+                </button>
               </div>
-
-              {/* Savings summary — teal */}
-              <div className="overflow-hidden rounded-2xl border border-[#A7DDDC] bg-gradient-to-br from-[#E5F6F5] via-[#D4EFEE] to-[#BFE6E4] p-5">
-                <div className="mb-2 flex items-center gap-2">
-                  <Zap size={14} className="text-[#0E9594]" strokeWidth={2.5} />
-                  <span className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#0E9594]">
-                    Advisor savings
-                  </span>
-                </div>
-                <div className="text-[28px] font-bold leading-none text-[#0A4A4A]">{savedThisYear}</div>
-                <div className="text-[11.5px] text-[#1F6E6D]">saved via auto-tuning in 2026</div>
-                <div className="mt-2">
-                  <Sparkline values={savingsTrend} color="#0E9594" width={200} height={28} />
-                </div>
-                <div className="mt-3 space-y-1.5 border-t border-[#A7DDDC] pt-3">
-                  {isMaya ? (
-                    <>
-                      <div className="flex items-center justify-between text-[11.5px]">
-                        <span className="text-[#1F6E6D]">Price lock on D3</span>
-                        <span className="font-bold text-[#0A4A4A]">$4.40</span>
-                      </div>
-                      <div className="flex items-center justify-between text-[11.5px]">
-                        <span className="text-[#1F6E6D]">Avoided duplicate delivery</span>
-                        <span className="font-bold text-[#0A4A4A]">$18.99</span>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="flex items-center justify-between text-[11.5px]">
-                        <span className="text-[#1F6E6D]">EPA/DHA price lock</span>
-                        <span className="font-bold text-[#0A4A4A]">$11.97</span>
-                      </div>
-                      <div className="flex items-center justify-between text-[11.5px]">
-                        <span className="text-[#1F6E6D]">Longevity bundle</span>
-                        <span className="font-bold text-[#0A4A4A]">$31.20/mo</span>
-                      </div>
-                      <div className="flex items-center justify-between text-[11.5px]">
-                        <span className="text-[#1F6E6D]">LMNT pause</span>
-                        <span className="font-bold text-[#0A4A4A]">~$24</span>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-
-              <div className="rounded-xl border border-[#E0E0E0] bg-white p-4">
-                <div className="flex items-start gap-2.5">
-                  <CheckCircle2 size={16} className="mt-0.5 flex-shrink-0 text-[#0A6B3C]" strokeWidth={2.5} />
-                  <div>
-                    <div className="text-[12.5px] font-semibold text-[#1A1A1A]">
-                      Every action is reversible
-                    </div>
-                    <p className="mt-0.5 text-[11.5px] leading-relaxed text-[#666]">
-                      {isMaya
-                        ? 'Your advisor never ships or charges anything without your approval — it adjusts timing and locks in prices.'
-                        : 'Protocol changes, delivery timing, and price locks are all reversible from this page.'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </aside>
-        </div>
+            ))}
+          </div>
+        </section>
       </main>
 
       <Footer />

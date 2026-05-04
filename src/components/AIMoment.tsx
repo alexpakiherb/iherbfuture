@@ -20,7 +20,14 @@ interface AIMomentProps {
   children?: ReactNode;
   footerLabel?: string;
   footerRight?: ReactNode;
-  variant?: 'card' | 'inline';
+  /**
+   * `card` — white box with subtle border + soft shadow + thin accent bar (default).
+   * `inline` — tinted left-accent strip for inline notes.
+   * `flat`  — editorial v2: no border, no shadow, no accent bar; just a green
+   *           sparkle eyebrow + headline + body + footer divider. Use this on
+   *           pages where the card chrome was overpowering. (May 3 2026)
+   */
+  variant?: 'card' | 'inline' | 'flat';
   className?: string;
 }
 
@@ -58,29 +65,83 @@ export function AIMoment({
     );
   }
 
-  // Card variant: white background, gradient bar, shadow
-  return (
-    <div
-      className={`overflow-hidden rounded-2xl border border-[#D9EADF] bg-white shadow-[0_2px_16px_rgba(10,107,60,0.07)] animate-[fadeIn_200ms_ease-out] ${className}`}
-    >
-      <div className="h-[3px] bg-gradient-to-r from-[#0A6B3C] via-[#79A83C] to-[#0A6B3C]" />
-
-      <div className="px-5 py-4">
-        <div className="mb-1 flex items-center gap-1.5">
-          <Sparkles size={12} className="text-[#0A6B3C]" strokeWidth={2.5} />
-          <span className="text-[10px] font-bold uppercase tracking-widest text-[#0A6B3C]">
+  if (variant === 'flat') {
+    // Flat editorial variant — no card chrome. Use inside other layout
+    // sections (EditorialSplit, full-width sections) where the AI moment
+    // is one of several content blocks and shouldn't dominate visually.
+    return (
+      <div className={`animate-[fadeIn_200ms_ease-out] ${className}`}>
+        <div className="mb-3 flex items-center gap-1.5">
+          <Sparkles size={13} className="text-[#0A6B3C]" strokeWidth={2.5} />
+          <span
+            className="text-[11px] font-bold uppercase text-[#0A6B3C]"
+            style={{ letterSpacing: '0.18em' }}
+          >
             {eyebrow}
           </span>
         </div>
-        <div className="text-[15px] font-semibold leading-snug text-[#1A1A1A]">{headline}</div>
-        {body && <div className="mt-1.5 text-[13.5px] leading-relaxed text-[#444]">{body}</div>}
-        {children && <div className="mt-3">{children}</div>}
+        <div
+          className="text-[22px] md:text-[26px] font-bold text-[#1A1A1A]"
+          style={{ letterSpacing: '-0.012em', lineHeight: 1.18 }}
+        >
+          {headline}
+        </div>
+        {body && (
+          <div className="mt-3 text-[15px] text-[#555]" style={{ lineHeight: 1.6 }}>
+            {body}
+          </div>
+        )}
+        {children && <div className="mt-5">{children}</div>}
+        {(footerLabel || footerRight) && (
+          <div className="mt-5 flex items-center justify-between border-t border-[#EEE] pt-3">
+            {footerLabel && <span className="text-[11px] text-[#888]">{footerLabel}</span>}
+            {footerRight && <div className="ml-auto">{footerRight}</div>}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Card variant: white background, gradient bar, shadow.
+  // Lightened May 3 2026: thinner accent (1px), softer shadow, slightly
+  // larger headline + body so it earns its space when used.
+  return (
+    <div
+      className={`overflow-hidden rounded-2xl border border-[#EAEAEA] bg-white shadow-[0_1px_3px_rgba(0,0,0,0.04),0_8px_24px_rgba(10,107,60,0.05)] animate-[fadeIn_200ms_ease-out] ${className}`}
+    >
+      <div className="h-[2px] bg-gradient-to-r from-[#0A6B3C] via-[#79A83C] to-[#0A6B3C]" />
+
+      <div className="px-6 py-5">
+        <div className="mb-2 flex items-center gap-1.5">
+          <Sparkles size={12} className="text-[#0A6B3C]" strokeWidth={2.5} />
+          <span
+            className="text-[11px] font-bold uppercase text-[#0A6B3C]"
+            style={{ letterSpacing: '0.18em' }}
+          >
+            {eyebrow}
+          </span>
+        </div>
+        <div
+          className="text-[18px] font-bold text-[#1A1A1A]"
+          style={{ letterSpacing: '-0.01em', lineHeight: 1.25 }}
+        >
+          {headline}
+        </div>
+        {body && (
+          <div
+            className="mt-2 text-[14.5px] text-[#444]"
+            style={{ lineHeight: 1.6 }}
+          >
+            {body}
+          </div>
+        )}
+        {children && <div className="mt-4">{children}</div>}
       </div>
 
       {(footerLabel || footerRight) && (
-        <div className="flex items-center justify-between border-t border-[#F0F0F0] bg-[#FAFBFA] px-5 py-2.5">
+        <div className="flex items-center justify-between border-t border-[#F2F2F2] bg-white px-6 py-3">
           {footerLabel && (
-            <span className="text-[10.5px] text-[#888]">{footerLabel}</span>
+            <span className="text-[11px] text-[#888]">{footerLabel}</span>
           )}
           {footerRight && <div className="ml-auto">{footerRight}</div>}
         </div>

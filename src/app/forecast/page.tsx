@@ -222,7 +222,7 @@ export default function ForecastPage() {
       <main className="mx-auto w-full max-w-[1280px] flex-1 px-8 py-6">
 
         {/* ── Editorial hero ───────────────────────────────────────── */}
-        <section className="mb-6">
+        <section className="mb-10">
           <LifestyleHero
             imageUrl={heroImage.url}
             alt={heroImage.alt}
@@ -237,9 +237,11 @@ export default function ForecastPage() {
                 ? 'Your environment, translated into wellness recommendations you can act on today.'
                 : 'Your environment, correlated with biometric data to optimize your protocol in real time.'
             }
-            size="xl"
+            size="lg"
             tint={isMaya ? 'coral' : 'green'}
             overlay="medium"
+            serif
+            rounded="lg"
           >
             <div className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur-sm">
               <MapPin size={12} strokeWidth={2.5} />
@@ -271,7 +273,7 @@ export default function ForecastPage() {
         </section>
 
         {/* ── 7-day strip ──────────────────────────────────────────── */}
-        <section className="mb-6">
+        <section className="mb-10">
           <HealthForecastStrip
             days={forecast.days}
             city={forecast.city}
@@ -281,7 +283,7 @@ export default function ForecastPage() {
         </section>
 
         {/* ── Today's conditions: 4-tile bento with gauges ─────────── */}
-        <section className="mb-6">
+        <section className="mb-10">
           <div className="mb-3">
             <div className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#0A6B3C]">
               Today&rsquo;s conditions
@@ -408,7 +410,7 @@ export default function ForecastPage() {
         </section>
 
         {/* ── Insight cards (intermixed with imagery) ──────────────── */}
-        <section className="mb-6">
+        <section className="mb-10">
           <div className="mb-3">
             <div className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#0A6B3C]">
               {isMaya ? 'Read of the week' : 'Environmental signal analysis'}
@@ -546,7 +548,7 @@ export default function ForecastPage() {
 
         {/* ── Hydration lifestyle break (Maya only, when heat is high) ── */}
         {isMaya && today.tempHigh >= 85 && (
-          <section className="mb-6">
+          <section className="mb-10">
             <div className="grid grid-cols-12 gap-5">
               <div className="col-span-5">
                 <div className="relative h-[220px] overflow-hidden rounded-2xl border border-[#EBEBEB]">
@@ -583,7 +585,7 @@ export default function ForecastPage() {
         )}
 
         {/* ── Seasonal protocol ────────────────────────────────────── */}
-        <section className="mb-6">
+        <section className="mb-10">
           <div className="mb-3 flex items-baseline justify-between">
             <div>
               <div className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#6B4FBC]">
@@ -610,7 +612,7 @@ export default function ForecastPage() {
 
         {/* ── Daniel: training window analysis ─────────────────────── */}
         {!isMaya && (
-          <section className="mb-6">
+          <section className="mb-10">
             <AIMoment
               eyebrow="Training window analysis"
               headline="This week: 3 outdoor Z2 sessions optimal"
@@ -655,7 +657,7 @@ export default function ForecastPage() {
         )}
 
         {/* ── Email signup — magazine footer style ─────────────────── */}
-        <section className="mb-6">
+        <section className="mb-10">
           <div className="overflow-hidden rounded-2xl border border-[#D9EADF] bg-gradient-to-br from-[#F1FAF3] to-white">
             <div className="h-[3px] bg-gradient-to-r from-[#0A6B3C] via-[#79A83C] to-[#0A6B3C]" />
             <div className="p-7">
