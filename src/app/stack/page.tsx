@@ -1,12 +1,11 @@
 'use client';
 
-// My Stack — editorial v2 (May 3, 2026).
+// My Stack — editorial v3 (May 4, 2026).
 //
-// The day timeline is the protagonist now. Stats live in a clean MetricRow,
-// each time-of-day group becomes its own editorial section with a real
-// SectionHeader, and the side rail (AI insight + achievements + weekly grid)
-// is gone — those moments now live as full-width sections after the timeline.
-// Less card chrome, much more breathing room.
+// Bento returns mixed-media. Hero photo (apothecary aesthetic), then a
+// 12-col grid that mixes a big content tile (today's progress + streak)
+// with photo tiles (morning kitchen, evening wind-down) and stat
+// billboards. Time-of-day groups are below as editorial sub-sections.
 
 import { useState } from 'react';
 import {
@@ -23,12 +22,18 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { AIMoment } from '@/components/AIMoment';
 import { LifestyleHero } from '@/components/LifestyleHero';
-import { SectionHeader } from '@/components/SectionHeader';
-import { MetricRow, type Metric } from '@/components/MetricRow';
+import { Bento, BentoTile } from '@/components/BentoTile';
 import { Sparkline } from '@/components/Sparkline';
+import { ScrollReveal } from '@/components/ScrollReveal';
+import { AnimatedCounter } from '@/components/AnimatedCounter';
 import { usePersona } from '@/components/PersonaProvider';
 import { StackItem } from '@/data/personas';
-import { STACK_HERO } from '@/data/lifestyleImages';
+import {
+  RITUAL_KITCHEN,
+  RITUAL_EVENING,
+  RITUAL_WORKOUT,
+  RITUAL_BOTTLES_WOOD,
+} from '@/data/lifestyleImages';
 
 const TIME_GROUPS: {
   key: StackItem['timeOfDay'];
@@ -44,7 +49,6 @@ const TIME_GROUPS: {
   { key: 'evening',      label: 'Evening',      icon: Moon,     description: '30 minutes before bed',               color: '#6B4FBC' },
 ];
 
-// Per-supplement 30-day mock trend.
 function trendFor(adherence: number): number[] {
   const series: number[] = [];
   let v = Math.max(40, adherence - 25);
@@ -89,114 +93,165 @@ export default function StackPage() {
 
   const autoshipItems = persona.stack.filter((s) => s.autoship);
 
-  const metrics: Metric[] = [
-    {
-      label: 'Streak',
-      value: persona.streakDays.toString(),
-      unit: 'days',
-      caption: isMaya ? 'next milestone 21' : '180+ achieved · top 3%',
-      accent: '#FF6B4A',
-      hero: true,
-    },
-    {
-      label: '30-day adherence',
-      value: `${avgAdherence}`,
-      unit: '%',
-      caption: avgAdherence >= 90 ? 'Crushing it.' : avgAdherence >= 75 ? 'Solid.' : 'Room to grow.',
-      trend: adherenceTrend,
-      accent: '#0A6B3C',
-    },
-    {
-      label: 'Next delivery',
-      value: nextDelivery.split(' ')[1] ?? nextDelivery,
-      unit: nextDelivery.split(' ')[0] ?? '',
-      caption: `${autoshipItems.length} items in box · ${isMaya ? '1 paused by AI' : 'auto-tuned'}`,
-      accent: '#0E9594',
-    },
-    {
-      label: 'Earned',
-      value: persona.achievements.length.toString(),
-      unit: 'badges',
-      caption: 'this year',
-      accent: '#6B4FBC',
-    },
-  ];
-
   return (
-    <div className="flex min-h-screen flex-col bg-[#FAFAFA]">
+    <div className="flex min-h-screen flex-col">
       <Header />
 
       <main className="flex-1">
-        {/* ── 1. Editorial hero ──────────────────────────────────────── */}
-        <section className="mx-auto w-full max-w-[1440px] px-4 pt-4 sm:px-6 md:px-8 md:pt-6">
+        <section className="mx-auto w-full max-w-[1500px] px-4 pt-4 sm:px-6 md:px-8 md:pt-6">
           <LifestyleHero
-            imageUrl={STACK_HERO.url}
-            alt={STACK_HERO.alt}
+            imageUrl={RITUAL_BOTTLES_WOOD.url}
+            alt={RITUAL_BOTTLES_WOOD.alt}
             eyebrow={isMaya ? 'A simple ritual' : 'A precise protocol'}
-            headline={`${persona.firstName}'s daily stack`}
+            headline={
+              isMaya
+                ? <>{persona.firstName}&rsquo;s daily stack.</>
+                : <>{persona.firstName}&rsquo;s twelve, <em className="not-italic font-serif-display italic">calibrated.</em></>
+            }
             subline={
               isMaya
-                ? 'Three supplements anchored to the morning and evening routines you already keep.'
-                : 'Twelve supplements, calibrated to your biometrics, your training cycle, and the windows of your day.'
+                ? "Three supplements anchored to the morning and evening you already keep."
+                : "Twelve compounds, paced through the day to your data and your training cycle."
             }
-            size="md"
-            tint="green"
+            size="xl"
+            tint="neutral"
             overlay="medium"
             serif
             rounded="lg"
           />
         </section>
 
-        {/* ── 2. Stat row ────────────────────────────────────────────── */}
-        <section className="mx-auto w-full max-w-[1280px] px-6 py-12 md:px-10 md:py-16">
-          <MetricRow metrics={metrics} />
-        </section>
-
-        {/* ── 3. Today's progress — clean strip, no card chrome ──────── */}
-        <section className="mx-auto w-full max-w-[1280px] px-6 md:px-10">
-          <div className="flex flex-col items-start gap-5 rounded-2xl bg-white p-7 ring-1 ring-[#EFEFEF] sm:flex-row sm:items-center">
-            <div className="flex-1">
-              <div className="text-[11.5px] font-bold uppercase text-[#666]" style={{ letterSpacing: '0.18em' }}>
-                Today
-              </div>
-              <h2 className="mt-2 text-[24px] font-bold text-[#1A1A1A]" style={{ letterSpacing: '-0.012em' }}>
-                {takenCount} of {totalCount} doses logged
-              </h2>
-              <div className="mt-4 h-[6px] overflow-hidden rounded-full bg-[#F3F3F3]">
+        <section className="mx-auto w-full max-w-[1500px] px-4 pt-6 sm:px-6 md:px-8 md:pt-8">
+          <Bento>
+            <BentoTile
+              variant="content"
+              span="col-span-12 lg:col-span-8"
+              surface="ink"
+              eyebrow="Today"
+              title={
+                <span>
+                  {takenCount} of {totalCount} doses logged.
+                </span>
+              }
+              ctaHref="#log"
+              ctaLabel="Log dose"
+              minHeight="320px"
+            >
+              <div className="mt-1 h-[6px] overflow-hidden rounded-full bg-white/15">
                 <div
-                  className="h-full rounded-full bg-[#0A6B3C] transition-all duration-500"
+                  className="h-full rounded-full bg-[#79A83C] transition-all duration-500"
                   style={{ width: `${progress}%` }}
                 />
               </div>
-              <div className="mt-3 text-[13px] text-[#666]">
-                Tap each supplement to mark taken. Apple Health logs automatically when connected.
+              <p className="mt-4 max-w-[520px] text-[14px] text-white/70" style={{ lineHeight: 1.55 }}>
+                Tap any supplement below to log it. Apple Health logs automatically when connected.
+              </p>
+              <div className="mt-6 flex flex-wrap items-center gap-3">
+                <button className="inline-flex items-center gap-2 rounded-full bg-[#F5F1EA] px-5 py-2.5 text-[13px] font-semibold text-[#0F1815] transition-transform hover:-translate-y-0.5">
+                  <Plus size={14} strokeWidth={2.5} />
+                  Add to stack
+                </button>
+                <span className="text-[12.5px] text-white/60">
+                  Anchored to {persona.routine.morningTime} & {persona.routine.eveningTime}
+                </span>
               </div>
-            </div>
-            <button className="inline-flex items-center gap-2 rounded-full bg-[#1A1A1A] px-5 py-3 text-[13px] font-semibold text-white transition-colors hover:bg-[#0A6B3C]">
-              <Plus size={14} strokeWidth={2.5} />
-              Add to stack
-            </button>
-          </div>
+            </BentoTile>
+
+            <BentoTile
+              variant="stat"
+              span="col-span-12 lg:col-span-4"
+              surface="oat"
+              label={isMaya ? 'Day streak' : 'Long streak'}
+              value={<AnimatedCounter to={persona.streakDays} duration={1600} />}
+              unit="days"
+              caption={isMaya ? 'Twenty-one is the next milestone.' : '180+ achieved · top 3 percent.'}
+              accent="#0F1815"
+              serif
+              size="xl"
+              minHeight="320px"
+            />
+          </Bento>
         </section>
 
-        {/* ── 4. Time-of-day timeline — each group as editorial section ── */}
-        <section className="mx-auto w-full max-w-[1280px] px-6 pt-20 md:px-10 md:pt-24">
-          <SectionHeader
-            eyebrow="The day"
-            headline="Your routine, in time"
-            lede={
-              isMaya
-                ? `Anchored to ${persona.routine.morningTime} and ${persona.routine.eveningTime}. Tap any supplement to log it.`
-                : `Five windows. ${persona.stack.length} supplements. Calibrated to your training cycle and biometric inputs.`
-            }
-          />
+        <section className="mx-auto w-full max-w-[1500px] px-4 pt-5 sm:px-6 md:px-8">
+          <Bento>
+            <BentoTile
+              variant="photo"
+              span="col-span-12 lg:col-span-5"
+              imageUrl={isMaya ? RITUAL_KITCHEN.url : RITUAL_WORKOUT.url}
+              alt={isMaya ? RITUAL_KITCHEN.alt : RITUAL_WORKOUT.alt}
+              eyebrow={isMaya ? 'Anchor habits' : 'Training cycle'}
+              caption={isMaya ? 'A morning, paced.' : 'Strain-aware. Recovery-first.'}
+              overlay="medium"
+              minHeight="280px"
+            />
 
-          <div className="space-y-14">
+            <BentoTile
+              variant="stat"
+              span="col-span-6 lg:col-span-3"
+              surface="bone"
+              label="30-day adherence"
+              value={`${avgAdherence}`}
+              unit="%"
+              caption={avgAdherence >= 90 ? 'Crushing it.' : avgAdherence >= 75 ? 'Solid.' : 'Room to grow.'}
+              trend={adherenceTrend}
+              accent="#0A6B3C"
+              size="lg"
+              minHeight="280px"
+            />
+
+            <BentoTile
+              variant="stat"
+              span="col-span-6 lg:col-span-2"
+              surface="forest"
+              label="Next delivery"
+              value={nextDelivery.split(' ')[1] ?? nextDelivery}
+              unit={nextDelivery.split(' ')[0] ?? ''}
+              caption={`${autoshipItems.length} items in box.`}
+              accent="#FFFFFF"
+              size="md"
+              minHeight="280px"
+            />
+
+            <BentoTile
+              variant="stat"
+              span="col-span-12 lg:col-span-2"
+              surface="bone"
+              label="Earned"
+              value={persona.achievements.length.toString()}
+              unit="badges"
+              caption="this year."
+              accent="#6B4FBC"
+              serif
+              size="md"
+              minHeight="280px"
+            />
+          </Bento>
+        </section>
+
+        <section className="mx-auto w-full max-w-[1280px] px-6 pt-28 md:px-10 md:pt-36" id="log">
+          <ScrollReveal as="div" className="mb-8">
+            <div className="text-[11.5px] font-bold uppercase text-[#0A6B3C]" style={{ letterSpacing: '0.22em' }}>
+              The day
+            </div>
+            <h2
+              className="mt-4 font-serif-display font-semibold text-[#0F1815] max-w-[24ch]"
+              style={{ fontSize: 'clamp(30px, 3.6vw, 44px)', letterSpacing: '-0.02em', lineHeight: 1.06 }}
+            >
+              {isMaya ? 'Your routine, in time.' : 'Five windows, twelve compounds.'}
+            </h2>
+            <p className="mt-4 max-w-[560px] text-[15.5px] text-[#555]" style={{ lineHeight: 1.6 }}>
+              {isMaya
+                ? `Anchored to ${persona.routine.morningTime} and ${persona.routine.eveningTime}. Tap each supplement to log it.`
+                : `Calibrated to your training cycle and biometric inputs. Each window has its own purpose.`}
+            </p>
+          </ScrollReveal>
+
+          <div className="space-y-12">
             {grouped.map((group) => {
               const Icon = group.icon;
               return (
                 <div key={group.key}>
-                  {/* Group header — eyebrow + label in the section's color */}
                   <div className="mb-5 flex items-baseline gap-3">
                     <Icon size={18} strokeWidth={2.25} style={{ color: group.color }} />
                     <div
@@ -211,7 +266,7 @@ export default function StackPage() {
                     </div>
                   </div>
 
-                  <div className="overflow-hidden rounded-2xl bg-white ring-1 ring-[#EFEFEF]">
+                  <div className="overflow-hidden rounded-2xl bg-[#FBF9F4] ring-1 ring-[#EFEAE0]">
                     {group.items.map((item, i) => {
                       const isTaken = !!taken[item.productId];
                       const itemTrend = trendFor(item.adherence30d);
@@ -219,8 +274,8 @@ export default function StackPage() {
                         <div
                           key={item.productId}
                           className={`flex items-center gap-5 p-5 transition-colors ${
-                            i > 0 ? 'border-t border-[#F2F2F2]' : ''
-                          } ${isTaken ? 'bg-[#FAFCFA]' : 'hover:bg-[#FAFBFA]'}`}
+                            i > 0 ? 'border-t border-[#EFEAE0]' : ''
+                          } ${isTaken ? 'bg-[#F5F1EA]' : 'hover:bg-white'}`}
                         >
                           <button
                             onClick={() => toggleTaken(item.productId)}
@@ -233,7 +288,7 @@ export default function StackPage() {
                             {isTaken && <CheckCircle2 size={18} className="text-white" strokeWidth={2.5} />}
                           </button>
 
-                          <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#FAFBFA]">
+                          <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white">
                             <img
                               src={item.imageUrl}
                               alt={item.name}
@@ -246,7 +301,7 @@ export default function StackPage() {
                             <div className="text-[10.5px] font-bold uppercase text-[#0A6B3C]" style={{ letterSpacing: '0.14em' }}>
                               {item.brand}
                             </div>
-                            <div className={`mt-0.5 text-[15px] font-semibold ${isTaken ? 'text-[#888] line-through' : 'text-[#1A1A1A]'}`}>
+                            <div className={`mt-0.5 text-[15px] font-semibold ${isTaken ? 'text-[#888] line-through' : 'text-[#0F1815]'}`}>
                               {item.name}
                             </div>
                             <div className="mt-0.5 text-[12.5px] text-[#666]">
@@ -268,13 +323,13 @@ export default function StackPage() {
 
                           <div className="flex flex-shrink-0 flex-col items-end gap-1">
                             <div
-                              className="text-[20px] font-bold tabular-nums"
+                              className="font-serif-display text-[24px] font-semibold tabular-nums"
                               style={{
                                 color:
                                   item.adherence30d >= 90 ? '#0A6B3C' :
                                   item.adherence30d >= 75 ? '#B38900' :
                                                             '#D14800',
-                                letterSpacing: '-0.015em',
+                                letterSpacing: '-0.018em',
                               }}
                             >
                               {item.adherence30d}%
@@ -296,10 +351,14 @@ export default function StackPage() {
           </div>
         </section>
 
-        {/* ── 5. Insight from your routine (flat AIMoment) ───────────── */}
-        <section className="mx-auto w-full max-w-[1280px] px-6 pt-24 md:px-10 md:pt-28">
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
-            <div className="lg:col-span-8">
+        <section className="mx-auto w-full max-w-[1500px] px-4 pt-28 sm:px-6 md:px-8 md:pt-36">
+          <Bento>
+            <BentoTile
+              variant="content"
+              span="col-span-12 lg:col-span-7"
+              surface="bone"
+              minHeight="340px"
+            >
               <AIMoment
                 variant="flat"
                 eyebrow="Insight from your routine"
@@ -310,10 +369,10 @@ export default function StackPage() {
                 }
                 body={
                   isMaya
-                    ? 'Vitamin C is your weak link. The pattern is mostly Tuesday and Thursday afternoons — likely tied to your gym schedule. Want me to move it to mornings?'
+                    ? 'Vitamin C is your weak link — mostly Tuesday and Thursday afternoons, likely tied to your gym schedule. Want me to move it to mornings?'
                     : 'Bisglycinate is doing its job. Right moment to layer in glycine 3g or magnesium L-threonate at 9 PM, depending on whether you want REM depth or cognitive next-morning sharpness.'
                 }
-                footerLabel="Powered by iHerb Wellness Hub"
+                footerLabel="Sourced from iHerb Wellness Hub"
                 footerRight={
                   <Link
                     href="/advisor"
@@ -323,29 +382,44 @@ export default function StackPage() {
                   </Link>
                 }
               />
-            </div>
-          </div>
+            </BentoTile>
+
+            <BentoTile
+              variant="photo"
+              span="col-span-12 lg:col-span-5"
+              imageUrl={RITUAL_EVENING.url}
+              alt={RITUAL_EVENING.alt}
+              eyebrow="Wind down"
+              caption={isMaya ? 'Magnesium, thirty minutes before lights out.' : 'Glycine first. Magnesium with it.'}
+              overlay="medium"
+              minHeight="340px"
+            />
+          </Bento>
         </section>
 
-        {/* ── 6. Achievements ────────────────────────────────────────── */}
-        <section className="mx-auto w-full max-w-[1280px] px-6 pt-24 pb-24 md:px-10 md:pt-28 md:pb-32">
-          <SectionHeader
-            eyebrow="Earned"
-            eyebrowColor="#6B4FBC"
-            headline={`${persona.achievements.length} ${persona.achievements.length === 1 ? 'badge' : 'badges'} this year`}
-            lede="Small celebrations of consistency. Each one is automatically recognized as you build the habit."
-          />
+        <section className="mx-auto w-full max-w-[1280px] px-6 pt-28 pb-24 md:px-10 md:pt-36 md:pb-32">
+          <ScrollReveal as="div" className="mb-8">
+            <div className="text-[11.5px] font-bold uppercase text-[#6B4FBC]" style={{ letterSpacing: '0.22em' }}>
+              Earned
+            </div>
+            <h2
+              className="mt-4 font-serif-display font-semibold text-[#0F1815] max-w-[24ch]"
+              style={{ fontSize: 'clamp(30px, 3.6vw, 44px)', letterSpacing: '-0.02em', lineHeight: 1.06 }}
+            >
+              {persona.achievements.length} {persona.achievements.length === 1 ? 'badge' : 'badges'}, this year.
+            </h2>
+          </ScrollReveal>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {persona.achievements.map((a) => (
               <div
                 key={a.id}
-                className="flex items-center gap-4 rounded-2xl bg-white p-6 ring-1 ring-[#EFEFEF] transition-all hover:ring-[#6B4FBC]"
+                className="motion-lift flex items-center gap-4 rounded-2xl bg-[#FBF9F4] p-6 ring-1 ring-[#EFEAE0]"
               >
                 <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-[#F4F0FB] text-[24px]">
                   {a.emoji}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="text-[14.5px] font-semibold text-[#1A1A1A]">{a.label}</div>
+                  <div className="text-[14.5px] font-semibold text-[#0F1815]">{a.label}</div>
                   <div className="mt-0.5 inline-flex items-center gap-1 text-[11.5px] font-medium text-[#6B4FBC]">
                     <Award size={11} strokeWidth={2.5} />
                     Earned {a.earned}

@@ -18,6 +18,8 @@ import { Bento, BentoTile } from '@/components/BentoTile';
 import { Billboard } from '@/components/Billboard';
 import { EditorialSplit } from '@/components/EditorialSplit';
 import { BundleCollage } from '@/components/BundleCollage';
+import { ScrollReveal } from '@/components/ScrollReveal';
+import { AnimatedCounter } from '@/components/AnimatedCounter';
 import { usePersona } from '@/components/PersonaProvider';
 import { getForecast } from '@/data/healthForecast';
 import {
@@ -197,7 +199,7 @@ export default function TodayPage() {
               span="col-span-12 lg:col-span-4"
               surface="oat"
               label={isMaya ? 'Day streak' : 'Long streak'}
-              value={persona.streakDays.toString()}
+              value={<AnimatedCounter to={persona.streakDays} duration={1600} />}
               unit="days"
               caption={isMaya ? 'Next milestone, twenty-one.' : '180+ achieved · top three percent.'}
               accent="#0F1815"
@@ -240,7 +242,7 @@ export default function TodayPage() {
               span="col-span-6 lg:col-span-2"
               surface="forest"
               label="Saved"
-              value={`$${totalSaved}`}
+              value={<AnimatedCounter to={totalSaved} prefix="$" duration={1800} />}
               caption="this year"
               accent="#FFFFFF"
               size="md"
@@ -270,7 +272,7 @@ export default function TodayPage() {
         </section>
 
         <section className="mx-auto w-full max-w-[1280px] px-6 pt-28 md:px-10 md:pt-36">
-          <div className="mb-7">
+          <ScrollReveal as="div" className="mb-7">
             <div className="text-[11.5px] font-bold uppercase text-[#0A6B3C]" style={{ letterSpacing: '0.22em' }}>
               The Forecast · {forecast.city}, {forecast.state}
             </div>
@@ -280,7 +282,7 @@ export default function TodayPage() {
             >
               {isMaya ? 'A bright spring week — and what to do with it.' : 'Cool dry days are opening up.'}
             </h2>
-          </div>
+          </ScrollReveal>
 
           <EditorialSplit
             imageUrl={isMaya ? ALLERGY_LIFESTYLE.url : SUPPLEMENT_STILLLIFE_AMBER.url}
@@ -383,7 +385,7 @@ export default function TodayPage() {
         </section>
 
         <section className="mx-auto w-full max-w-[1280px] px-6 pt-28 md:px-10 md:pt-36">
-          <div className="mb-8">
+          <ScrollReveal as="div" className="mb-8">
             <div className="text-[11.5px] font-bold uppercase text-[#0A6B3C]" style={{ letterSpacing: '0.22em' }}>
               Hands-off
             </div>
@@ -396,7 +398,7 @@ export default function TodayPage() {
             <p className="mt-4 max-w-[560px] text-[15.5px] text-[#555]" style={{ lineHeight: 1.6 }}>
               Each one is reversible from your audit log. Open the advisor for the full conversation.
             </p>
-          </div>
+          </ScrollReveal>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {recentActions.map((a) => (
               <AgentActionCard key={a.id} action={a} compact />

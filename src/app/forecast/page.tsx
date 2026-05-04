@@ -216,28 +216,28 @@ export default function ForecastPage() {
       ];
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#FAFAFA]">
+    <div className="flex min-h-screen flex-col">
       <Header />
 
-      <main className="mx-auto w-full max-w-[1280px] flex-1 px-8 py-6">
+      <main className="mx-auto w-full max-w-[1280px] flex-1 px-6 py-6 md:px-10">
 
         {/* ── Editorial hero ───────────────────────────────────────── */}
-        <section className="mb-10">
+        <section className="mb-12">
           <LifestyleHero
             imageUrl={heroImage.url}
             alt={heroImage.alt}
             eyebrow={`Health Forecast · May 1, 2026`}
             headline={
               isMaya
-                ? 'A bright spring week in Austin — and what to do with it.'
-                : 'Cool dry days are opening up in the Pacific Northwest.'
+                ? <>A bright spring week in Austin — <em className="not-italic font-serif-display italic">and what to do with it.</em></>
+                : <>Cool dry days are opening up <em className="not-italic font-serif-display italic">in the Pacific Northwest.</em></>
             }
             subline={
               isMaya
                 ? 'Your environment, translated into wellness recommendations you can act on today.'
                 : 'Your environment, correlated with biometric data to optimize your protocol in real time.'
             }
-            size="lg"
+            size="xl"
             tint={isMaya ? 'coral' : 'green'}
             overlay="medium"
             serif
@@ -273,7 +273,7 @@ export default function ForecastPage() {
         </section>
 
         {/* ── 7-day strip ──────────────────────────────────────────── */}
-        <section className="mb-10">
+        <section className="mb-12">
           <HealthForecastStrip
             days={forecast.days}
             city={forecast.city}
@@ -283,7 +283,7 @@ export default function ForecastPage() {
         </section>
 
         {/* ── Today's conditions: 4-tile bento with gauges ─────────── */}
-        <section className="mb-10">
+        <section className="mb-12">
           <div className="mb-3">
             <div className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#0A6B3C]">
               Today&rsquo;s conditions
@@ -410,7 +410,7 @@ export default function ForecastPage() {
         </section>
 
         {/* ── Insight cards (intermixed with imagery) ──────────────── */}
-        <section className="mb-10">
+        <section className="mb-12">
           <div className="mb-3">
             <div className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#0A6B3C]">
               {isMaya ? 'Read of the week' : 'Environmental signal analysis'}
@@ -548,7 +548,7 @@ export default function ForecastPage() {
 
         {/* ── Hydration lifestyle break (Maya only, when heat is high) ── */}
         {isMaya && today.tempHigh >= 85 && (
-          <section className="mb-10">
+          <section className="mb-12">
             <div className="grid grid-cols-12 gap-5">
               <div className="col-span-5">
                 <div className="relative h-[220px] overflow-hidden rounded-2xl border border-[#EBEBEB]">
@@ -585,7 +585,7 @@ export default function ForecastPage() {
         )}
 
         {/* ── Seasonal protocol ────────────────────────────────────── */}
-        <section className="mb-10">
+        <section className="mb-12">
           <div className="mb-3 flex items-baseline justify-between">
             <div>
               <div className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-[#6B4FBC]">
@@ -612,7 +612,7 @@ export default function ForecastPage() {
 
         {/* ── Daniel: training window analysis ─────────────────────── */}
         {!isMaya && (
-          <section className="mb-10">
+          <section className="mb-12">
             <AIMoment
               eyebrow="Training window analysis"
               headline="This week: 3 outdoor Z2 sessions optimal"
@@ -657,7 +657,7 @@ export default function ForecastPage() {
         )}
 
         {/* ── Email signup — magazine footer style ─────────────────── */}
-        <section className="mb-10">
+        <section className="mb-12">
           <div className="overflow-hidden rounded-2xl border border-[#D9EADF] bg-gradient-to-br from-[#F1FAF3] to-white">
             <div className="h-[3px] bg-gradient-to-r from-[#0A6B3C] via-[#79A83C] to-[#0A6B3C]" />
             <div className="p-7">

@@ -122,8 +122,8 @@ export default function SubscriptionsPage() {
         {/* ── 1. Editorial hero ──────────────────────────────────────── */}
         <section className="mx-auto w-full max-w-[1500px] px-4 pt-4 sm:px-6 md:px-8 md:pt-6">
           <LifestyleHero
-            imageUrl={SUBSCRIPTIONS_HERO.url}
-            alt={SUBSCRIPTIONS_HERO.alt}
+            imageUrl={DELIVERY_LIFESTYLE.url}
+            alt={DELIVERY_LIFESTYLE.alt}
             eyebrow="Subscriptions · auto-tuned"
             headline={
               isMaya
@@ -135,8 +135,8 @@ export default function SubscriptionsPage() {
                 ? 'Your advisor watches your usage patterns and adjusts deliveries so you never run out — or end up with too much.'
                 : 'Optimized in real time from Whoop, Oura, and price intelligence. Every change is logged and reversible.'
             }
-            size="lg"
-            tint="green"
+            size="xl"
+            tint="neutral"
             overlay="medium"
             serif
             rounded="lg"
